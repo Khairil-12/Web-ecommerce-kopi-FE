@@ -1,0 +1,3187 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products - Kopi Prima</title>
+
+    <!-- Bootstrap & Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --primary-color: #8b4513;
+        --secondary-color: #d2691e;
+        --accent-color: #a0522d;
+        --dark-brown: #654321;
+        --light-brown: #deb887;
+        --cream: #f5f5dc;
+        --light-cream: #fff8dc;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        padding-top: 76px;
+        background-color: var(--cream);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        ) !important;
+        border: none !important;
+        color: white !important;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4) !important;
+        background: linear-gradient(
+          135deg,
+          var(--accent-color),
+          var(--primary-color)
+        ) !important;
+      }
+
+      .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        background: transparent !important;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+      }
+
+      .text-primary {
+        color: var(--primary-color) !important;
+      }
+
+      .navbar {
+        background: linear-gradient(
+          135deg,
+          var(--light-cream),
+          var(--cream)
+        ) !important;
+      }
+
+      .navbar-brand {
+        color: var(--primary-color) !important;
+        font-weight: bold;
+      }
+
+      .nav-link {
+        color: var(--dark-brown) !important;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--primary-color) !important;
+      }
+
+      /* Search Box Improved */
+      .search-box {
+        position: relative;
+        width: 300px;
+      }
+
+      .search-input {
+        padding-right: 50px;
+        border-radius: 25px;
+        border: 2px solid var(--light-brown);
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(139, 69, 19, 0.25);
+      }
+
+      .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .search-btn:hover {
+        background: var(--accent-color);
+        transform: translateY(-50%) scale(1.05);
+      }
+
+      /* Advanced Search Options */
+      .search-options {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      .search-options.active {
+        display: block;
+      }
+
+      .search-option-btn {
+        background: var(--light-cream);
+        border: 1px solid var(--light-brown);
+        color: var(--dark-brown);
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin: 3px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+      }
+
+      .search-option-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .search-option-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      /* Product Card Styles */
+      .product-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s ease forwards;
+      }
+
+      .product-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .product-card:hover {
+        transform: translateY(-10px) !important;
+        box-shadow: 0 15px 30px rgba(139, 69, 19, 0.2) !important;
+      }
+
+      .product-image {
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .product-card:hover .product-image {
+        transform: scale(1.05);
+      }
+
+      .price-tag {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+      }
+
+      .green-bean-tag {
+        background: #28a745 !important;
+      }
+
+      .roasted-bean-tag {
+        background: var(--accent-color) !important;
+      }
+
+      /* Category Filter */
+      .category-filter {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .filter-btn {
+        background: white;
+        border: 2px solid var(--cream);
+        color: var(--dark-brown);
+        padding: 8px 20px;
+        border-radius: 25px;
+        margin: 5px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      /* Cart Sidebar */
+      .cart-sidebar {
+        position: fixed;
+        top: 76px;
+        right: -400px;
+        width: 350px;
+        height: calc(100vh - 76px);
+        background: white;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+      }
+
+      .cart-sidebar.active {
+        right: 0;
+      }
+
+      .cart-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+      }
+
+      .cart-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+      }
+
+      .cart-overlay.active {
+        display: block;
+      }
+
+      /* Loading Animation */
+      .loading-spinner {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+
+      .loading-spinner.active {
+        display: block;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--light-brown);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Coffee Bean Animation */
+      .coffee-bean {
+        position: fixed;
+        font-size: 20px;
+        z-index: 1000;
+        pointer-events: none;
+        animation: floatCoffeeBean 5s linear forwards;
+      }
+
+      @keyframes floatCoffeeBean {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Product Details Modal */
+      .product-modal-image {
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      /* Type Badge */
+      .type-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        z-index: 2;
+      }
+
+      .green-bean {
+        background: #28a745;
+      }
+
+      .roasted-bean {
+        background: var(--accent-color);
+      }
+
+      /* Pagination */
+      .pagination .page-link {
+        color: var(--primary-color);
+        border: 1px solid var(--light-brown);
+        cursor: pointer;
+      }
+
+      .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+
+      /* Product Sorting */
+      .sorting-options {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .sort-select {
+        border: 2px solid var(--light-brown);
+        border-radius: 25px;
+        padding: 8px 20px;
+        color: var(--dark-brown);
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .sort-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(139, 69, 19, 0.25);
+      }
+
+      /* Product Grid Layout */
+      .product-grid-header {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .results-info {
+        color: var(--dark-brown);
+        font-weight: 500;
+      }
+
+      /* Price per unit display */
+      .price-per-unit {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      /* Weight options styling */
+      .weight-options .form-select {
+        border: 2px solid var(--light-brown);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .weight-options .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(139, 69, 19, 0.25);
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        color: var(--light-brown);
+        margin-bottom: 20px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .search-box {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .cart-sidebar {
+          width: 100%;
+          right: -100%;
+        }
+
+        .product-image {
+          height: 200px;
+        }
+
+        .price-tag {
+          font-size: 0.9rem;
+          padding: 5px 10px;
+        }
+
+        .type-badge {
+          font-size: 0.7rem;
+          padding: 3px 8px;
+        }
+
+        .sorting-options .d-flex {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .sort-select {
+          width: 100%;
+        }
+
+        .empty-state-icon {
+          font-size: 3rem;
+        }
+      }
+
+      /* Badge Colors */
+      .badge.bg-arabica {
+        background-color: #8b4513 !important;
+      }
+      .badge.bg-robusta {
+        background-color: #654321 !important;
+      }
+      .badge.bg-green-beans {
+        background-color: #28a745 !important;
+      }
+      .badge.bg-roasted {
+        background-color: #d2691e !important;
+      }
+      .badge.bg-specialty {
+        background-color: #a0522d !important;
+      }
+      .badge.bg-organic {
+        background-color: #228b22 !important;
+      }
+      .badge.bg-fair-trade {
+        background-color: #ff8c00 !important;
+      }
+      .badge.bg-premium {
+        background-color: #ffd700 !important;
+        color: #000 !important;
+      }
+      .badge.bg-grade {
+        background-color: #4169e1 !important;
+      }
+      .badge.bg-blend {
+        background-color: #808080 !important;
+      }
+      .badge.bg-traditional {
+        background-color: #a52a2a !important;
+      }
+      .badge.bg-high-caffeine {
+        background-color: #dc3545 !important;
+      }
+      .badge.bg-dark-roast {
+        background-color: #000000 !important;
+      }
+      .badge.bg-medium-roast {
+        background-color: #d2691e !important;
+      }
+      .badge.bg-light-roast {
+        background-color: #deb887 !important;
+        color: #000 !important;
+      }
+      .badge.bg-signature {
+        background-color: #6f42c1 !important;
+      }
+      .badge.bg-espresso {
+        background-color: #000000 !important;
+      }
+
+      /* Quick Search Tags */
+      .quick-search-tags {
+        margin-top: 10px;
+      }
+
+      .quick-tag {
+        display: inline-block;
+        background: var(--light-cream);
+        border: 1px solid var(--light-brown);
+        color: var(--dark-brown);
+        padding: 4px 12px;
+        border-radius: 15px;
+        margin: 3px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .quick-tag:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      /* Search Suggestions */
+      .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: none;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .search-suggestions.active {
+        display: block;
+      }
+
+      .suggestion-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .suggestion-item:hover {
+        background: var(--light-cream);
+      }
+
+      .suggestion-item:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+      <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="text-primary mb-0">
+            <i class="fas fa-shopping-cart me-2"></i>Keranjang Belanja
+          </h4>
+          <button class="btn-close" id="closeCart"></button>
+        </div>
+
+        <div id="cartItems">
+          <!-- Cart items will be loaded here -->
+          <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Keranjang belanja kosong</p>
+          </div>
+        </div>
+
+        <div class="cart-summary mt-4 pt-4 border-top">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <span id="cartSubtotal">Rp 0</span>
+          </div>
+          <div class="d-flex justify-content-between mb-3">
+            <span>Ongkir:</span>
+            <span id="cartShipping">Rp 15.000</span>
+          </div>
+          <div class="d-flex justify-content-between mb-3 fw-bold">
+            <span>Total:</span>
+            <span id="cartTotal">Rp 15.000</span>
+          </div>
+          <button class="btn btn-primary w-100" id="checkoutBtn">
+            <i class="fas fa-credit-card me-2"></i>Checkout
+          </button>
+          <button class="btn btn-outline-primary w-100 mt-2" id="clearCartBtn">
+            <i class="fas fa-trash me-2"></i>Kosongkan Keranjang
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">
+          <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="products.html">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#profile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#contact">Contact</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center">
+            <!-- Improved Search Box -->
+            <div class="search-box me-3 position-relative">
+              <input
+                type="text"
+                class="form-control search-input"
+                id="searchInput"
+                placeholder="Cari kopi... (nama, jenis, daerah)"
+                autocomplete="off"
+              />
+              <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+              </button>
+              <div class="search-suggestions" id="searchSuggestions">
+                <!-- Search suggestions will appear here -->
+              </div>
+            </div>
+
+            <span
+              id="userInfo"
+              class="me-3 text-muted small d-none d-md-block"
+            ></span>
+            <a
+              href="login.html"
+              id="loginBtn"
+              class="btn btn-outline-primary me-2"
+              >Login</a
+            >
+            <button id="logoutBtn" class="btn btn-outline-primary me-2 d-none">
+              Logout
+            </button>
+
+            <button class="btn btn-primary position-relative" id="cartBtn">
+              <i class="fas fa-shopping-cart"></i>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="cartCount"
+                >0</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Product Categories -->
+    <div
+      class="container-fluid py-4"
+      style="
+        background: linear-gradient(135deg, var(--light-cream), var(--cream));
+      "
+    >
+      <div class="container">
+        <div class="category-filter">
+          <h5 class="text-primary mb-3">
+            <i class="fas fa-filter me-2"></i>Filter Kategori
+          </h5>
+          <div class="d-flex flex-wrap">
+            <button class="filter-btn active" data-category="all">Semua</button>
+            <button class="filter-btn" data-category="arabica">Arabica</button>
+            <button class="filter-btn" data-category="robusta">Robusta</button>
+            <button class="filter-btn" data-category="specialty">
+              Specialty
+            </button>
+            <button class="filter-btn" data-category="blend">Blend</button>
+            <button class="filter-btn" data-category="single-origin">
+              Single Origin
+            </button>
+            <button class="filter-btn" data-category="green-beans">
+              Green Beans
+            </button>
+            <button class="filter-btn" data-category="roasted">Roasted</button>
+            <button class="filter-btn" data-category="kopi-luwak">
+              Kopi Luwak
+            </button>
+            <button class="filter-btn" data-category="organic">Organic</button>
+            <button class="filter-btn" data-category="fair-trade">
+              Fair Trade
+            </button>
+            <button class="filter-btn" data-category="premium">Premium</button>
+          </div>
+
+          <!-- Advanced Search Options -->
+          <div class="search-options mt-3" id="searchOptions">
+            <h6 class="text-primary mb-2">
+              <i class="fas fa-sliders-h me-2"></i>Filter Lanjutan
+            </h6>
+            <div class="d-flex flex-wrap">
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="gayo"
+                >Gayo Aceh</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="toraja"
+                >Toraja</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="flores"
+                >Flores</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="bali"
+                >Bali</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="sumatra"
+                >Sumatra</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="java"
+                >Java</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="origin"
+                data-value="lampung"
+                >Lampung</span
+              >
+
+              <span
+                class="search-option-btn"
+                data-filter="roast"
+                data-value="light"
+                >Light Roast</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="roast"
+                data-value="medium"
+                >Medium Roast</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="roast"
+                data-value="dark"
+                >Dark Roast</span
+              >
+
+              <span
+                class="search-option-btn"
+                data-filter="process"
+                data-value="washed"
+                >Washed</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="process"
+                data-value="natural"
+                >Natural</span
+              >
+              <span
+                class="search-option-btn"
+                data-filter="process"
+                data-value="honey"
+                >Honey</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="product-grid-header">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h1
+                    class="display-5 fw-bold text-primary mb-2"
+                    id="pageTitle"
+                  >
+                    Produk Kopi Prima
+                  </h1>
+                  <p class="text-muted mb-0" id="pageDescription">
+                    Temukan biji kopi berkualitas dari berbagai daerah di
+                    Indonesia
+                  </p>
+                  <p class="results-info mt-2" id="resultsInfo">
+                    Menampilkan 8 dari 24 produk
+                  </p>
+                </div>
+                <div class="col-md-4">
+                  <div class="sorting-options">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <span class="text-muted me-2">Urutkan:</span>
+                      <select class="form-select sort-select" id="sortSelect">
+                        <option value="default">Default</option>
+                        <option value="price-low">Harga Terendah</option>
+                        <option value="price-high">Harga Tertinggi</option>
+                        <option value="name-asc">Nama A-Z</option>
+                        <option value="name-desc">Nama Z-A</option>
+                        <option value="popular">Paling Populer</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4" id="productsGrid">
+          <!-- Products will be loaded dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="row d-none" id="emptyState">
+          <div class="col-12">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <i class="fas fa-coffee"></i>
+              </div>
+              <h4 class="text-primary mb-3">Tidak ada produk ditemukan</h4>
+              <p class="text-muted mb-4">
+                Coba gunakan kata kunci lain atau pilih kategori yang berbeda
+              </p>
+              <button class="btn btn-primary" id="resetFiltersBtn">
+                <i class="fas fa-redo me-2"></i>Reset Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="row mt-5">
+          <div class="col-12">
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center" id="pagination">
+                <!-- Pagination will be generated dynamically -->
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Details Modal -->
+    <div
+      class="modal fade"
+      id="productModal"
+      tabindex="-1"
+      aria-labelledby="productModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-primary" id="productModalLabel">
+              Detail Produk
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <img
+                  id="modalImage"
+                  src=""
+                  class="img-fluid product-modal-image"
+                  alt="Product Image"
+                />
+              </div>
+              <div class="col-md-6">
+                <h3 id="modalTitle" class="text-primary"></h3>
+                <div id="modalBadges" class="mb-3"></div>
+                <h4 class="text-primary mb-2" id="modalPrice"></h4>
+                <p class="price-per-unit" id="modalPricePerUnit"></p>
+                <p id="modalDescription" class="text-muted"></p>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label class="form-label">Berat:</label>
+                    <select class="form-select" id="modalWeight">
+                      <!-- Options will be loaded dynamically -->
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label">Jumlah:</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="modalQuantity"
+                      value="1"
+                      min="1"
+                      max="10"
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <h6 class="text-primary">Spesifikasi:</h6>
+                  <ul id="modalSpecs" class="text-muted">
+                    <!-- Specifications will be loaded here -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="modalAddToCart">
+              <i class="fas fa-cart-plus me-2"></i>Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <h5 class="fw-bold mb-3 text-light">
+              <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+            </h5>
+            <p class="text-light">
+              Pemasok biji kopi berkualitas tinggi sejak 1985. Komitmen kami
+              adalah memberikan produk terbaik dengan layanan profesional.
+            </p>
+            <div class="social-links">
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-facebook fa-lg"></i
+              ></a>
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-instagram fa-lg"></i
+              ></a>
+              <a href="#" class="text-light"
+                ><i class="fab fa-twitter fa-lg"></i
+              ></a>
+            </div>
+          </div>
+
+          <div class="col-lg-2">
+            <h5 class="fw-bold mb-3 text-light">Produk</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a
+                  href="products.html?category=arabica"
+                  class="text-light text-decoration-none"
+                  >Kopi Arabica</a
+                >
+              </li>
+              <li>
+                <a
+                  href="products.html?category=robusta"
+                  class="text-light text-decoration-none"
+                  >Kopi Robusta</a
+                >
+              </li>
+              <li>
+                <a
+                  href="products.html?category=specialty"
+                  class="text-light text-decoration-none"
+                  >Specialty Coffee</a
+                >
+              </li>
+              <li>
+                <a
+                  href="products.html?category=blend"
+                  class="text-light text-decoration-none"
+                  >Custom Blends</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2">
+            <h5 class="fw-bold mb-3 text-light">Tautan Cepat</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="index.html" class="text-light text-decoration-none"
+                  >Beranda</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#profile"
+                  class="text-light text-decoration-none"
+                  >Profil</a
+                >
+              </li>
+              <li>
+                <a href="products.html" class="text-light text-decoration-none"
+                  >Produk</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#contact"
+                  class="text-light text-decoration-none"
+                  >Kontak</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4">
+            <h5 class="fw-bold mb-3 text-light">Kontak</h5>
+            <div class="footer-contact">
+              <p class="mb-2 text-light">
+                <i class="fas fa-map-marker-alt me-2"></i>Jakarta Selatan 12560
+              </p>
+              <p class="mb-2 text-light">
+                <i class="fas fa-phone me-2"></i>+62 857 9992 6085
+              </p>
+              <p class="mb-0 text-light">
+                <i class="fas fa-envelope me-2"></i>info@kopiprima.co.id
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="mb-0 text-light">
+              &copy; 2024 PT. Kopi Prima Indonesia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+      // SEMUA 24 PRODUK LENGKAP
+      const products = {
+        1: {
+          name: "Arabica Gayo - Green Beans",
+          price: 95000,
+          image: "img/products/gayo_green.jpeg",
+          description:
+            "Biji kopi Arabica mentah Grade 1 dari dataran tinggi Gayo, Aceh. Cocok untuk roasting sendiri dengan karakteristik floral dan chocolate notes yang akan berkembang setelah roasting. Perfect untuk coffee shop dan roastery profesional.",
+          category: ["arabica", "green-beans", "single-origin", "gayo"],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Grade 1", class: "bg-grade" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "washed",
+          origin: "gayo",
+          specs: [
+            "Asal: Gayo, Aceh",
+            "Altitude: 1200-1600 mdpl",
+            "Process: Fully Washed",
+            "Grade: Grade 1 (Screen 17-18)",
+            "Moisture Content: 11-12%",
+            "Defect: < 5%",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        2: {
+          name: "Arabica Gayo - Roasted",
+          price: 125000,
+          image: "img/products/gayo_roast.jpeg",
+          description:
+            "Kopi Arabica premium dari dataran tinggi Gayo, Aceh dengan medium roast. Mengembangkan aroma floral yang kuat dengan aftertaste coklat yang khas. Cocok untuk berbagai metode brewing seperti pour over, French press, dan espresso.",
+          category: [
+            "arabica",
+            "roasted",
+            "single-origin",
+            "specialty",
+            "gayo",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Specialty", class: "bg-specialty" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "washed",
+          origin: "gayo",
+          specs: [
+            "Asal: Gayo, Aceh",
+            "Altitude: 1200-1600 mdpl",
+            "Process: Fully Washed",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Floral, Dark Chocolate, Caramel",
+            "Body: Medium to Full",
+            "Acidity: Bright",
+            "Best for: Pour Over, French Press, Espresso",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        3: {
+          name: "Robusta Lampung - Green Beans",
+          price: 65000,
+          image: "img/products/lampung_green.jpeg",
+          description:
+            "Biji kopi Robusta mentah dari Lampung dengan kandungan kafein tinggi. Cocok untuk roasting espresso blend atau dark roast. Grade AB dengan kadar air optimal untuk roasting.",
+          category: ["robusta", "green-beans", "lampung"],
+          badges: [
+            { text: "Robusta", class: "bg-robusta" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "High Caffeine", class: "bg-high-caffeine" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "natural",
+          origin: "lampung",
+          specs: [
+            "Asal: Lampung",
+            "Altitude: 400-800 mdpl",
+            "Process: Natural",
+            "Grade: Grade AB",
+            "Moisture Content: 12-13%",
+            "Bean Size: Medium",
+            "Packaging: Jute bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        4: {
+          name: "Robusta Lampung - Roasted",
+          price: 85000,
+          image: "img/products/lampung_roast.jpeg",
+          description:
+            "Kopi Robusta dari Lampung dengan dark roast yang memberikan karakteristik rasa bold dan kandungan kafein tinggi. Sempurna untuk espresso dan memberikan crema yang tebal serta rasa yang kuat.",
+          category: ["robusta", "roasted", "lampung"],
+          badges: [
+            { text: "Robusta", class: "bg-robusta" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Dark Roast", class: "bg-dark-roast" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "dark",
+          process: "natural",
+          origin: "lampung",
+          specs: [
+            "Asal: Lampung",
+            "Altitude: 400-800 mdpl",
+            "Process: Natural",
+            "Roast Level: Dark",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Earthy, Dark Chocolate, Spicy",
+            "Body: Full",
+            "Acidity: Low",
+            "Caffeine: High",
+            "Best for: Espresso, Moka Pot, Vietnamese Coffee",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        5: {
+          name: "Mandheling Sumatra - Green Beans",
+          price: 115000,
+          image: "img/products/mandheling_green.jpeg",
+          description:
+            "Biji kopi Arabica mentah Grade AA dari Sumatra Utara untuk specialty coffee. Cocok untuk roasting single origin dengan karakter earthy dan spicy yang unik setelah roasting.",
+          category: [
+            "arabica",
+            "green-beans",
+            "single-origin",
+            "specialty",
+            "sumatra",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Grade AA", class: "bg-grade" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "washed",
+          origin: "sumatra",
+          specs: [
+            "Asal: Mandheling, Sumatra Utara",
+            "Altitude: 1100-1300 mdpl",
+            "Process: Wet Hulled (Giling Basah)",
+            "Grade: Grade AA",
+            "Moisture Content: 11-12%",
+            "Bean Size: Large",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        6: {
+          name: "Mandheling Sumatra - Roasted",
+          price: 145000,
+          image: "img/products/mandheling_roast.jpeg",
+          description:
+            "Kopi single origin dari Sumatra Utara dengan medium-dark roast yang mengembangkan body yang full dan rasa yang kompleks. Dikenal dengan karakter earthy dan spicy yang unik dengan finish yang panjang.",
+          category: [
+            "arabica",
+            "roasted",
+            "single-origin",
+            "specialty",
+            "sumatra",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Specialty", class: "bg-specialty" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "dark",
+          process: "washed",
+          origin: "sumatra",
+          specs: [
+            "Asal: Mandheling, Sumatra Utara",
+            "Altitude: 1100-1300 mdpl",
+            "Process: Wet Hulled",
+            "Roast Level: Medium-Dark",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Dark Chocolate, Spice, Earthy, Tobacco",
+            "Body: Full",
+            "Acidity: Low-Medium",
+            "Finish: Long",
+            "Best for: French Press, Aeropress, Siphon",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        7: {
+          name: "Toraja Sapan - Green Beans",
+          price: 125000,
+          image: "img/products/toraja_green.jpeg",
+          description:
+            "Biji kopi Arabica organik mentah dari Toraja yang ditanam secara sustainable di ketinggian 1400-1800 mdpl. Diproses dengan metode honey untuk memberikan sweetness yang natural.",
+          category: [
+            "arabica",
+            "green-beans",
+            "single-origin",
+            "organic",
+            "toraja",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Organic", class: "bg-organic" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "honey",
+          origin: "toraja",
+          specs: [
+            "Asal: Toraja, Sulawesi",
+            "Altitude: 1400-1800 mdpl",
+            "Process: Honey Process",
+            "Grade: Grade A",
+            "Moisture Content: 10-11%",
+            "Certification: Organic",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        8: {
+          name: "Toraja Sapan - Roasted",
+          price: 155000,
+          image: "img/products/toraja_roast.jpeg",
+          description:
+            "Kopi Arabica organik dari Toraja dengan light-medium roast yang mempertahankan karakteristik herbal dan earthy. Diproses dengan metode honey untuk memberikan sweetness yang natural dengan aftertaste yang clean.",
+          category: [
+            "arabica",
+            "roasted",
+            "single-origin",
+            "organic",
+            "toraja",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Organic", class: "bg-organic" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "light",
+          process: "honey",
+          origin: "toraja",
+          specs: [
+            "Asal: Toraja, Sulawesi",
+            "Altitude: 1400-1800 mdpl",
+            "Process: Honey Process",
+            "Roast Level: Light-Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Herbal, Earthy, Brown Sugar, Stone Fruit",
+            "Body: Medium",
+            "Acidity: Medium-High",
+            "Certification: Organic Certified",
+            "Best for: Pour Over, Chemex, V60",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        9: {
+          name: "Flores Bajawa - Green Beans",
+          price: 130000,
+          image: "img/products/flores_green.jpeg",
+          description:
+            "Biji kopi Arabica Fair Trade Grade A dari Flores. Proses natural untuk sweetness maksimal dengan karakteristik fruity dan winey yang akan berkembang setelah roasting.",
+          category: [
+            "arabica",
+            "green-beans",
+            "single-origin",
+            "fair-trade",
+            "flores",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Fair Trade", class: "bg-fair-trade" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "natural",
+          origin: "flores",
+          specs: [
+            "Asal: Bajawa, Flores",
+            "Altitude: 1200-1500 mdpl",
+            "Process: Natural",
+            "Grade: Grade A",
+            "Moisture Content: 11-12%",
+            "Certification: Fair Trade",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        10: {
+          name: "Flores Bajawa - Roasted",
+          price: 160000,
+          image: "img/products/flores_roast.jpeg",
+          description:
+            "Kopi Arabica Fair Trade dari Flores dengan medium roast. Natural process dengan karakteristik fruity dan winey yang unik. Sweetness alami dari proses natural dengan acidity yang balanced.",
+          category: [
+            "arabica",
+            "roasted",
+            "single-origin",
+            "fair-trade",
+            "flores",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Fair Trade", class: "bg-fair-trade" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "natural",
+          origin: "flores",
+          specs: [
+            "Asal: Bajawa, Flores",
+            "Altitude: 1200-1500 mdpl",
+            "Process: Natural",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Berry, Wine, Caramel, Citrus",
+            "Body: Medium-Full",
+            "Acidity: Balanced",
+            "Certification: Fair Trade Certified",
+            "Best for: Pour Over, AeroPress, Cold Brew",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        11: {
+          name: "Kintamani Bali - Green Beans",
+          price: 120000,
+          image: "img/products/kintamani_green.jpeg",
+          description:
+            "Biji kopi Arabica organik dari lereng Gunung Batur, Bali. Karakteristik citrusy dengan acidity yang clean dan aroma floral yang akan muncul setelah roasting yang tepat.",
+          category: [
+            "arabica",
+            "green-beans",
+            "single-origin",
+            "organic",
+            "bali",
+          ],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Organic", class: "bg-organic" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "washed",
+          origin: "bali",
+          specs: [
+            "Asal: Kintamani, Bali",
+            "Altitude: 1000-1400 mdpl",
+            "Process: Fully Washed",
+            "Grade: Grade A",
+            "Moisture Content: 11-12%",
+            "Certification: Organic",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        12: {
+          name: "Kintamani Bali - Roasted",
+          price: 150000,
+          image: "img/products/kintamani_roast.jpeg",
+          description:
+            "Kopi Arabica organik dari Bali dengan light roast untuk mempertahankan karakter citrusy yang fresh. Acidity yang clean dengan aroma floral dan finish yang crisp.",
+          category: ["arabica", "roasted", "single-origin", "organic", "bali"],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Organic", class: "bg-organic" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "light",
+          process: "washed",
+          origin: "bali",
+          specs: [
+            "Asal: Kintamani, Bali",
+            "Altitude: 1000-1400 mdpl",
+            "Process: Fully Washed",
+            "Roast Level: Light",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Citrus, Floral, Honey, Lemon",
+            "Body: Light-Medium",
+            "Acidity: Bright and Clean",
+            "Certification: Organic Certified",
+            "Best for: Pour Over, Chemex, Siphon",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        13: {
+          name: "Kopi Luwak - Green Beans",
+          price: 250000,
+          image: "img/products/luwak_green.jpeg",
+          description:
+            "Biji kopi luwak mentah premium dengan proses natural yang etis. Grade terbaik untuk roasting exclusive dengan karakteristik smooth dan low acidity setelah roasting.",
+          category: ["arabica", "green-beans", "kopi-luwak", "premium"],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Premium", class: "bg-premium" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "natural",
+          origin: "mixed",
+          specs: [
+            "Asal: Various Premium Regions",
+            "Process: Wild Civet, Natural",
+            "Grade: Premium Grade",
+            "Moisture Content: 10-11%",
+            "Certification: Ethical Production",
+            "Bean Size: Uniform",
+            "Packaging: Vacuum Pack",
+            "Minimum Order: 250g",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        14: {
+          name: "Kopi Luwak - Roasted",
+          price: 350000,
+          image: "img/products/luwak_roast.jpeg",
+          description:
+            "Kopi luwak asli dengan proses natural yang etis. Medium roast untuk rasa yang smooth dengan acidity rendah dan aftertaste yang panjang. Diproses secara sustainable dengan kualitas premium.",
+          category: ["arabica", "roasted", "kopi-luwak", "premium"],
+          badges: [
+            { text: "Arabica", class: "bg-arabica" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Premium", class: "bg-premium" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "natural",
+          origin: "mixed",
+          specs: [
+            "Asal: Various Premium Regions",
+            "Process: Wild Civet, Natural",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Smooth, Chocolate, Caramel, Nutty",
+            "Body: Full",
+            "Acidity: Very Low",
+            "Certification: Ethical Production Certified",
+            "Best for: Special Occasions, Gift, Exclusive Brewing",
+          ],
+          weightOptions: [
+            { value: 100, label: "100g", priceMultiplier: 0.1 },
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+          ],
+        },
+        15: {
+          name: "Arabika Temanggung - Green Beans",
+          price: 75000,
+          image: "img/products/temanggung_green.jpeg",
+          description:
+            "Specialty coffee from Central Java, famous for its unique flavor, often with hints of tobacco, earthiness, or wine.",
+          category: ["blend", "green-beans"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Arabica+Robusta", class: "bg-arabica" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: 70% Arabica, 30% Robusta",
+            "Arabica Source: Various Indonesia",
+            "Robusta Source: Temanggung",
+            "Grade: Commercial Grade",
+            "Moisture Content: 12-13%",
+            "Roast Recommendation: Medium",
+            "Packaging: Jute bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        16: {
+          name: "Arabika Temanggung - Roasted",
+          price: 95000,
+          image: "img/products/temanggung_roast.jpeg",
+          description:
+            "Specialty coffee from Central Java, famous for its unique flavor, often with hints of tobacco, earthiness, or wine.",
+          category: ["blend", "roasted"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Medium Roast", class: "bg-medium-roast" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: 70% Arabica, 30% Robusta",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Nuts, Winey, Mild Chocolate, Tobacco",
+            "Body: Medium",
+            "Acidity: Balanced",
+            "Caffeine: Medium",
+            "Best for: All Brewing Methods, Daily Coffee",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        17: {
+          name: "Espresso Blend - Green Beans",
+          price: 100000,
+          image: "img/products/espresso_blend.jpeg",
+          description:
+            "Green beans khusus untuk espresso dengan rasio 60% Arabica, 40% Robusta. Cocok untuk dark roasting dengan karakteristik crema yang tebal dan rasa yang bold.",
+          category: ["blend", "green-beans", "espresso"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Espresso", class: "bg-espresso" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: 60% Arabica, 40% Robusta",
+            "Arabica Source: Sumatra & Java",
+            "Robusta Source: Lampung Premium",
+            "Grade: Espresso Grade",
+            "Moisture Content: 11-12%",
+            "Roast Recommendation: Dark",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        18: {
+          name: "Morning Blend - Roasted",
+          price: 110000,
+          image: "img/products/morning_blend.jpeg",
+          description:
+            "Blend khusus untuk kopi pagi hari dengan dark roast yang memberikan crema tebal dan rasa bold. Perfect untuk latte art dan berbagai espresso-based drinks.",
+          category: ["blend", "roasted", "espresso"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Dark Roast", class: "bg-dark-roast" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "dark",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: 60% Arabica, 40% Robusta",
+            "Roast Level: Dark",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Dark Chocolate, Caramel, Spice, Nutty",
+            "Body: Full and Creamy",
+            "Acidity: Low",
+            "Crema: Thick and Persistent",
+            "Best for: Espresso, Cappuccino, Latte",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        19: {
+          name: "Cappucino - Green Beans",
+          price: 80000,
+          image: "img/products/cappucino_green.jpeg",
+          description:
+            "Green beans signature Kopi Prima dengan keseimbangan sempurna antara berbagai origins. Cocok untuk Kopi yang tidak terlalu tebal rasanya.",
+          category: ["blend", "green-beans", "signature"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Signature", class: "bg-signature" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: Secret Blend",
+            "Sources: Multiple Indonesia Regions",
+            "Grade: Premium Commercial",
+            "Moisture Content: 11-12%",
+            "Roast Flexibility: Wide Range",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+            "Consistency: High",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        20: {
+          name: "Mocca Blend - Roasted",
+          price: 100000,
+          image: "img/products/mocca.jpeg",
+          description:
+            "Blend signature Kopi Prima dengan medium roast untuk keseimbangan sempurna antara acidity dan body.",
+          category: ["blend", "roasted", "signature"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Signature", class: "bg-signature" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: Secret Blend",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Balanced, Sweet, Nutty, Chocolate",
+            "Body: Medium",
+            "Acidity: Medium-Balanced",
+            "Versatility: High",
+            "Best for: All Brewing Methods",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        21: {
+          name: "Robusta Java - Green Beans",
+          price: 70000,
+          image: "img/products/java_green.jpeg",
+          description:
+            "Biji kopi Robusta mentah dari Jawa dengan karakteristik earthy yang khas. Cocok untuk kopi tubruk tradisional atau blending dengan Arabica.",
+          category: ["robusta", "green-beans", "java"],
+          badges: [
+            { text: "Robusta", class: "bg-robusta" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Traditional", class: "bg-traditional" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "natural",
+          origin: "java",
+          specs: [
+            "Asal: Java Island",
+            "Altitude: 500-900 mdpl",
+            "Process: Natural",
+            "Grade: Grade AB",
+            "Moisture Content: 12-13%",
+            "Characteristic: Earthy",
+            "Packaging: Jute bag",
+            "Minimum Order: 1kg",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        22: {
+          name: "Robusta Java - Roasted",
+          price: 90000,
+          image: "img/products/java_roast.jpeg",
+          description:
+            "Kopi Robusta dari Jawa dengan dark roast yang memberikan karakteristik earthy dan spicy yang khas. Sempurna untuk kopi tubruk tradisional Indonesia.",
+          category: ["robusta", "roasted", "java"],
+          badges: [
+            { text: "Robusta", class: "bg-robusta" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Dark Roast", class: "bg-dark-roast" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "dark",
+          process: "natural",
+          origin: "java",
+          specs: [
+            "Asal: Java Island",
+            "Altitude: 500-900 mdpl",
+            "Process: Natural",
+            "Roast Level: Dark",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Earthy, Spicy, Dark Chocolate, Tobacco",
+            "Body: Heavy",
+            "Acidity: Very Low",
+            "Traditional Use: Kopi Tubruk",
+            "Best for: Traditional Brewing, Blending",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+        23: {
+          name: "Specialty Blend - Green Beans",
+          price: 140000,
+          image: "img/products/spesial_green.jpeg",
+          description:
+            "Green beans premium blend dari berbagai single origin specialty Indonesia. Untuk roasting tingkat ahli dengan complexity tinggi.",
+          category: ["blend", "green-beans", "specialty"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Green Beans", class: "bg-green-beans" },
+            { text: "Specialty", class: "bg-specialty" },
+          ],
+          type: "green-bean",
+          pricePer: "per kg",
+          roastLevel: "",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: Multiple Specialty Origins",
+            "Sources: Gayo, Toraja, Flores, Kintamani",
+            "Grade: All Grade A or Above",
+            "Moisture Content: 10-11%",
+            "Roast Recommendation: Light to Medium",
+            "Packaging: GrainPro bag",
+            "Minimum Order: 1kg",
+            "Target: Professional Roasters",
+          ],
+          weightOptions: [
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+            { value: 5000, label: "5kg", priceMultiplier: 4.8 },
+            { value: 10000, label: "10kg", priceMultiplier: 9.5 },
+          ],
+        },
+        24: {
+          name: "Specialty Blend - Roasted",
+          price: 170000,
+          image: "img/products/spesial_roast.jpeg",
+          description:
+            "Blend premium dari berbagai single origin specialty Indonesia dengan medium roast. Complexity tinggi dengan layers of flavor yang sophisticated.",
+          category: ["blend", "roasted", "specialty"],
+          badges: [
+            { text: "Blend", class: "bg-blend" },
+            { text: "Roasted", class: "bg-roasted" },
+            { text: "Specialty", class: "bg-specialty" },
+          ],
+          type: "roasted-bean",
+          pricePer: "per kg",
+          roastLevel: "medium",
+          process: "mixed",
+          origin: "mixed",
+          specs: [
+            "Composition: Multiple Specialty Origins",
+            "Roast Level: Medium",
+            "Roast Date: Within 2 weeks",
+            "Flavor Notes: Complex, Layered, Fruity, Chocolate, Floral",
+            "Body: Medium-Full",
+            "Acidity: Bright and Complex",
+            "Finish: Long and Lingering",
+            "Best for: Specialty Coffee Shops, Connoisseurs",
+          ],
+          weightOptions: [
+            { value: 250, label: "250g", priceMultiplier: 0.25 },
+            { value: 500, label: "500g", priceMultiplier: 0.5 },
+            { value: 1000, label: "1kg", priceMultiplier: 1 },
+          ],
+        },
+      };
+
+      // ============================================================
+      // URL PARAMETER HANDLING - OPSI 3 IMPLEMENTASI
+      // ============================================================
+
+      // Function to read URL parameters
+      function getUrlParameter(name) {
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(window.location.href);
+        if (!results) return null;
+        if (!results[2]) return "";
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      // Category mapping for URL parameters to actual categories
+      const categoryMapping = {
+        arabica: "arabica",
+        robusta: "robusta",
+        specialty: "specialty",
+        blend: "blend",
+        custom: "blend",
+      };
+
+      // Category title mapping
+      const categoryTitles = {
+        arabica: "Kopi Arabica",
+        robusta: "Kopi Robusta",
+        specialty: "Specialty Coffee",
+        blend: "Custom Blends & Blends",
+        custom: "Custom Blends",
+      };
+
+      // Category description mapping
+      const categoryDescriptions = {
+        arabica:
+          "Kopi Arabica berkualitas tinggi dengan aroma floral dan rasa kompleks dari berbagai daerah di Indonesia",
+        robusta:
+          "Kopi Robusta dengan cita rasa kuat dan kandungan kafein tinggi untuk penggemar kopi bold",
+        specialty:
+          "Kopi spesialti grade tinggi melalui proses seleksi ketat untuk pengalaman kopi premium",
+        blend:
+          "Blend kopi custom sesuai kebutuhan bisnis Anda dengan konsistensi terjamin",
+        custom: "Blend kopi custom sesuai kebutuhan spesifik bisnis Anda",
+      };
+
+      // Function to apply category filter from URL
+      function applyCategoryFilterFromURL() {
+        const categoryFromUrl = getUrlParameter("category");
+
+        if (categoryFromUrl && categoryMapping[categoryFromUrl]) {
+          const targetCategory = categoryMapping[categoryFromUrl];
+
+          // Update page title and description
+          updatePageTitleByCategory(categoryFromUrl);
+
+          // Return the target category for product manager
+          return targetCategory;
+        }
+
+        return null;
+      }
+
+      // Function to update page title based on category
+      function updatePageTitleByCategory(category) {
+        if (categoryTitles[category]) {
+          // Update page title
+          document.title = `${categoryTitles[category]} - Kopi Prima`;
+
+          // Update the main heading
+          const mainHeading = document.getElementById("pageTitle");
+          if (mainHeading) {
+            mainHeading.textContent = categoryTitles[category];
+          }
+
+          // Update the description
+          const description = document.getElementById("pageDescription");
+          if (description && categoryDescriptions[category]) {
+            description.textContent = categoryDescriptions[category];
+          }
+        }
+      }
+
+      // ============================================================
+      // ADVANCED PRODUCT MANAGEMENT SYSTEM
+      // ============================================================
+
+      class ProductManager {
+        constructor() {
+          this.currentPage = 1;
+          this.productsPerPage = 8;
+          this.currentCategory = "all";
+          this.currentSort = "default";
+          this.currentSearch = "";
+          this.activeFilters = {
+            origin: [],
+            roast: [],
+            process: [],
+          };
+          this.allProducts = this.prepareProductsData();
+          this.filteredProducts = [...this.allProducts];
+          this.searchHistory = [];
+
+          // Check for URL parameter first
+          const urlCategory = applyCategoryFilterFromURL();
+          if (urlCategory) {
+            this.currentCategory = urlCategory;
+          }
+
+          this.init();
+        }
+
+        prepareProductsData() {
+          return Object.keys(products).map((id) => ({
+            id: parseInt(id),
+            ...products[id],
+            categoryString: products[id].category.join(" "),
+            searchString: this.createSearchString(products[id]),
+          }));
+        }
+
+        createSearchString(product) {
+          return [
+            product.name,
+            product.description,
+            ...product.category,
+            ...product.badges.map((b) => b.text),
+            product.origin,
+            product.roastLevel,
+            product.process,
+            ...product.specs,
+          ]
+            .join(" ")
+            .toLowerCase();
+        }
+
+        init() {
+          this.setupEventListeners();
+          this.renderProducts();
+          this.updateResultsInfo();
+          this.setupSearchSuggestions();
+          this.updateFilterButtons();
+        }
+
+        updateFilterButtons() {
+          // Update active filter button based on current category
+          const filterButtons = document.querySelectorAll(".filter-btn");
+          filterButtons.forEach((btn) => {
+            btn.classList.remove("active");
+            if (btn.getAttribute("data-category") === this.currentCategory) {
+              btn.classList.add("active");
+            } else if (
+              this.currentCategory === "all" &&
+              btn.getAttribute("data-category") === "all"
+            ) {
+              btn.classList.add("active");
+            }
+          });
+        }
+
+        setupEventListeners() {
+          // Filter buttons
+          document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              this.currentCategory =
+                e.currentTarget.getAttribute("data-category");
+              this.currentPage = 1;
+
+              // Update active state
+              document
+                .querySelectorAll(".filter-btn")
+                .forEach((b) => b.classList.remove("active"));
+              e.currentTarget.classList.add("active");
+
+              // Update URL without reloading page
+              this.updateURLWithCategory(this.currentCategory);
+
+              this.filterAndSortProducts();
+            });
+          });
+
+          // Sort select
+          document
+            .getElementById("sortSelect")
+            .addEventListener("change", (e) => {
+              this.currentSort = e.target.value;
+              this.filterAndSortProducts();
+            });
+
+          // Search functionality
+          const searchInput = document.getElementById("searchInput");
+          const searchBtn = document.getElementById("searchBtn");
+
+          searchBtn.addEventListener("click", () => this.performSearch());
+          searchInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") this.performSearch();
+          });
+
+          // Real-time search suggestions
+          searchInput.addEventListener("input", (e) => {
+            this.showSearchSuggestions(e.target.value);
+          });
+
+          // Advanced filter options
+          document.querySelectorAll(".search-option-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const filterType = e.currentTarget.getAttribute("data-filter");
+              const filterValue = e.currentTarget.getAttribute("data-value");
+
+              e.currentTarget.classList.toggle("active");
+
+              if (e.currentTarget.classList.contains("active")) {
+                this.activeFilters[filterType].push(filterValue);
+              } else {
+                this.activeFilters[filterType] = this.activeFilters[
+                  filterType
+                ].filter((v) => v !== filterValue);
+              }
+
+              this.currentPage = 1;
+              this.filterAndSortProducts();
+            });
+          });
+
+          // Toggle advanced search
+          const searchOptions = document.getElementById("searchOptions");
+          searchInput.addEventListener("focus", () => {
+            searchOptions.classList.add("active");
+          });
+
+          document.addEventListener("click", (e) => {
+            if (
+              !searchInput.contains(e.target) &&
+              !searchOptions.contains(e.target)
+            ) {
+              searchOptions.classList.remove("active");
+            }
+          });
+
+          // Reset filters
+          document
+            .getElementById("resetFiltersBtn")
+            .addEventListener("click", () => this.resetFilters());
+        }
+
+        updateURLWithCategory(category) {
+          // Update URL without reloading page
+          const url = new URL(window.location);
+          if (category === "all") {
+            url.searchParams.delete("category");
+          } else {
+            url.searchParams.set("category", category);
+          }
+          window.history.pushState({}, "", url);
+        }
+
+        performSearch() {
+          this.currentSearch = document
+            .getElementById("searchInput")
+            .value.toLowerCase()
+            .trim();
+          this.currentPage = 1;
+
+          if (this.currentSearch) {
+            this.searchHistory.unshift(this.currentSearch);
+            if (this.searchHistory.length > 5) this.searchHistory.pop();
+          }
+
+          this.filterAndSortProducts();
+          this.hideSearchSuggestions();
+        }
+
+        showSearchSuggestions(query) {
+          const suggestionsContainer =
+            document.getElementById("searchSuggestions");
+
+          if (!query || query.length < 2) {
+            suggestionsContainer.classList.remove("active");
+            return;
+          }
+
+          const suggestions = new Set();
+
+          this.allProducts.forEach((product) => {
+            if (product.name.toLowerCase().includes(query)) {
+              suggestions.add(product.name);
+            }
+
+            product.category.forEach((cat) => {
+              if (cat.toLowerCase().includes(query)) {
+                suggestions.add(cat.charAt(0).toUpperCase() + cat.slice(1));
+              }
+            });
+
+            product.badges.forEach((badge) => {
+              if (badge.text.toLowerCase().includes(query)) {
+                suggestions.add(badge.text);
+              }
+            });
+          });
+
+          this.searchHistory.forEach((term) => {
+            if (term.includes(query)) {
+              suggestions.add(`🔍 ${term}`);
+            }
+          });
+
+          const popularSearches = [
+            "gayo",
+            "toraja",
+            "luwak",
+            "espresso",
+            "arabica",
+            "robusta",
+            "specialty",
+          ];
+          popularSearches.forEach((term) => {
+            if (term.includes(query)) {
+              suggestions.add(term.charAt(0).toUpperCase() + term.slice(1));
+            }
+          });
+
+          if (suggestions.size > 0) {
+            let suggestionsHTML = "";
+            Array.from(suggestions)
+              .slice(0, 8)
+              .forEach((suggestion) => {
+                suggestionsHTML += `
+                  <div class="suggestion-item" data-suggestion="${suggestion.replace(
+                    "🔍 ",
+                    ""
+                  )}">
+                    ${suggestion}
+                  </div>
+                `;
+              });
+
+            suggestionsContainer.innerHTML = suggestionsHTML;
+            suggestionsContainer.classList.add("active");
+
+            suggestionsContainer
+              .querySelectorAll(".suggestion-item")
+              .forEach((item) => {
+                item.addEventListener("click", (e) => {
+                  const suggestion =
+                    e.currentTarget.getAttribute("data-suggestion");
+                  document.getElementById("searchInput").value = suggestion;
+                  this.performSearch();
+                });
+              });
+          } else {
+            suggestionsContainer.classList.remove("active");
+          }
+        }
+
+        hideSearchSuggestions() {
+          document
+            .getElementById("searchSuggestions")
+            .classList.remove("active");
+        }
+
+        setupSearchSuggestions() {
+          document.addEventListener("click", (e) => {
+            const suggestions = document.getElementById("searchSuggestions");
+            const searchInput = document.getElementById("searchInput");
+
+            if (
+              !suggestions.contains(e.target) &&
+              !searchInput.contains(e.target)
+            ) {
+              suggestions.classList.remove("active");
+            }
+          });
+        }
+
+        resetFilters() {
+          this.currentCategory = "all";
+          this.currentSearch = "";
+          this.currentSort = "default";
+          this.currentPage = 1;
+          this.activeFilters = {
+            origin: [],
+            roast: [],
+            process: [],
+          };
+
+          document.getElementById("searchInput").value = "";
+          document.getElementById("sortSelect").value = "default";
+          document.querySelectorAll(".search-option-btn").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+
+          this.updateFilterButtons();
+          this.updateURLWithCategory("all");
+          updatePageTitleByCategory("all");
+
+          // Reset page title
+          document.title = "Products - Kopi Prima";
+          document.getElementById("pageTitle").textContent =
+            "Produk Kopi Prima";
+          document.getElementById("pageDescription").textContent =
+            "Temukan biji kopi berkualitas dari berbagai daerah di Indonesia";
+
+          this.filterAndSortProducts();
+        }
+
+        filterAndSortProducts() {
+          this.filteredProducts = [...this.allProducts];
+
+          if (this.currentCategory !== "all") {
+            this.filteredProducts = this.filteredProducts.filter((product) =>
+              product.category.includes(this.currentCategory)
+            );
+          }
+
+          if (this.currentSearch) {
+            this.filteredProducts = this.filteredProducts.filter((product) =>
+              product.searchString.includes(this.currentSearch)
+            );
+          }
+
+          Object.keys(this.activeFilters).forEach((filterType) => {
+            if (this.activeFilters[filterType].length > 0) {
+              this.filteredProducts = this.filteredProducts.filter(
+                (product) => {
+                  if (filterType === "origin") {
+                    return this.activeFilters.origin.includes(product.origin);
+                  } else if (filterType === "roast") {
+                    return this.activeFilters.roast.includes(
+                      product.roastLevel
+                    );
+                  } else if (filterType === "process") {
+                    return this.activeFilters.process.includes(product.process);
+                  }
+                  return true;
+                }
+              );
+            }
+          });
+
+          this.sortProducts();
+          this.renderProducts();
+          this.updateResultsInfo();
+        }
+
+        sortProducts() {
+          switch (this.currentSort) {
+            case "price-low":
+              this.filteredProducts.sort((a, b) => a.price - b.price);
+              break;
+            case "price-high":
+              this.filteredProducts.sort((a, b) => b.price - a.price);
+              break;
+            case "name-asc":
+              this.filteredProducts.sort((a, b) =>
+                a.name.localeCompare(b.name)
+              );
+              break;
+            case "name-desc":
+              this.filteredProducts.sort((a, b) =>
+                b.name.localeCompare(a.name)
+              );
+              break;
+            case "popular":
+              this.filteredProducts.sort((a, b) => b.price - a.price);
+              break;
+            default:
+              this.filteredProducts.sort((a, b) => a.id - b.id);
+          }
+        }
+
+        renderProducts() {
+          const productsGrid = document.getElementById("productsGrid");
+          const emptyState = document.getElementById("emptyState");
+          const pagination = document.getElementById("pagination");
+
+          if (this.filteredProducts.length === 0) {
+            productsGrid.innerHTML = "";
+            emptyState.classList.remove("d-none");
+            pagination.classList.add("d-none");
+            return;
+          }
+
+          emptyState.classList.add("d-none");
+          pagination.classList.remove("d-none");
+
+          const startIndex = (this.currentPage - 1) * this.productsPerPage;
+          const endIndex = startIndex + this.productsPerPage;
+          const currentProducts = this.filteredProducts.slice(
+            startIndex,
+            endIndex
+          );
+
+          productsGrid.innerHTML = "";
+
+          currentProducts.forEach((product, index) => {
+            const productHTML = this.createProductHTML(product);
+            const productElement = document.createElement("div");
+            productElement.className = "col-md-6 col-lg-4 col-xl-3";
+            productElement.setAttribute(
+              "data-category",
+              product.categoryString
+            );
+            productElement.innerHTML = productHTML;
+
+            productsGrid.appendChild(productElement);
+
+            setTimeout(() => {
+              const card = productElement.querySelector(".product-card");
+              if (card) {
+                card.classList.add("visible");
+                card.style.animationDelay = `${index * 0.1}s`;
+              }
+            }, 10);
+          });
+
+          this.attachProductEventListeners();
+          this.setupPagination();
+        }
+
+        createProductHTML(product) {
+          const typeClass =
+            product.type === "green-bean"
+              ? "green-bean-tag"
+              : "roasted-bean-tag";
+          const typeBadge =
+            product.type === "green-bean" ? "green-bean" : "roasted-bean";
+          const typeText =
+            product.type === "green-bean" ? "Green Beans" : "Roasted Beans";
+
+          return `
+            <div class="card product-card h-100">
+              <div class="position-relative">
+                <div class="type-badge ${typeBadge}">${typeText}</div>
+                <img src="${product.image}" 
+                     class="card-img-top product-image" alt="${product.name}"
+                     loading="lazy">
+                <div class="price-tag ${typeClass}">Rp ${product.price.toLocaleString(
+            "id-ID"
+          )}</div>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary">${product.name}</h5>
+                <p class="price-per-unit text-muted">${product.pricePer}</p>
+                <p class="card-text text-muted flex-grow-1">
+                  ${product.description.substring(0, 100)}...
+                </p>
+                <div class="mt-auto">
+                  <div class="d-flex flex-wrap gap-2 mb-3">
+                    ${product.badges
+                      .map(
+                        (badge) =>
+                          `<span class="badge ${badge.class}">${badge.text}</span>`
+                      )
+                      .join("")}
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6 weight-options">
+                      <select class="form-select form-select-sm" data-product="${
+                        product.id
+                      }">
+                        ${product.weightOptions
+                          .map(
+                            (option) =>
+                              `<option value="${option.value}">${option.label}</option>`
+                          )
+                          .join("")}
+                      </select>
+                    </div>
+                    <div class="col-6">
+                      <button class="btn btn-primary w-100 btn-sm add-to-cart-btn" data-id="${
+                        product.id
+                      }">
+                        <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                  <button class="btn btn-outline-primary w-100 mt-2 btn-sm btn-detail" data-id="${
+                    product.id
+                  }">
+                    <i class="fas fa-info-circle me-1"></i>Detail
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        attachProductEventListeners() {
+          document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const productId = parseInt(
+                e.currentTarget.getAttribute("data-id")
+              );
+              const product = products[productId];
+              const weightSelect = document.querySelector(
+                `select[data-product="${productId}"]`
+              );
+              const weight = weightSelect ? parseInt(weightSelect.value) : 1000;
+
+              if (product) {
+                window.cartSystem.addToCart(productId, weight);
+              }
+            });
+          });
+
+          document.querySelectorAll(".btn-detail").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const productId = parseInt(
+                e.currentTarget.getAttribute("data-id")
+              );
+              this.showProductDetails(productId);
+            });
+          });
+        }
+
+        showProductDetails(productId) {
+          const product = products[productId];
+
+          if (!product) return;
+
+          document.getElementById("modalTitle").textContent = product.name;
+          document.getElementById("modalImage").src = product.image;
+          document.getElementById("modalImage").alt = product.name;
+          document.getElementById(
+            "modalPrice"
+          ).textContent = `Rp ${product.price.toLocaleString("id-ID")}`;
+          document.getElementById("modalPricePerUnit").textContent =
+            product.pricePer;
+          document.getElementById("modalDescription").textContent =
+            product.description;
+
+          const badgesContainer = document.getElementById("modalBadges");
+          badgesContainer.innerHTML = "";
+          product.badges.forEach((badge) => {
+            const badgeEl = document.createElement("span");
+            badgeEl.className = `badge ${badge.class} me-2`;
+            badgeEl.textContent = badge.text;
+            badgesContainer.appendChild(badgeEl);
+          });
+
+          const specsContainer = document.getElementById("modalSpecs");
+          specsContainer.innerHTML = "";
+          product.specs.forEach((spec) => {
+            const li = document.createElement("li");
+            li.className = "mb-2";
+            li.textContent = spec;
+            specsContainer.appendChild(li);
+          });
+
+          const weightSelect = document.getElementById("modalWeight");
+          weightSelect.innerHTML = product.weightOptions
+            .map(
+              (option) =>
+                `<option value="${option.value}">${
+                  option.label
+                } - Rp ${Math.round(
+                  product.price * option.priceMultiplier
+                ).toLocaleString("id-ID")}</option>`
+            )
+            .join("");
+
+          document.getElementById("modalQuantity").value = 1;
+
+          const modalAddToCartBtn = document.getElementById("modalAddToCart");
+          modalAddToCartBtn.onclick = () => {
+            const weight = parseInt(weightSelect.value);
+            const quantity = parseInt(
+              document.getElementById("modalQuantity").value
+            );
+
+            for (let i = 0; i < quantity; i++) {
+              window.cartSystem.addToCart(productId, weight);
+            }
+
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("productModal")
+            );
+            modal.hide();
+          };
+
+          const modal = new bootstrap.Modal(
+            document.getElementById("productModal")
+          );
+          modal.show();
+        }
+
+        setupPagination() {
+          const totalPages = Math.ceil(
+            this.filteredProducts.length / this.productsPerPage
+          );
+          const paginationContainer = document.getElementById("pagination");
+
+          if (totalPages <= 1) {
+            paginationContainer.innerHTML = "";
+            return;
+          }
+
+          let paginationHTML = "";
+          const maxVisiblePages = 5;
+
+          paginationHTML += `
+            <li class="page-item ${this.currentPage === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" aria-label="Previous" data-page="${
+                this.currentPage - 1
+              }">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          `;
+
+          let startPage = Math.max(
+            1,
+            this.currentPage - Math.floor(maxVisiblePages / 2)
+          );
+          let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+          if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+          }
+
+          for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+              <li class="page-item ${i === this.currentPage ? "active" : ""}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+              </li>
+            `;
+          }
+
+          paginationHTML += `
+            <li class="page-item ${
+              this.currentPage === totalPages ? "disabled" : ""
+            }">
+              <a class="page-link" href="#" aria-label="Next" data-page="${
+                this.currentPage + 1
+              }">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          `;
+
+          paginationContainer.innerHTML = paginationHTML;
+
+          paginationContainer.querySelectorAll(".page-link").forEach((link) => {
+            link.addEventListener("click", (e) => {
+              e.preventDefault();
+              const page = parseInt(e.currentTarget.getAttribute("data-page"));
+              if (page && page >= 1 && page <= totalPages) {
+                this.goToPage(page);
+              }
+            });
+          });
+        }
+
+        goToPage(page) {
+          this.currentPage = page;
+          this.renderProducts();
+          this.updateResultsInfo();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        updateResultsInfo() {
+          const startIndex = (this.currentPage - 1) * this.productsPerPage + 1;
+          const endIndex = Math.min(
+            this.currentPage * this.productsPerPage,
+            this.filteredProducts.length
+          );
+          const totalProducts = this.filteredProducts.length;
+
+          document.getElementById(
+            "resultsInfo"
+          ).textContent = `Menampilkan ${startIndex}-${endIndex} dari ${totalProducts} produk`;
+        }
+      }
+
+      // ============================================================
+      // CART SYSTEM
+      // ============================================================
+
+      class CartSystem {
+        constructor() {
+          this.cart = JSON.parse(localStorage.getItem("kopiprima_cart")) || [];
+          this.shippingCost = 15000;
+          this.init();
+        }
+
+        init() {
+          this.updateCartCount();
+          this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+          document
+            .getElementById("cartBtn")
+            .addEventListener("click", () => this.openCart());
+
+          document
+            .getElementById("closeCart")
+            .addEventListener("click", () => this.closeCart());
+          document
+            .getElementById("cartOverlay")
+            .addEventListener("click", () => this.closeCart());
+
+          document
+            .getElementById("checkoutBtn")
+            .addEventListener("click", () => this.checkout());
+
+          document
+            .getElementById("clearCartBtn")
+            .addEventListener("click", () => this.clearCart());
+        }
+
+        addToCart(productId, weight = 1000) {
+          const product = products[productId];
+          if (!product) return;
+
+          const weightOption = product.weightOptions.find(
+            (opt) => opt.value === weight
+          );
+          const priceMultiplier = weightOption
+            ? weightOption.priceMultiplier
+            : 1;
+          const itemPrice = Math.round(product.price * priceMultiplier);
+
+          const existingItemIndex = this.cart.findIndex(
+            (item) => item.id === productId && item.weight === weight
+          );
+
+          if (existingItemIndex !== -1) {
+            this.cart[existingItemIndex].quantity += 1;
+          } else {
+            this.cart.push({
+              id: productId,
+              name: product.name,
+              price: itemPrice,
+              weight: weight,
+              quantity: 1,
+              image: product.image,
+              type: product.type,
+            });
+          }
+
+          this.saveCart();
+          this.updateCartCount();
+          this.updateCartDisplay();
+          this.showAddToCartNotification(product.name);
+        }
+
+        removeFromCart(index) {
+          this.cart.splice(index, 1);
+          this.saveCart();
+          this.updateCartCount();
+          this.updateCartDisplay();
+        }
+
+        updateQuantity(index, newQuantity) {
+          if (newQuantity < 1) {
+            this.removeFromCart(index);
+            return;
+          }
+
+          this.cart[index].quantity = newQuantity;
+          this.saveCart();
+          this.updateCartCount();
+          this.updateCartDisplay();
+        }
+
+        saveCart() {
+          localStorage.setItem("kopiprima_cart", JSON.stringify(this.cart));
+        }
+
+        updateCartCount() {
+          const totalItems = this.cart.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+          );
+          document.getElementById("cartCount").textContent = totalItems;
+        }
+
+        openCart() {
+          this.updateCartDisplay();
+          document.getElementById("cartSidebar").classList.add("active");
+          document.getElementById("cartOverlay").classList.add("active");
+        }
+
+        closeCart() {
+          document.getElementById("cartSidebar").classList.remove("active");
+          document.getElementById("cartOverlay").classList.remove("active");
+        }
+
+        updateCartDisplay() {
+          const cartItemsContainer = document.getElementById("cartItems");
+          const cartSubtotal = document.getElementById("cartSubtotal");
+          const cartTotal = document.getElementById("cartTotal");
+
+          if (this.cart.length === 0) {
+            cartItemsContainer.innerHTML = `
+              <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Keranjang belanja kosong</p>
+              </div>
+            `;
+            cartSubtotal.textContent = "Rp 0";
+            cartTotal.textContent = `Rp ${this.shippingCost.toLocaleString(
+              "id-ID"
+            )}`;
+            return;
+          }
+
+          let itemsHTML = "";
+          let subtotal = 0;
+
+          this.cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            let weightLabel = `${item.weight}g`;
+            if (item.weight >= 1000) {
+              weightLabel = `${item.weight / 1000}kg`;
+            }
+
+            itemsHTML += `
+              <div class="cart-item">
+                <div class="d-flex">
+                  <img src="${item.image}" alt="${item.name}" 
+                       class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                  <div class="ms-3 flex-grow-1">
+                    <h6 class="mb-1">${item.name}</h6>
+                    <small class="text-muted">${weightLabel} • Rp ${item.price.toLocaleString(
+              "id-ID"
+            )}</small>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                      <div class="input-group input-group-sm" style="width: 120px;">
+                        <button class="btn btn-outline-secondary" type="button" 
+                                onclick="window.cartSystem.updateQuantity(${index}, ${
+              item.quantity - 1
+            })">-</button>
+                        <input type="text" class="form-control text-center" 
+                               value="${item.quantity}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" 
+                                onclick="window.cartSystem.updateQuantity(${index}, ${
+              item.quantity + 1
+            })">+</button>
+                      </div>
+                      <span class="fw-bold">Rp ${itemTotal.toLocaleString(
+                        "id-ID"
+                      )}</span>
+                      <button class="btn btn-link text-danger btn-sm" 
+                              onclick="window.cartSystem.removeFromCart(${index})">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          const total = subtotal + this.shippingCost;
+
+          cartItemsContainer.innerHTML = itemsHTML;
+          cartSubtotal.textContent = `Rp ${subtotal.toLocaleString("id-ID")}`;
+          cartTotal.textContent = `Rp ${total.toLocaleString("id-ID")}`;
+        }
+
+        checkout() {
+          if (this.cart.length === 0) {
+            alert("Keranjang belanja kosong!");
+            return;
+          }
+
+          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+          if (!isLoggedIn) {
+            if (
+              confirm(
+                "Anda perlu login untuk checkout. Lanjut ke halaman login?"
+              )
+            ) {
+              window.location.href = "login.html?redirect=checkout";
+            }
+            return;
+          }
+
+          showLoading();
+
+          setTimeout(() => {
+            hideLoading();
+
+            const orderNumber = "ORD-" + Date.now().toString().slice(-8);
+            const totalItems = this.cart.reduce(
+              (sum, item) => sum + item.quantity,
+              0
+            );
+            const subtotal = this.cart.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
+            );
+            const total = subtotal + this.shippingCost;
+
+            this.showNotification(
+              `
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-check-circle fa-2x me-3"></i>
+                  <div>
+                    <h5 class="mb-1">Checkout Berhasil!</h5>
+                    <p class="mb-0">Order #${orderNumber} telah diterima.</p>
+                    <p class="mb-0">Total: Rp ${total.toLocaleString(
+                      "id-ID"
+                    )}</p>
+                    <small>Kami akan mengirimkan konfirmasi ke email Anda.</small>
+                  </div>
+                </div>
+              `,
+              "success"
+            );
+
+            this.clearCart(true);
+          }, 1500);
+        }
+
+        clearCart(showNotification = false) {
+          if (this.cart.length === 0) return;
+
+          if (
+            !showNotification &&
+            !confirm("Apakah Anda yakin ingin mengosongkan keranjang belanja?")
+          ) {
+            return;
+          }
+
+          this.cart = [];
+          this.saveCart();
+          this.updateCartCount();
+          this.updateCartDisplay();
+
+          if (showNotification) {
+            this.showNotification(
+              "Keranjang belanja telah dikosongkan",
+              "info"
+            );
+          }
+        }
+
+        showAddToCartNotification(productName) {
+          this.showNotification(
+            `
+              <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>${productName} ditambahkan ke keranjang!</span>
+              </div>
+            `,
+            "success"
+          );
+        }
+
+        showNotification(message, type = "info") {
+          const notification = document.createElement("div");
+          notification.className = `alert alert-${type} position-fixed bottom-0 end-0 m-3`;
+          notification.style.zIndex = "9999";
+          notification.style.minWidth = "300px";
+          notification.innerHTML = message;
+
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+        }
+      }
+
+      // ============================================================
+      // UTILITY FUNCTIONS
+      // ============================================================
+
+      function showLoading() {
+        document.getElementById("loadingSpinner").classList.add("active");
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingSpinner").classList.remove("active");
+      }
+
+      function createCoffeeBean() {
+        if (window.innerWidth > 768) {
+          const bean = document.createElement("div");
+          bean.className = "coffee-bean";
+          bean.innerHTML = "☕";
+          bean.style.left = Math.random() * window.innerWidth + "px";
+          bean.style.animationDuration = Math.random() * 3 + 2 + "s";
+          document.body.appendChild(bean);
+
+          setTimeout(() => bean.remove(), 5000);
+        }
+      }
+
+      // ============================================================
+      // INITIALIZATION
+      // ============================================================
+
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Products page loaded - Advanced Search Version");
+
+        // Initialize auth system
+        if (window.authSystem) {
+          window.authSystem.updateAuthUI();
+        }
+
+        // Initialize product manager
+        window.productManager = new ProductManager();
+
+        // Initialize cart system
+        window.cartSystem = new CartSystem();
+
+        // Setup logout button
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (window.authSystem) {
+              const result = await window.authSystem.logout();
+              if (result.success) {
+                window.location.href = "index.html";
+              }
+            }
+          });
+        }
+
+        // Setup login button
+        const loginBtn = document.getElementById("loginBtn");
+        if (loginBtn) {
+          loginBtn.addEventListener("click", function (e) {
+            sessionStorage.setItem("returningToProducts", "true");
+          });
+        }
+
+        // Start coffee bean animation
+        setInterval(createCoffeeBean, 3000);
+
+        // Handle browser back/forward buttons
+        window.addEventListener("popstate", function () {
+          // Re-apply category from URL when user navigates with browser buttons
+          const urlCategory = applyCategoryFilterFromURL();
+          if (urlCategory && window.productManager) {
+            window.productManager.currentCategory = urlCategory;
+            window.productManager.currentPage = 1;
+            window.productManager.updateFilterButtons();
+            window.productManager.filterAndSortProducts();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

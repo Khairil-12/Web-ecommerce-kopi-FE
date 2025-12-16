@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kopi Prima - Premium Coffee Supplier</title>
+
+    <!-- Bootstrap & Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --primary-color: #8b4513;
+        --secondary-color: #d2691e;
+        --accent-color: #a0522d;
+        --dark-brown: #654321;
+        --light-brown: #deb887;
+        --cream: #f5f5dc;
+        --light-cream: #fff8dc;
+
+        /* Notification colors */
+        --success-color: #10b981;
+        --info-color: #3b82f6;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+      }
+
+      /* Notification System Styles */
+      .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .notification-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+        animation: notificationSlideIn 0.5s ease forwards;
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      @keyframes notificationSlideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes notificationSlideOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+      }
+
+      .notification-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .notification-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .notification-success .notification-icon {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+
+      .notification-info .notification-icon {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info-color);
+      }
+
+      .notification-title-text h4 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 2px;
+      }
+
+      .notification-title-text p {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      .notification-time {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .notification-content {
+        padding: 15px 20px;
+      }
+
+      .notification-message {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #334155;
+        margin-bottom: 10px;
+      }
+
+      .notification-message strong {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .notification-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #475569;
+      }
+
+      .detail-item i {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        width: 16px;
+        text-align: center;
+      }
+
+      .user-status {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .notification-success .user-avatar {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+      }
+
+      .notification-info .user-avatar {
+        background: linear-gradient(135deg, #94a3b8, #64748b);
+      }
+
+      .user-info h5 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+
+      .user-info p {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      .notification-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f1f5f9;
+      }
+
+      .notification-btn {
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+      }
+
+      .notification-btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        color: white;
+      }
+
+      .notification-btn-secondary {
+        background: white;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+      }
+
+      .notification-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .notification-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: color 0.2s;
+        padding: 5px;
+        line-height: 1;
+      }
+
+      .notification-close:hover {
+        color: #64748b;
+      }
+
+      .status-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+      }
+
+      .notification-success .status-indicator {
+        background: linear-gradient(to bottom, var(--success-color), #059669);
+      }
+
+      .notification-info .status-indicator {
+        background: linear-gradient(to bottom, var(--info-color), #2563eb);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+
+      .status-badge.success {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+
+      .status-badge.info {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info-color);
+      }
+
+      /* Animasi untuk elemen yang muncul saat scroll */
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+
+      .animate-on-scroll.animated {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Coffee Bean Animation */
+      @keyframes floatCoffeeBean {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .coffee-bean {
+        position: fixed;
+        font-size: 24px;
+        z-index: 1000;
+        pointer-events: none;
+        animation: floatCoffeeBean 5s linear forwards;
+      }
+
+      /* Existing Kopi Prima Styles */
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        ) !important;
+        border: none !important;
+        color: white !important;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4) !important;
+        background: linear-gradient(
+          135deg,
+          var(--accent-color),
+          var(--primary-color)
+        ) !important;
+      }
+
+      .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        background: transparent !important;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+      }
+
+      .text-primary {
+        color: var(--primary-color) !important;
+      }
+
+      .bg-primary {
+        background-color: var(--primary-color) !important;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .section {
+        padding: 80px 0;
+      }
+
+      .hero-section {
+        background: linear-gradient(
+          135deg,
+          var(--light-cream) 0%,
+          var(--cream) 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding-top: 76px;
+      }
+
+      .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(139, 69, 19, 0.2) !important;
+      }
+
+      .step-number {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .process-step:hover .step-number {
+        transform: scale(1.1) rotate(360deg);
+        background: var(--accent-color);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .navbar {
+        transition: all 0.3s ease;
+        background: linear-gradient(
+          135deg,
+          var(--light-cream),
+          var(--cream)
+        ) !important;
+      }
+
+      .navbar-scrolled {
+        background: rgba(245, 245, 220, 0.95) !important;
+        backdrop-filter: blur(10px);
+      }
+
+      .navbar-brand {
+        color: var(--primary-color) !important;
+        font-weight: bold;
+      }
+
+      .navbar-nav .nav-link {
+        color: var(--dark-brown) !important;
+        font-weight: 500;
+        margin: 0 0.5rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+      }
+
+      .navbar-nav .nav-link:hover,
+      .navbar-nav .nav-link.active {
+        background-color: var(--primary-color);
+        color: white !important;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+      }
+
+      /* Hero Carousel */
+      .hero-carousel {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(139, 69, 19, 0.2);
+        height: 400px;
+      }
+
+      .carousel-item {
+        height: 400px;
+      }
+
+      .carousel-item img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .carousel-caption {
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 25px;
+        bottom: 40px;
+        left: 40px;
+        right: 40px;
+        text-align: center;
+      }
+
+      .carousel-caption h3 {
+        color: var(--light-cream);
+        font-weight: bold;
+        font-size: 2rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .carousel-caption p {
+        color: #f8f9fa;
+        font-size: 1.2rem;
+        margin-bottom: 0;
+        font-style: italic;
+      }
+
+      /* Stats Animation */
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        transition: all 0.5s ease;
+      }
+
+      /* Card Hover Effects */
+      .vision-card,
+      .mission-card,
+      .certification-card {
+        transition: all 0.4s ease;
+        overflow: hidden;
+      }
+
+      .vision-card:hover,
+      .mission-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(139, 69, 19, 0.2) !important;
+      }
+
+      .certification-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(139, 69, 19, 0.15) !important;
+      }
+
+      /* Contact Form Animation */
+      .form-group {
+        transition: all 0.3s ease;
+      }
+
+      .form-group:focus-within {
+        transform: translateY(-2px);
+      }
+
+      footer {
+        background: linear-gradient(
+          135deg,
+          var(--dark-brown),
+          #2c1a0f
+        ) !important;
+      }
+
+      @media (max-width: 768px) {
+        .section {
+          padding: 60px 0;
+        }
+        .display-4 {
+          font-size: 2rem;
+        }
+        .hero-section {
+          text-align: center;
+        }
+        .hero-carousel {
+          height: 300px;
+        }
+        .carousel-item {
+          height: 300px;
+        }
+        .carousel-caption {
+          padding: 15px;
+          font-size: 0.9rem;
+          bottom: 20px;
+          left: 20px;
+          right: 20px;
+        }
+        .carousel-caption h3 {
+          font-size: 1.5rem;
+        }
+        .carousel-caption p {
+          font-size: 1rem;
+        }
+        .notification-container {
+          top: 10px;
+          right: 10px;
+          left: 10px;
+          max-width: none;
+        }
+        .notification-card {
+          max-width: 100%;
+        }
+        .notification-details {
+          grid-template-columns: 1fr;
+        }
+        .notification-actions {
+          flex-direction: column;
+        }
+        .notification-btn {
+          justify-content: center;
+          width: 100%;
+        }
+      }
+
+      /* Loading Animation */
+      .loading-spinner {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+
+      .loading-spinner.active {
+        display: block;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--light-brown);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="#home">
+          <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#profile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#products">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#quality">Quality</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center">
+            <span
+              id="userInfo"
+              class="me-3 text-muted small d-none d-md-block"
+            ></span>
+            <a
+              href="login.html"
+              id="loginBtn"
+              class="btn btn-outline-primary me-2"
+              >Login</a
+            >
+            <button id="logoutBtn" class="btn btn-outline-primary me-2 d-none">
+              Logout
+            </button>
+            <a href="products.html" class="btn btn-primary">
+              <i class="fas fa-shopping-bag me-1"></i>Shop
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 animate-on-scroll" data-animation="fadeInLeft">
+            <h1 class="display-4 fw-bold mb-3">
+              Hi <span id="userName" class="text-primary">Guest</span>, Welcome
+              to Kopi Prima
+            </h1>
+            <h2 class="h3 text-muted mb-4">
+              Premium Coffee Supplier Since 1985
+            </h2>
+            <p class="lead mb-4">
+              Menyediakan biji kopi berkualitas tinggi dari perkebunan terbaik
+              di Indonesia
+            </p>
+            <div class="hero-buttons">
+              <a href="products.html" class="btn btn-primary btn-lg me-3"
+                >Lihat Produk</a
+              >
+              <a href="#contact" class="btn btn-outline-primary btn-lg"
+                >Hubungi Kami</a
+              >
+            </div>
+          </div>
+          <div class="col-lg-6 animate-on-scroll" data-animation="fadeInRight">
+            <div
+              id="heroCarousel"
+              class="carousel slide hero-carousel"
+              data-bs-ride="carousel"
+              data-bs-interval="4000"
+            >
+              <div class="carousel-indicators">
+                <button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="0"
+                  class="active"
+                ></button>
+                <button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="1"
+                ></button>
+                <button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="2"
+                ></button>
+                <button
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="3"
+                ></button>
+              </div>
+
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="img/petik.jpeg" alt="Proses petik" />
+                  <div class="carousel-caption slide-1">
+                    <h3>Harvesting Coffee</h3>
+                    <p>Dengan Pengalaman Menghasilkan Biji Berkualitas</p>
+                  </div>
+                </div>
+
+                <div class="carousel-item">
+                  <img
+                    src="https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+                    class="d-block w-100"
+                    alt="People enjoying coffee together"
+                  />
+                  <div class="carousel-caption slide-2">
+                    <h3>Share Coffee, Share Happiness</h3>
+                    <p>
+                      Setiap cangkir kopi membawa kebahagiaan dan cerita baru
+                    </p>
+                  </div>
+                </div>
+
+                <div class="carousel-item">
+                  <img
+                    src="img/story.jpg"
+                    class="d-block w-100"
+                    alt="Coffee beans close up"
+                  />
+                  <div class="carousel-caption slide-3">
+                    <h3>Every Bean Has a Story</h3>
+                    <p>
+                      Setiap biji kopi memiliki perjalanan dan cerita uniknya
+                      sendiri
+                    </p>
+                  </div>
+                </div>
+
+                <div class="carousel-item">
+                  <img
+                    src="img/coffe_trees.jpeg"
+                    class="d-block w-100"
+                    alt="Coffee trees on plantation"
+                  />
+                  <div class="carousel-caption slide-4">
+                    <h3>Good Trees for Good Beans</h3>
+                    <p>
+                      Pohon kopi yang sehat menghasilkan biji kopi berkualitas
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                class="carousel-control-prev"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="prev"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button
+                class="carousel-control-next"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="next"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile" class="section bg-light">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12 text-center">
+            <h2
+              class="display-5 fw-bold mb-3 text-primary profile-title animate-on-scroll"
+            >
+              Profil Perusahaan
+            </h2>
+          </div>
+        </div>
+
+        <div class="row align-items-center mb-5">
+          <div class="col-lg-6 animate-on-scroll" data-animation="fadeInLeft">
+            <h3 class="h2 mb-4 text-primary profile-text">
+              PT. Kopi Prima Indonesia
+            </h3>
+            <p class="lead mb-4 profile-text">
+              Sebagai pelopor dalam industri kopi sejak 1985, Kopi Prima telah
+              menjadi pemasok terpercaya biji kopi berkualitas tinggi dari
+              berbagai daerah di Indonesia. Dengan pengalaman lebih dari 35
+              tahun, kami memahami seluk-beluk industri kopi dan terus
+              berkomitmen untuk memberikan yang terbaik kepada pelanggan kami.
+            </p>
+
+            <div class="row text-center">
+              <div class="col-4">
+                <div class="stat-number h3 text-primary fw-bold">35+</div>
+                <div class="text-muted">Tahun Pengalaman</div>
+              </div>
+              <div class="col-4">
+                <div class="stat-number h3 text-primary fw-bold">50+</div>
+                <div class="text-muted">Jenis Produk</div>
+              </div>
+              <div class="col-4">
+                <div class="stat-number h3 text-primary fw-bold">1000+</div>
+                <div class="text-muted">Klien Terpuaskan</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 animate-on-scroll" data-animation="fadeInRight">
+            <img
+              src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+              alt="Coffee Factory"
+              class="img-fluid rounded-3 shadow profile-image"
+            />
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-6 animate-on-scroll" data-animation="fadeInLeft">
+            <div class="card border-0 shadow-sm h-100 vision-card">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                <h4 class="card-title text-primary">Visi Kami</h4>
+                <p class="card-text">
+                  Menjadi perusahaan kopi terdepan yang diakui secara global
+                  dalam hal kualitas, inovasi, dan keberlanjutan.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 animate-on-scroll" data-animation="fadeInRight">
+            <div class="card border-0 shadow-sm h-100 mission-card">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                <h4 class="card-title text-primary">Misi Kami</h4>
+                <p class="card-text">
+                  Menyediakan biji kopi berkualitas tertinggi melalui proses
+                  yang berkelanjutan dan terus berinovasi.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12 text-center">
+            <h2
+              class="display-5 fw-bold mb-3 text-primary products-title animate-on-scroll"
+            >
+              Produk Kami
+            </h2>
+            <p class="lead text-muted products-title animate-on-scroll">
+              Berbagai jenis biji kopi berkualitas dari daerah terbaik di
+              Indonesia
+            </p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Product Card 1 -->
+          <div class="col-md-6 col-lg-3">
+            <div
+              class="card product-card shadow-sm border-0 h-100 animate-on-scroll"
+              data-animation="fadeInUp"
+              data-delay="0"
+            >
+              <img
+                src="img/products/gayo_roast.jpeg"
+                class="card-img-top"
+                alt="Arabica Coffee"
+                style="height: 200px; object-fit: cover"
+              />
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary">Kopi Arabica</h5>
+                <p class="card-text flex-grow-1">
+                  Biji kopi Arabica dengan aroma yang harum dan rasa yang
+                  kompleks.
+                </p>
+                <div class="mt-auto">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-primary">Medium Roast</span>
+                    <span class="badge bg-success">Daerah Tinggi</span>
+                  </div>
+                  <a
+                    href="products.html?category=arabica"
+                    class="btn btn-primary w-100"
+                  >
+                    Lihat Detail
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 2 -->
+          <div class="col-md-6 col-lg-3">
+            <div
+              class="card product-card shadow-sm border-0 h-100 animate-on-scroll"
+              data-animation="fadeInUp"
+              data-delay="100"
+            >
+              <img
+                src="img/products/lampung_roast.jpeg"
+                class="card-img-top"
+                alt="Robusta Coffee"
+                style="height: 200px; object-fit: cover"
+              />
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary">Kopi Robusta</h5>
+                <p class="card-text flex-grow-1">
+                  Kopi Robusta dengan cita rasa kuat dan kandungan kafein
+                  tinggi.
+                </p>
+                <div class="mt-auto">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-dark">Dark Roast</span>
+                    <span class="badge bg-warning">High Caffeine</span>
+                  </div>
+                  <a
+                    href="products.html?category=robusta"
+                    class="btn btn-primary w-100"
+                  >
+                    Lihat Detail
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 3 -->
+          <div class="col-md-6 col-lg-3">
+            <div
+              class="card product-card shadow-sm border-0 h-100 animate-on-scroll"
+              data-animation="fadeInUp"
+              data-delay="200"
+            >
+              <img
+                src="img/products/spesial_roast.jpeg"
+                class="card-img-top"
+                alt="Specialty Coffee"
+                style="height: 200px; object-fit: cover"
+              />
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary">Specialty Coffee</h5>
+                <p class="card-text flex-grow-1">
+                  Kopi spesialti dengan grade tinggi melalui proses seleksi
+                  ketat.
+                </p>
+                <div class="mt-auto">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-success">Grade 1</span>
+                    <span class="badge bg-info">Specialty</span>
+                  </div>
+                  <a
+                    href="products.html?category=specialty"
+                    class="btn btn-primary w-100"
+                  >
+                    Lihat Detail
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 4 -->
+          <div class="col-md-6 col-lg-3">
+            <div
+              class="card product-card shadow-sm border-0 h-100 animate-on-scroll"
+              data-animation="fadeInUp"
+              data-delay="300"
+            >
+              <img
+                src="img/products/mocca.jpeg"
+                class="card-img-top"
+                alt="Coffee Blends"
+                style="height: 200px; object-fit: cover"
+              />
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary">Custom Blends</h5>
+                <p class="card-text flex-grow-1">
+                  Blend kopi custom sesuai kebutuhan bisnis Anda.
+                </p>
+                <div class="mt-auto">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-secondary">Custom</span>
+                    <span class="badge bg-primary">Consistent</span>
+                  </div>
+                  <a
+                    href="products.html?category=custom"
+                    class="btn btn-primary w-100"
+                  >
+                    Lihat Detail
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-12 text-center">
+            <a
+              href="products.html"
+              class="btn btn-outline-primary btn-lg animate-on-scroll"
+            >
+              Lihat Semua Produk <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quality Section -->
+    <section id="quality" class="section bg-light">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12 text-center">
+            <h2
+              class="display-5 fw-bold mb-3 text-primary quality-title animate-on-scroll"
+            >
+              Standar Kualitas
+            </h2>
+          </div>
+        </div>
+
+        <div class="row g-5">
+          <div class="col-lg-6">
+            <h3 class="h4 mb-4 text-primary animate-on-scroll">
+              Proses Produksi Berkualitas
+            </h3>
+            <div class="process-steps">
+              <div
+                class="d-flex mb-4 process-step animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="0"
+              >
+                <div class="step-number">01</div>
+                <div class="ms-3">
+                  <h5 class="text-primary">Seleksi Biji</h5>
+                  <p class="text-muted mb-0">
+                    Biji kopi dipilih secara manual untuk memastikan hanya yang
+                    terbaik yang diproses
+                  </p>
+                </div>
+              </div>
+              <div
+                class="d-flex mb-4 process-step animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="100"
+              >
+                <div class="step-number">02</div>
+                <div class="ms-3">
+                  <h5 class="text-primary">Pengolahan</h5>
+                  <p class="text-muted mb-0">
+                    Proses pengolahan menggunakan teknologi modern dengan
+                    kontrol kualitas ketat
+                  </p>
+                </div>
+              </div>
+              <div
+                class="d-flex mb-4 process-step animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="200"
+              >
+                <div class="step-number">03</div>
+                <div class="ms-3">
+                  <h5 class="text-primary">Pemanggangan</h5>
+                  <p class="text-muted mb-0">
+                    Pemanggangan dengan suhu terkontrol untuk mengoptimalkan
+                    cita rasa
+                  </p>
+                </div>
+              </div>
+              <div
+                class="d-flex process-step animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="300"
+              >
+                <div class="step-number">04</div>
+                <div class="ms-3">
+                  <h5 class="text-primary">Pengemasan</h5>
+                  <p class="text-muted mb-0">
+                    Pengemasan vakum untuk menjaga kesegaran dan aroma kopi
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h3 class="h4 mb-4 text-primary animate-on-scroll">Sertifikasi</h3>
+            <div class="row g-3">
+              <div class="col-6">
+                <div
+                  class="card border-0 text-center h-100 certification-card animate-on-scroll"
+                  data-animation="zoomIn"
+                  data-delay="0"
+                >
+                  <div class="card-body">
+                    <i class="fas fa-certificate fa-2x text-primary mb-3"></i>
+                    <h6 class="text-primary">ISO 9001:2015</h6>
+                    <small class="text-muted">Sistem Manajemen Mutu</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div
+                  class="card border-0 text-center h-100 certification-card animate-on-scroll"
+                  data-animation="zoomIn"
+                  data-delay="100"
+                >
+                  <div class="card-body">
+                    <i class="fas fa-leaf fa-2x text-primary mb-3"></i>
+                    <h6 class="text-primary">Organic Certified</h6>
+                    <small class="text-muted">Produk Organik</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div
+                  class="card border-0 text-center h-100 certification-card animate-on-scroll"
+                  data-animation="zoomIn"
+                  data-delay="200"
+                >
+                  <div class="card-body">
+                    <i class="fas fa-recycle fa-2x text-primary mb-3"></i>
+                    <h6 class="text-primary">Sustainability</h6>
+                    <small class="text-muted">Praktik Berkelanjutan</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div
+                  class="card border-0 text-center h-100 certification-card animate-on-scroll"
+                  data-animation="zoomIn"
+                  data-delay="300"
+                >
+                  <div class="card-body">
+                    <i class="fas fa-globe fa-2x text-primary mb-3"></i>
+                    <h6 class="text-primary">Export Ready</h6>
+                    <small class="text-muted">Standar Internasional</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-12 text-center">
+            <h2
+              class="display-5 fw-bold mb-3 text-primary contact-title animate-on-scroll"
+            >
+              Hubungi Kami
+            </h2>
+          </div>
+        </div>
+
+        <div class="row g-5">
+          <div class="col-lg-6 contact-info">
+            <h3 class="h4 mb-4 text-primary animate-on-scroll">
+              PT. Kopi Prima Indonesia
+            </h3>
+            <div class="contact-details">
+              <div
+                class="d-flex align-items-start mb-3 contact-detail-item animate-on-scroll"
+                data-animation="fadeInLeft"
+              >
+                <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="h6 mb-1 text-primary">Alamat</h5>
+                  <p class="text-muted mb-0">
+                    Jl. Perkebunan No. 122<br />Jakarta Selatan 12560
+                  </p>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-start mb-3 contact-detail-item animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="100"
+              >
+                <i class="fas fa-phone text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="h6 mb-1 text-primary">Telepon</h5>
+                  <p class="text-muted mb-0">+62 857 9992 6085</p>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-start mb-3 contact-detail-item animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="200"
+              >
+                <i class="fas fa-envelope text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="h6 mb-1 text-primary">Email</h5>
+                  <p class="text-muted mb-0">info@kopiprima.co.id</p>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-start contact-detail-item animate-on-scroll"
+                data-animation="fadeInLeft"
+                data-delay="300"
+              >
+                <i class="fas fa-clock text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="h6 mb-1 text-primary">Jam Operasional</h5>
+                  <p class="text-muted mb-0">
+                    Senin - Jumat: 08:00 - 17:00<br />Sabtu: 08:00 - 14:00
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 contact-form">
+            <div
+              class="card shadow border-0 animate-on-scroll"
+              data-animation="fadeInUp"
+            >
+              <div class="card-body p-4">
+                <h3 class="card-title h4 mb-4 text-primary">Kirim Pesan</h3>
+                <form id="contactForm">
+                  <div class="row g-3">
+                    <div
+                      class="col-md-6 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="0"
+                    >
+                      <label for="name" class="form-label text-primary"
+                        >Nama *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        required
+                      />
+                    </div>
+                    <div
+                      class="col-md-6 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="100"
+                    >
+                      <label for="email" class="form-label text-primary"
+                        >Email *</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        required
+                      />
+                    </div>
+                    <div
+                      class="col-12 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="200"
+                    >
+                      <label for="phone" class="form-label text-primary"
+                        >Nomor Telepon *</label
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="phone"
+                        required
+                      />
+                    </div>
+                    <div
+                      class="col-12 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="300"
+                    >
+                      <label for="company" class="form-label text-primary"
+                        >Perusahaan</label
+                      >
+                      <input type="text" class="form-control" id="company" />
+                    </div>
+                    <div
+                      class="col-12 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="400"
+                    >
+                      <label for="message" class="form-label text-primary"
+                        >Pesan *</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="message"
+                        rows="4"
+                        required
+                      ></textarea>
+                    </div>
+                    <div
+                      class="col-12 form-group animate-on-scroll"
+                      data-animation="fadeInUp"
+                      data-delay="500"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-lg w-100"
+                      >
+                        <i class="fas fa-paper-plane me-2"></i>Kirim Pesan
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4 animate-on-scroll">
+            <h5 class="fw-bold mb-3 text-light">
+              <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+            </h5>
+            <p class="text-light">
+              Pemasok biji kopi berkualitas tinggi sejak 1985. Komitmen kami
+              adalah memberikan produk terbaik dengan layanan profesional.
+            </p>
+            <div class="social-links">
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-facebook fa-lg"></i
+              ></a>
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-instagram fa-lg"></i
+              ></a>
+              <a href="#" class="text-light"
+                ><i class="fab fa-twitter fa-lg"></i
+              ></a>
+            </div>
+          </div>
+
+          <div
+            class="col-lg-2 animate-on-scroll"
+            data-animation="fadeInUp"
+            data-delay="100"
+          >
+            <h5 class="fw-bold mb-3 text-light">Produk</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="#products" class="text-light text-decoration-none"
+                  >Kopi Arabica</a
+                >
+              </li>
+              <li>
+                <a href="#products" class="text-light text-decoration-none"
+                  >Kopi Robusta</a
+                >
+              </li>
+              <li>
+                <a href="#products" class="text-light text-decoration-none"
+                  >Specialty Coffee</a
+                >
+              </li>
+              <li>
+                <a href="#products" class="text-light text-decoration-none"
+                  >Custom Blends</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="col-lg-2 animate-on-scroll"
+            data-animation="fadeInUp"
+            data-delay="200"
+          >
+            <h5 class="fw-bold mb-3 text-light">Tautan Cepat</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="#home" class="text-light text-decoration-none"
+                  >Beranda</a
+                >
+              </li>
+              <li>
+                <a href="#profile" class="text-light text-decoration-none"
+                  >Profil</a
+                >
+              </li>
+              <li>
+                <a href="#products" class="text-light text-decoration-none"
+                  >Produk</a
+                >
+              </li>
+              <li>
+                <a href="#contact" class="text-light text-decoration-none"
+                  >Kontak</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="col-lg-4 animate-on-scroll"
+            data-animation="fadeInUp"
+            data-delay="300"
+          >
+            <h5 class="fw-bold mb-3 text-light">Kontak</h5>
+            <div class="footer-contact">
+              <p class="mb-2 text-light">
+                <i class="fas fa-map-marker-alt me-2"></i>Jakarta Selatan 12560
+              </p>
+              <p class="mb-2 text-light">
+                <i class="fas fa-phone me-2"></i>+62 857 9992 6085
+              </p>
+              <p class="mb-0 text-light">
+                <i class="fas fa-envelope me-2"></i>info@kopiprima.co.id
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="mb-0 text-light">
+              &copy; 2024 PT. Kopi Prima Indonesia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+      // Loading Spinner Functions
+      function showLoading() {
+        document.getElementById("loadingSpinner").classList.add("active");
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingSpinner").classList.remove("active");
+      }
+
+      // Coffee Bean Animation
+      function createCoffeeBean() {
+        if (window.innerWidth > 768) {
+          const bean = document.createElement("div");
+          bean.className = "coffee-bean";
+          bean.innerHTML = "☕";
+          bean.style.left = Math.random() * window.innerWidth + "px";
+          bean.style.animationDuration = Math.random() * 3 + 2 + "s";
+          document.body.appendChild(bean);
+
+          setTimeout(() => {
+            if (bean.parentNode) {
+              bean.parentNode.removeChild(bean);
+            }
+          }, 5000);
+        }
+      }
+
+      // Scroll Animation System
+      class ScrollAnimator {
+        constructor() {
+          this.observer = null;
+          this.init();
+        }
+
+        init() {
+          const options = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px",
+          };
+
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const element = entry.target;
+                const animationType =
+                  element.getAttribute("data-animation") || "fadeInUp";
+                const delay = element.getAttribute("data-delay") || 0;
+
+                // Apply animation with delay
+                setTimeout(() => {
+                  element.classList.add("animated");
+                  // Apply specific animation if needed
+                  if (animationType) {
+                    element.style.animation = `${animationType} 0.8s ease forwards`;
+                  }
+                }, parseInt(delay));
+
+                // Stop observing after animation
+                this.observer.unobserve(element);
+              }
+            });
+          }, options);
+
+          // Observe all elements with animate-on-scroll class
+          document.querySelectorAll(".animate-on-scroll").forEach((element) => {
+            this.observer.observe(element);
+          });
+        }
+      }
+
+      // Number Counter Animation
+      class NumberCounter {
+        constructor() {
+          this.counters = document.querySelectorAll(".stat-number");
+          this.init();
+        }
+
+        init() {
+          this.counters.forEach((counter) => {
+            const target = parseInt(counter.innerText.replace("+", ""));
+            const increment = target / 50;
+            let current = 0;
+
+            const updateCounter = () => {
+              if (current < target) {
+                current += increment;
+                counter.innerText = Math.ceil(current) + "+";
+                setTimeout(updateCounter, 30);
+              } else {
+                counter.innerText = target + "+";
+              }
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  updateCounter();
+                  observer.unobserve(entry.target);
+                }
+              });
+            });
+
+            observer.observe(counter);
+          });
+        }
+      }
+
+      // Notification System Functions
+      function showLoginNotification(userName = "User") {
+        const notificationContainer = document.getElementById(
+          "notificationContainer"
+        );
+        const notificationId = "notification-" + Date.now();
+
+        const notification = document.createElement("div");
+        notification.className = "notification-card notification-success";
+        notification.id = notificationId;
+
+        notification.innerHTML = `
+          <div class="status-indicator"></div>
+          <button class="notification-close" onclick="removeNotification('${notificationId}')">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="notification-header">
+            <div class="notification-title">
+              <div class="notification-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="notification-title-text">
+                <h4>Berhasil Login <span class="status-badge success">Sukses</span></h4>
+                <p>Anda telah berhasil masuk ke sistem</p>
+              </div>
+            </div>
+            <div class="notification-time">
+              <i class="far fa-clock"></i> Baru saja
+            </div>
+          </div>
+          <div class="notification-content">
+            <p class="notification-message">
+              Selamat datang kembali, <strong>${userName}</strong>! Anda telah berhasil masuk ke akun Anda.
+            </p>
+            
+            <div class="notification-details">
+              <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Tanggal: ${new Date().toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-desktop"></i>
+                <span>Perangkat: ${
+                  navigator.userAgent.includes("Chrome")
+                    ? "Chrome"
+                    : navigator.userAgent.includes("Firefox")
+                    ? "Firefox"
+                    : "Browser"
+                } di ${navigator.platform}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Lokasi: Jakarta, Indonesia</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Keamanan: Verifikasi berhasil</span>
+              </div>
+            </div>
+            
+            <div class="user-status">
+              <div class="user-avatar">
+                <i class="fas fa-user-tie"></i>
+              </div>
+              <div class="user-info">
+                <h5>Anda sedang login sebagai ${userName}</h5>
+                <p>Akses penuh ke semua fitur sistem dengan hak akses administrator</p>
+              </div>
+            </div>
+            
+            <div class="notification-actions">
+              <button class="notification-btn notification-btn-secondary" onclick="viewLoginHistory()">
+                <i class="fas fa-history"></i> Riwayat Login
+              </button>
+              <button class="notification-btn notification-btn-primary" onclick="manageAccount()">
+                <i class="fas fa-cog"></i> Kelola Akun
+              </button>
+            </div>
+          </div>
+        `;
+
+        notificationContainer.appendChild(notification);
+
+        // Auto remove after 10 seconds
+        setTimeout(() => {
+          removeNotification(notificationId);
+        }, 10000);
+
+        return notificationId;
+      }
+
+      function showLogoutNotification() {
+        const notificationContainer = document.getElementById(
+          "notificationContainer"
+        );
+        const notificationId = "notification-" + Date.now();
+
+        const notification = document.createElement("div");
+        notification.className = "notification-card notification-info";
+        notification.id = notificationId;
+
+        notification.innerHTML = `
+          <div class="status-indicator"></div>
+          <button class="notification-close" onclick="removeNotification('${notificationId}')">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="notification-header">
+            <div class="notification-title">
+              <div class="notification-icon">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+              <div class="notification-title-text">
+                <h4>Berhasil Logout <span class="status-badge info">Selesai</span></h4>
+                <p>Anda telah keluar dari sistem</p>
+              </div>
+            </div>
+            <div class="notification-time">
+              <i class="far fa-clock"></i> Baru saja
+            </div>
+          </div>
+          <div class="notification-content">
+            <p class="notification-message">
+              <strong>Berhasil logout!</strong> Selamat datang kembali, <strong>Guest</strong>.
+            </p>
+            
+            <div class="notification-details">
+              <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Tanggal: ${new Date().toLocaleDateString("id-ID")}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <span>Durasi sesi: 2 jam 15 menit</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Keamanan: Sesi diakhiri dengan aman</span>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-info-circle"></i>
+                <span>Status: Tidak ada aktivitas mencurigakan</span>
+              </div>
+            </div>
+            
+            <div class="user-status">
+              <div class="user-avatar">
+                <i class="fas fa-user-secret"></i>
+              </div>
+              <div class="user-info">
+                <h5>Status: Guest (Pengunjung)</h5>
+                <p>Akses terbatas ke fitur publik. Login untuk akses penuh.</p>
+              </div>
+            </div>
+            
+            <div class="notification-actions">
+              <button class="notification-btn notification-btn-secondary" onclick="goToHome()">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+              </button>
+              <button class="notification-btn notification-btn-primary" onclick="goToLogin()">
+                <i class="fas fa-sign-in-alt"></i> Login Kembali
+              </button>
+            </div>
+          </div>
+        `;
+
+        notificationContainer.appendChild(notification);
+
+        // Auto remove after 10 seconds
+        setTimeout(() => {
+          removeNotification(notificationId);
+        }, 10000);
+
+        return notificationId;
+      }
+
+      function removeNotification(notificationId) {
+        const notification = document.getElementById(notificationId);
+        if (notification) {
+          notification.style.animation =
+            "notificationSlideOut 0.5s ease forwards";
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 500);
+        }
+      }
+
+      // Notification action functions
+      function viewLoginHistory() {
+        alert("Membuka riwayat login...");
+      }
+
+      function manageAccount() {
+        alert("Membuka pengaturan akun...");
+      }
+
+      function goToHome() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function goToLogin() {
+        window.location.href = "login.html";
+      }
+
+      // Modified logout function to show notification
+      async function logoutUser() {
+        if (window.authSystem) {
+          const result = await window.authSystem.logout();
+          if (result.success) {
+            // Show logout notification
+            showLogoutNotification();
+
+            // Update UI
+            window.authSystem.updateAuthUI();
+
+            // Optional: Scroll to top
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+            // Reset carousel to first slide
+            const carousel = document.getElementById("heroCarousel");
+            if (carousel) {
+              const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+              if (bsCarousel) {
+                bsCarousel.to(0);
+              }
+            }
+          }
+        }
+      }
+
+      // Check if user just logged in and show notification
+      function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const currentUser = localStorage.getItem("currentUser");
+
+        if (isLoggedIn && currentUser) {
+          // Check if we just logged in (session flag)
+          const justLoggedIn = sessionStorage.getItem("justLoggedIn");
+          if (justLoggedIn === "true") {
+            // Show login notification
+            setTimeout(() => {
+              showLoginNotification(currentUser);
+            }, 1000);
+
+            // Clear the flag
+            sessionStorage.removeItem("justLoggedIn");
+          }
+        }
+      }
+
+      // Contact Form Handler
+      function setupContactForm() {
+        const contactForm = document.getElementById("contactForm");
+        if (contactForm) {
+          contactForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            showLoading();
+
+            // Simulate API call
+            setTimeout(() => {
+              const formData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                company: document.getElementById("company").value,
+                message: document.getElementById("message").value,
+              };
+
+              console.log("Form submitted:", formData);
+
+              // Show success notification
+              const notificationId = "notification-" + Date.now();
+              const notification = document.createElement("div");
+              notification.className = "notification-card notification-success";
+              notification.id = notificationId;
+              notification.innerHTML = `
+                <div class="status-indicator"></div>
+                <button class="notification-close" onclick="removeNotification('${notificationId}')">
+                  <i class="fas fa-times"></i>
+                </button>
+                <div class="notification-header">
+                  <div class="notification-title">
+                    <div class="notification-icon">
+                      <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="notification-title-text">
+                      <h4>Pesan Terkirim <span class="status-badge success">Sukses</span></h4>
+                      <p>Pesan Anda telah berhasil dikirim</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-message">
+                    Terima kasih <strong>${formData.name}</strong>, pesan Anda telah kami terima. 
+                    Tim kami akan menghubungi Anda dalam waktu 1-2 hari kerja.
+                  </p>
+                  <div class="notification-actions">
+                    <button class="notification-btn notification-btn-primary" onclick="removeNotification('${notificationId}')">
+                      <i class="fas fa-check"></i> Oke
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              document
+                .getElementById("notificationContainer")
+                .appendChild(notification);
+
+              // Auto remove notification after 5 seconds
+              setTimeout(() => removeNotification(notificationId), 5000);
+
+              // Reset form
+              contactForm.reset();
+              hideLoading();
+            }, 1000);
+          });
+        }
+      }
+
+      // Setup UI dan event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM Loaded - Initializing animations and auth...");
+
+        // Show loading spinner initially
+        showLoading();
+
+        // Initialize auth system
+        if (window.authSystem) {
+          console.log("Auth system found, updating UI...");
+          window.authSystem.updateAuthUI();
+        } else {
+          console.error("Auth system not found!");
+        }
+
+        // Initialize animations
+        setTimeout(() => {
+          new ScrollAnimator();
+          new NumberCounter();
+          hideLoading();
+        }, 500);
+
+        // Setup logout button
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Logout button clicked");
+            await logoutUser();
+          });
+        }
+
+        // Setup login button
+        const loginBtn = document.getElementById("loginBtn");
+        if (loginBtn) {
+          loginBtn.addEventListener("click", function (e) {
+            console.log("Login button clicked");
+            // Set flag to show notification when user returns
+            sessionStorage.setItem("returningToHome", "true");
+          });
+        }
+
+        // Navbar scroll effect
+        window.addEventListener("scroll", function () {
+          const navbar = document.querySelector(".navbar");
+          if (window.scrollY > 100) {
+            navbar.classList.add("navbar-scrolled");
+          } else {
+            navbar.classList.remove("navbar-scrolled");
+          }
+        });
+
+        // Start coffee bean animation
+        setInterval(createCoffeeBean, 2000);
+
+        // Check login status and show notification if needed
+        checkLoginStatus();
+
+        // Setup contact form
+        setupContactForm();
+
+        // Add CSS animations for different animation types
+        const style = document.createElement("style");
+        style.textContent = `
+          @keyframes zoomIn {
+            from {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          
+          @keyframes slideInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes slideInRight {
+            from {
+              opacity: 0;
+              transform: translateX(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+        `;
+        document.head.appendChild(style);
+
+        // Add event listener for storage changes
+        window.addEventListener("storage", function (e) {
+          if (e.key === "isLoggedIn" || e.key === "currentUser") {
+            console.log("Storage changed, updating auth UI...");
+            if (window.authSystem) {
+              window.authSystem.updateAuthUI();
+            }
+          }
+        });
+
+        // Initialize carousel auto-play
+        const carousel = document.getElementById("heroCarousel");
+        if (carousel) {
+          const bsCarousel = new bootstrap.Carousel(carousel, {
+            interval: 4000,
+            wrap: true,
+          });
+        }
+      });
+
+      // Global function to show login notification (can be called from login page)
+      window.showLoginSuccess = function (userName) {
+        showLoginNotification(userName);
+      };
+    </script>
+  </body>
+</html>

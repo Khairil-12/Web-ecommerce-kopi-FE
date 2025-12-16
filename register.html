@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Kopi Prima</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .login-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #8b4513, #d2691e);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .login-header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-home {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.3s ease;
+      }
+
+      .back-home:hover {
+        color: var(--dark-brown);
+      }
+
+      .login-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .login-main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 450px;
+      }
+
+      .login-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+
+      .login-header p {
+        color: var(--text-light);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .login-form .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .login-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .login-form input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      .login-form input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .btn-register {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        margin-bottom: 1.5rem;
+      }
+
+      .login-links {
+        text-align: center;
+      }
+
+      .back-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+      }
+
+      .back-link:hover {
+        color: var(--dark-brown);
+      }
+
+      .loading {
+        text-align: center;
+        color: var(--primary-color);
+        margin: 1rem 0;
+      }
+
+      .error-message {
+        background: #fee;
+        color: #c33;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #fcc;
+        margin: 1rem 0;
+        text-align: center;
+      }
+
+      .success-message {
+        background: #efe;
+        color: #363;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #cfc;
+        margin: 1rem 0;
+        text-align: center;
+      }
+
+      .login-footer {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        text-align: center;
+        padding: 1.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-page">
+      <!-- Header -->
+      <header class="login-header">
+        <div class="container">
+          <a href="index.html" class="back-home">
+            <i class="fas fa-arrow-left"></i>
+            Kembali ke Beranda
+          </a>
+          <div class="login-logo">
+            <i class="fas fa-coffee"></i>
+            KOPI PRIMA
+          </div>
+        </div>
+      </header>
+
+      <!-- Register Form -->
+      <main class="login-main">
+        <div class="container">
+          <div class="login-container">
+            <div class="login-card">
+              <div class="login-header">
+                <h1>Daftar Akun Baru</h1>
+                <p>Bergabung dengan komunitas Kopi Prima</p>
+              </div>
+
+              <form id="registerForm" class="login-form">
+                <div class="form-group">
+                  <label for="username">Username *</label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Pilih username"
+                    required
+                  />
+                  <small style="color: #666; font-size: 12px"
+                    >Minimal 3 karakter</small
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email *</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Masukkan email"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Nomor Telepon *</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Contoh: 08123456789"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Password *</label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Buat password"
+                    required
+                  />
+                  <small style="color: #666; font-size: 12px"
+                    >Minimal 6 karakter</small
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="confirmPassword">Konfirmasi Password *</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Ulangi password"
+                    required
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-register">
+                  <i class="fas fa-user-plus"></i>
+                  Daftar
+                </button>
+
+                <div class="login-links">
+                  <p>
+                    Sudah punya akun?
+                    <a
+                      href="login.html"
+                      style="color: var(--primary-color); font-weight: 600"
+                      >Login di sini</a
+                    >
+                  </p>
+                  <a href="index.html" class="back-link">
+                    <i class="fas fa-home"></i>
+                    Kembali ke Beranda
+                  </a>
+                </div>
+              </form>
+
+              <!-- Loading Indicator -->
+              <div id="loading" class="loading" style="display: none">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Mendaftarkan akun...</p>
+              </div>
+
+              <div
+                id="errorMessage"
+                class="error-message"
+                style="display: none"
+              ></div>
+              <div
+                id="successMessage"
+                class="success-message"
+                style="display: none"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="login-footer">
+        <div class="container">
+          <p>&copy; 2024 PT. Kopi Prima Indonesia. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      function initializeUserDatabase() {
+        if (!localStorage.getItem("users")) {
+          const defaultUsers = [
+            {
+              id: 1,
+              username: "admin",
+              password: "admin123",
+              email: "admin@kopiprima.com",
+              phone: "08123456789",
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: 2,
+              username: "customer",
+              password: "customer123",
+              email: "customer@example.com",
+              phone: "0876543210",
+              createdAt: new Date().toISOString(),
+            },
+          ];
+          localStorage.setItem("users", JSON.stringify(defaultUsers));
+        }
+      }
+
+      function getUsers() {
+        return JSON.parse(localStorage.getItem("users")) || [];
+      }
+
+      function saveUsers(users) {
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+
+      function findUserByUsername(username) {
+        const users = getUsers();
+        return users.find((user) => user.username === username);
+      }
+
+      function findUserByEmail(email) {
+        const users = getUsers();
+        return users.find((user) => user.email === email);
+      }
+
+      function addUser(userData) {
+        const users = getUsers();
+        const newUser = {
+          id: Date.now(),
+          ...userData,
+          createdAt: new Date().toISOString(),
+        };
+        users.push(newUser);
+        saveUsers(users);
+        return newUser;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeUserDatabase();
+      });
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+          const loading = document.getElementById("loading");
+          const errorMessage = document.getElementById("errorMessage");
+          const successMessage = document.getElementById("successMessage");
+
+          errorMessage.style.display = "none";
+          successMessage.style.display = "none";
+          loading.style.display = "block";
+
+          setTimeout(() => {
+            if (
+              !username ||
+              !email ||
+              !phone ||
+              !password ||
+              !confirmPassword
+            ) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Semua field harus diisi!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            if (username.length < 3) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Username minimal 3 karakter!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            if (password.length < 6) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Password minimal 6 karakter!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            if (password !== confirmPassword) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Konfirmasi password tidak cocok!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Format email tidak valid!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            if (findUserByUsername(username)) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Username sudah digunakan!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            if (findUserByEmail(email)) {
+              loading.style.display = "none";
+              errorMessage.textContent = "Email sudah terdaftar!";
+              errorMessage.style.display = "block";
+              return;
+            }
+
+            const newUser = {
+              username: username,
+              password: password,
+              email: email,
+              phone: phone,
+            };
+
+            addUser(newUser);
+
+            loading.style.display = "none";
+            successMessage.textContent = "Registrasi berhasil! Silakan login.";
+            successMessage.style.display = "block";
+
+            document.getElementById("registerForm").reset();
+
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+          }, 1000);
+        });
+    </script>
+  </body>
+</html>
