@@ -503,6 +503,14 @@
                 <span class="badge bg-primary p-2" id="userRole"
                   >Loading...</span
                 >
+                <!-- New button: direct to shop/products page -->
+                <a
+                  href="products.html"
+                  class="btn btn-success ms-2"
+                  id="openStoreBtn"
+                >
+                  <i class="fas fa-store me-1"></i>Buka Toko
+                </a>
               </div>
             </div>
           </div>
@@ -795,6 +803,28 @@
         }, 1000);
       });
 
+      // Robust admin detection helper (case-insensitive, flags, roles array)
+      function isAdminUser(u) {
+        if (!u) return false;
+        try {
+          if (u.role && String(u.role).toLowerCase().includes("admin"))
+            return true;
+          if (u.is_admin === true || u.isAdmin === true) return true;
+          if (
+            Array.isArray(u.roles) &&
+            u.roles.some((r) => String(r).toLowerCase().includes("admin"))
+          )
+            return true;
+          if (u.email && String(u.email).toLowerCase().startsWith("admin"))
+            return true;
+          if (u.username && String(u.username).toLowerCase().includes("admin"))
+            return true;
+        } catch (e) {
+          return false;
+        }
+        return false;
+      }
+
       // Fungsi untuk cek status autentikasi
       function checkAuthStatus() {
         const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -807,7 +837,20 @@
 
         try {
           currentUser = JSON.parse(userData);
-          currentRole = currentUser.role || "customer";
+          // Normalize role detection using helper
+          if (isAdminUser(currentUser)) {
+            currentRole = "admin";
+          } else {
+            currentRole = (currentUser.role || "customer")
+              .toString()
+              .toLowerCase();
+          }
+
+          // If logged in user is not admin, redirect to customer dashboard
+          if (currentRole !== "admin") {
+            window.location.href = "dashboard_cust.html";
+            return;
+          }
 
           updateUIBasedOnRole();
           loadDashboardData();
@@ -844,13 +887,43 @@
       // Fungsi untuk memuat data dashboard
       async function loadDashboardData() {
         try {
-          // Simulasi API call untuk data dashboard
+          // Default mock data (fallback)
           const mockData = {
             totalUsers: 1245,
             totalProducts: 56,
             totalTransactions: 890,
             totalRevenue: 125430000,
           };
+
+          // Try to fetch real admin summary from backend; if it fails, keep mock
+          try {
+            const res = await fetch("http://127.0.0.1:5000/api/admin/summary", {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              // merge known fields if present
+              if (data.totalUsers !== undefined)
+                mockData.totalUsers = data.totalUsers;
+              if (data.totalProducts !== undefined)
+                mockData.totalProducts = data.totalProducts;
+              if (data.totalTransactions !== undefined)
+                mockData.totalTransactions = data.totalTransactions;
+              if (data.totalRevenue !== undefined)
+                mockData.totalRevenue = data.totalRevenue;
+            } else {
+              console.warn(
+                "Admin summary API responded with status",
+                res.status
+              );
+            }
+          } catch (fetchErr) {
+            console.warn(
+              "Could not fetch admin summary, using mock data:",
+              fetchErr
+            );
+          }
 
           // Update stats untuk admin
           if (currentRole === "admin") {
@@ -862,13 +935,34 @@
               mockData.totalTransactions;
             document.getElementById("totalRevenue").textContent =
               "Rp " + mockData.totalRevenue.toLocaleString("id-ID");
-          }
 
-          // Load data untuk section yang aktif
-          if (currentRole === "admin") {
-            loadUsers();
-            loadTransactions();
-            loadProducts();
+            // Attempt to load detailed lists from backend; fall back to existing mock loaders
+            try {
+              const [usersRes, transRes, prodRes] = await Promise.all([
+                fetch("http://127.0.0.1:5000/api/users"),
+                fetch("http://127.0.0.1:5000/api/transactions"),
+                fetch("http://127.0.0.1:5000/api/products"),
+              ]);
+
+              if (usersRes.ok) {
+                const users = await usersRes.json();
+                // replace loadUsers by injecting data into the users table if needed
+                // For now, call loadUsers() to render (it uses mock). Advanced wiring can replace this.
+              }
+
+              // Regardless of whether API calls succeeded, call the existing loaders
+              loadUsers();
+              loadTransactions();
+              loadProducts();
+            } catch (listErr) {
+              console.warn(
+                "Could not fetch detailed admin lists, using mock renderers:",
+                listErr
+              );
+              loadUsers();
+              loadTransactions();
+              loadProducts();
+            }
           }
         } catch (error) {
           console.error("Error loading dashboard data:", error);
@@ -939,146 +1033,133 @@
       function showSection(section) {
         const sectionContent = document.getElementById("sectionContent");
 
-        // Update active nav link
+        // Update active nav links based on onclick attribute
         document.querySelectorAll(".nav-link").forEach((link) => {
           link.classList.remove("active");
         });
-        event.target.classList.add("active");
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          const attr = link.getAttribute("onclick") || "";
+          if (
+            attr.includes("'" + section + "'") ||
+            attr.includes('"' + section + '"')
+          ) {
+            link.classList.add("active");
+          }
+        });
 
-        // Show loading
+        // Show loading and clear current content
         showLoading();
-
-        // Clear current content
         sectionContent.innerHTML = "";
 
-        // Load section content based on section name
-        setTimeout(() => {
-          switch (section) {
-            case "dashboard":
-              loadAdminDashboard();
-              break;
-            case "users":
-              loadUsers();
-              break;
-            case "transactions":
-              loadTransactions();
-              break;
-            case "products":
-              loadProducts();
-              break;
-            case "addProduct":
-              showAddProductForm();
-              break;
-            case "inactiveProducts":
-              loadInactiveProducts();
-              break;
-            case "profile":
-              showCustomerProfile();
-              break;
-            case "myOrders":
-              showCustomerOrders();
-              break;
-            case "editProfile":
-              showEditProfileForm();
-              break;
+        setTimeout(async () => {
+          try {
+            // Dashboard
+            if (section === "dashboard") {
+              document
+                .getElementById("adminOverview")
+                .classList.remove("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              if (typeof loadDashboardData === "function")
+                await loadDashboardData();
+            }
+
+            // Users
+            else if (section === "users") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              if (typeof loadUsers === "function") await loadUsers();
+              else
+                sectionContent.innerHTML =
+                  '<p class="text-muted">Users section</p>';
+            }
+
+            // Transactions
+            else if (section === "transactions") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              if (typeof loadTransactions === "function")
+                await loadTransactions();
+              else
+                sectionContent.innerHTML =
+                  '<p class="text-muted">Transactions section</p>';
+            }
+
+            // Products
+            else if (section === "products") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              if (typeof loadProducts === "function") await loadProducts();
+              else
+                sectionContent.innerHTML =
+                  '<p class="text-muted">Products section</p>';
+            }
+
+            // Add Product
+            else if (section === "addProduct") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              // show product modal or form
+              if (typeof showAddProductForm === "function")
+                showAddProductForm();
+              else
+                sectionContent.innerHTML =
+                  '<p class="text-muted">Add Product</p>';
+            }
+
+            // Inactive Products
+            else if (section === "inactiveProducts") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.add("d-none");
+              if (typeof loadInactiveProducts === "function")
+                await loadInactiveProducts();
+              else
+                sectionContent.innerHTML =
+                  '<p class="text-muted">Inactive Products</p>';
+            }
+
+            // Profile
+            else if (section === "profile") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.remove("d-none");
+              if (typeof loadCustomerProfile === "function")
+                await loadCustomerProfile();
+            }
+
+            // My Orders
+            else if (section === "myOrders") {
+              document.getElementById("adminOverview").classList.add("d-none");
+              document
+                .getElementById("customerProfile")
+                .classList.remove("d-none");
+              if (typeof loadCustomerOrders === "function")
+                await loadCustomerOrders();
+            }
+
+            // Edit Profile
+            else if (section === "editProfile") {
+              if (typeof showEditProfileForm === "function")
+                showEditProfileForm();
+            }
+          } catch (err) {
+            console.error("Error showing section", section, err);
+          } finally {
+            hideLoading();
           }
-          hideLoading();
-        }, 500);
-      }
-
-      // Fungsi untuk memuat data users (Admin)
-      async function loadUsers() {
-        const mockUsers = [
-          {
-            id: 1,
-            name: "Budi Santoso",
-            email: "budi@email.com",
-            phone: "081234567890",
-            role: "customer",
-            status: "active",
-          },
-          {
-            id: 2,
-            name: "Sari Dewi",
-            email: "sari@email.com",
-            phone: "081298765432",
-            role: "customer",
-            status: "active",
-          },
-          {
-            id: 3,
-            name: "Admin Kopi",
-            email: "admin@kopiprima.co.id",
-            phone: "08111222333",
-            role: "admin",
-            status: "active",
-          },
-        ];
-
-        const html = `
-                <div class="data-table-container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5>Kelola Users</h5>
-                        <button class="btn btn-primary" onclick="exportUsers()">
-                            <i class="fas fa-download me-2"></i>Export
-                        </button>
-                    </div>
-                    <table class="table table-hover" id="usersTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Telepon</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${mockUsers
-                              .map(
-                                (user) => `
-                                <tr>
-                                    <td>${user.id}</td>
-                                    <td>${user.name}</td>
-                                    <td>${user.email}</td>
-                                    <td>${user.phone}</td>
-                                    <td><span class="badge ${
-                                      user.role === "admin"
-                                        ? "bg-primary"
-                                        : "bg-secondary"
-                                    }">${user.role}</span></td>
-                                    <td><span class="badge-status ${
-                                      user.status
-                                    }">${user.status}</span></td>
-                                    <td>
-                                        <button class="btn btn-action edit" onclick="editUser(${
-                                          user.id
-                                        })">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        ${
-                                          user.role !== "admin"
-                                            ? `
-                                        <button class="btn btn-action delete" onclick="deleteUser(${user.id})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        `
-                                            : ""
-                                        }
-                                    </td>
-                                </tr>
-                            `
-                              )
-                              .join("")}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-        document.getElementById("sectionContent").innerHTML = html;
-        $("#usersTable").DataTable();
+        }, 200);
       }
 
       // Fungsi untuk memuat transaksi (Admin)
@@ -1436,10 +1517,10 @@
                             <div class="text-center">
                                 <div class="display-4 text-primary mb-2">3</div>
                                 <p class="text-muted">Total Pesanan</p>
-                                
+
                                 <div class="display-4 text-success mb-2">Rp 750.000</div>
                                 <p class="text-muted">Total Belanja</p>
-                                
+
                                 <div class="display-4 text-info mb-2">2</div>
                                 <p class="text-muted">Pesanan Selesai</p>
                             </div>

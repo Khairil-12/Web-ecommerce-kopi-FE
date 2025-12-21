@@ -710,9 +710,27 @@
               <a class="nav-link" href="index.html#profile">Profile</a>
             </li>
             <li class="nav-item">
+              <a
+                class="nav-link d-none"
+                href="dashboard_admin.html"
+                id="navDashboard"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="index.html#contact">Contact</a>
             </li>
           </ul>
+
+          <!-- Mobile: Dashboard button (shown only on small screens) -->
+          <div class="d-md-none w-100 mb-2">
+            <a
+              id="navDashboardMobile"
+              class="btn btn-outline-primary w-100 d-none"
+              href="dashboard_admin.html"
+              >Dashboard</a
+            >
+          </div>
 
           <div class="d-flex align-items-center">
             <!-- Improved Search Box -->
@@ -758,6 +776,67 @@
         </div>
       </div>
     </nav>
+
+    <script>
+      // Set Dashboard link target and visibility based on localStorage role
+      (function () {
+        try {
+          const nav = document.getElementById("navDashboard");
+          const navMobile = document.getElementById("navDashboardMobile");
+          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+          const s = localStorage.getItem("currentUser");
+          let u = null;
+          try {
+            u = s ? JSON.parse(s) : null;
+          } catch (e) {
+            u = null;
+          }
+
+          function isAdminUser(u) {
+            if (!u) return false;
+            try {
+              if (u.role && String(u.role).toLowerCase().includes("admin"))
+                return true;
+              if (u.is_admin === true || u.isAdmin === true) return true;
+              if (
+                Array.isArray(u.roles) &&
+                u.roles.some((r) => String(r).toLowerCase().includes("admin"))
+              )
+                return true;
+              if (u.email && String(u.email).toLowerCase().startsWith("admin"))
+                return true;
+              if (
+                u.username &&
+                String(u.username).toLowerCase().includes("admin")
+              )
+                return true;
+            } catch (e) {
+              return false;
+            }
+            return false;
+          }
+
+          if (isLoggedIn && u) {
+            const href = isAdminUser(u)
+              ? "dashboard_admin.html"
+              : "dashboard_cust.html";
+            if (nav) {
+              nav.classList.remove("d-none");
+              nav.setAttribute("href", href);
+            }
+            if (navMobile) {
+              navMobile.classList.remove("d-none");
+              navMobile.setAttribute("href", href);
+            }
+          } else {
+            if (nav) nav.classList.add("d-none");
+            if (navMobile) navMobile.classList.add("d-none");
+          }
+        } catch (e) {
+          console.warn("Dashboard nav init error:", e);
+        }
+      })();
+    </script>
 
     <!-- Product Categories -->
     <div
@@ -3182,6 +3261,49 @@
           }
         });
       });
+    </script>
+
+    <script>
+      (function () {
+        const nav = document.getElementById("navDashboard");
+        const navMobile = document.getElementById("navDashboardMobile");
+        if (!nav && !navMobile) return;
+
+        function updateDashboardUI() {
+          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+          const userData = localStorage.getItem("currentUser");
+          if (!isLoggedIn || !userData) {
+            if (nav) nav.classList.add("d-none");
+            if (navMobile) navMobile.classList.add("d-none");
+            return;
+          }
+
+          try {
+            const user = JSON.parse(userData);
+            const target =
+              user && user.role === "admin"
+                ? "dashboard_admin.html"
+                : "dashboard_cust.html";
+            if (nav) {
+              nav.classList.remove("d-none");
+              nav.href = target;
+            }
+            if (navMobile) {
+              navMobile.classList.remove("d-none");
+              navMobile.href = target;
+            }
+          } catch (e) {
+            if (nav) nav.classList.add("d-none");
+            if (navMobile) navMobile.classList.add("d-none");
+          }
+        }
+
+        updateDashboardUI();
+        window.addEventListener("storage", function (e) {
+          if (e.key === "isLoggedIn" || e.key === "currentUser")
+            updateDashboardUI();
+        });
+      })();
     </script>
   </body>
 </html>

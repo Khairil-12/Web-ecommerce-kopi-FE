@@ -728,6 +728,11 @@
               <a class="nav-link" href="#profile">Profile</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="dashboard_admin.html" id="navDashboard"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="#products">Products</a>
             </li>
             <li class="nav-item">
@@ -898,6 +903,8 @@
         </div>
       </div>
     </section>
+
+    <!-- Dashboard is a separate page (dashboard_admin.html for admin, dashboard_cust.html for customers) -->
 
     <!-- Profile Section -->
     <section id="profile" class="section bg-light">
@@ -2076,6 +2083,38 @@
 
         // Check login status and show notification if needed
         checkLoginStatus();
+
+        // Update dashboard link based on login/role
+        function updateDashboardUI() {
+          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+          const userData = localStorage.getItem("currentUser");
+          const navDashboard = document.getElementById("navDashboard");
+
+          if (!navDashboard) return;
+
+          if (!isLoggedIn || !userData) {
+            navDashboard.style.display = "none";
+            return;
+          }
+
+          let user = null;
+          try {
+            user = JSON.parse(userData);
+          } catch (e) {
+            user = null;
+          }
+
+          // Show nav link and set target page depending on role
+          navDashboard.style.display = "";
+          if (user && user.role === "admin") {
+            navDashboard.href = "dashboard_admin.html";
+          } else {
+            navDashboard.href = "dashboard_cust.html";
+          }
+        }
+
+        // Run once on load
+        updateDashboardUI();
 
         // Setup contact form
         setupContactForm();

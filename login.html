@@ -538,6 +538,12 @@
       const showLogin = document.getElementById("showLogin");
       const switchForm = document.getElementById("switchForm");
 
+      // Ensure loading indicator initially hidden (defensive)
+      try {
+        const _l = document.getElementById("loading");
+        if (_l) _l.style.display = "none";
+      } catch (e) {}
+
       showRegister.addEventListener("click", function (e) {
         e.preventDefault();
         loginContainer.classList.add("register-active");
@@ -567,7 +573,7 @@
       class MySQLAuthSystem {
         async register(userData) {
           try {
-            const response = await fetch("http://localhost:5000/api/register", {
+            const response = await fetch("http://127.0.0.1:5000/api/register", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -586,21 +592,32 @@
         }
 
         async login(username, password) {
+          // Use AbortController to timeout the request and avoid forever-pending fetch
+          const controller = new AbortController();
+          const timeoutMs = 10000; // 10 seconds
+          const timer = setTimeout(() => controller.abort(), timeoutMs);
+
           try {
-            const response = await fetch("http://localhost:5000/api/login", {
+            const response = await fetch("http://127.0.0.1:5000/api/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ username, password }),
+              signal: controller.signal,
             });
 
+            clearTimeout(timer);
             return await response.json();
           } catch (error) {
+            clearTimeout(timer);
             console.error("Login API error:", error);
             return {
               success: false,
-              message: "Koneksi ke server gagal!",
+              message:
+                error && error.name === "AbortError"
+                  ? "Request timeout. Periksa koneksi Anda."
+                  : "Koneksi ke server gagal!",
             };
           }
         }
@@ -626,12 +643,23 @@
 
           errorMessage.style.display = "none";
           successMessage.style.display = "none";
-          loading.style.display = "block";
+          if (loading) loading.style.display = "block";
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) submitBtn.disabled = true;
+          const fallbackHide = setTimeout(() => {
+            try {
+              if (loading) loading.style.display = "none";
+              if (submitBtn) submitBtn.disabled = false;
+            } catch (e) {}
+            console.warn("Fallback: hid loading after timeout");
+          }, 12000);
 
           if (!username || !password) {
-            loading.style.display = "none";
+            if (loading) loading.style.display = "none";
+            if (submitBtn) submitBtn.disabled = false;
             errorMessage.textContent = "Username dan password harus diisi!";
             errorMessage.style.display = "block";
+            clearTimeout(fallbackHide);
             return;
           }
 
@@ -640,28 +668,44 @@
 
             const result = await auth.login(username, password);
 
-            loading.style.display = "none";
+            if (result && result.success) {
+              if (successMessage) {
+                successMessage.textContent = result.message || "Login berhasil";
+                successMessage.style.display = "block";
+              }
 
-            if (result.success) {
-              successMessage.textContent = result.message;
-              successMessage.style.display = "block";
-
-              localStorage.setItem("currentUser", JSON.stringify(result.user));
-              localStorage.setItem("isLoggedIn", "true");
-              localStorage.setItem("userName", result.user.username);
+              try {
+                localStorage.setItem(
+                  "currentUser",
+                  JSON.stringify(result.user)
+                );
+                localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("userName", result.user.username);
+              } catch (storageErr) {
+                console.warn("Could not write to localStorage:", storageErr);
+              }
 
               setTimeout(() => {
                 window.location.href = "index.html";
               }, 1500);
             } else {
-              errorMessage.textContent = result.message;
-              errorMessage.style.display = "block";
+              if (errorMessage) {
+                errorMessage.textContent =
+                  (result && result.message) || "Login gagal";
+                errorMessage.style.display = "block";
+              }
             }
           } catch (error) {
-            loading.style.display = "none";
-            errorMessage.textContent = "Terjadi kesalahan: " + error.message;
-            errorMessage.style.display = "block";
+            if (errorMessage) {
+              errorMessage.textContent =
+                "Terjadi kesalahan: " + (error.message || error);
+              errorMessage.style.display = "block";
+            }
             console.error("Login error:", error);
+          } finally {
+            clearTimeout(fallbackHide);
+            if (loading) loading.style.display = "none";
+            if (submitBtn) submitBtn.disabled = false;
           }
         });
 
@@ -684,7 +728,7 @@
 
           errorMessage.style.display = "none";
           successMessage.style.display = "none";
-          loading.style.display = "block";
+          if (loading) loading.style.display = "block";
 
           if (!username || !email || !phone || !password || !confirmPassword) {
             loading.style.display = "none";
@@ -724,7 +768,6 @@
 
           try {
             console.log("Attempting register for user:", username);
-
             const result = await auth.register({
               username,
               password,
@@ -732,18 +775,17 @@
               phone,
             });
 
-            loading.style.display = "none";
-
             // Accept both our older `success` boolean and the backend `status: 'success'`
             const ok =
               result &&
               (result.success === true || result.status === "success");
 
             if (ok) {
-              // Show green success message
-              successMessage.textContent =
-                result.message || "User created successfully";
-              successMessage.style.display = "block";
+              if (successMessage) {
+                successMessage.textContent =
+                  result.message || "User created successfully";
+                successMessage.style.display = "block";
+              }
 
               document.getElementById("registerForm").reset();
 
@@ -751,17 +793,23 @@
                 loginContainer.classList.remove("register-active");
                 switchForm.innerHTML =
                   '<i class="fas fa-sync-alt"></i> Switch to Register';
-                successMessage.style.display = "none";
+                if (successMessage) successMessage.style.display = "none";
               }, 2000);
             } else {
-              errorMessage.textContent = result.message || "Register failed";
-              errorMessage.style.display = "block";
+              if (errorMessage) {
+                errorMessage.textContent = result.message || "Register failed";
+                errorMessage.style.display = "block";
+              }
             }
           } catch (error) {
-            loading.style.display = "none";
-            errorMessage.textContent = "Terjadi kesalahan: " + error.message;
-            errorMessage.style.display = "block";
+            if (errorMessage) {
+              errorMessage.textContent =
+                "Terjadi kesalahan: " + (error.message || error);
+              errorMessage.style.display = "block";
+            }
             console.error("Register error:", error);
+          } finally {
+            if (loading) loading.style.display = "none";
           }
         });
 

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Pelanggan - Kopi Prima</title>
+
+    <script>
+      // Early redirect: if currentUser looks like an admin, jump to admin dashboard
+      (function () {
+        try {
+          const s = localStorage.getItem("currentUser");
+          if (!s) return;
+          const u = JSON.parse(s);
+          const looksAdmin =
+            u &&
+            ((u.role && String(u.role).toLowerCase().includes("admin")) ||
+              u.is_admin === true ||
+              u.isAdmin === true ||
+              (Array.isArray(u.roles) &&
+                u.roles.some((r) =>
+                  String(r).toLowerCase().includes("admin")
+                )) ||
+              (u.email && String(u.email).toLowerCase().startsWith("admin")) ||
+              (u.username &&
+                String(u.username).toLowerCase().includes("admin")));
+          if (looksAdmin) location.replace("dashboard_admin.html");
+        } catch (e) {
+          /* ignore and let page render for customers */
+        }
+      })();
+    </script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Inter, sans-serif;
+        background: #f8fafc;
+      }
+      .card {
+        border-radius: 12px;
+      }
+      .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #8b4513;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Dashboard Pelanggan</h2>
+        <div>
+          <a href="index.html" class="btn btn-outline-secondary me-2"
+            >Beranda</a
+          >
+          <button id="logoutBtn" class="btn btn-danger">Logout</button>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card p-4">
+            <div class="text-center">
+              <div class="profile-avatar" id="custAvatar">U</div>
+              <h5 class="mt-3" id="custName">Nama Pelanggan</h5>
+              <p class="text-muted mb-1" id="custEmail">email@example.com</p>
+              <p class="text-muted" id="custPhone">+62 -</p>
+            </div>
+            <hr />
+            <div>
+              <h6>Statistik</h6>
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="h4 mb-0" id="custOrdersCount">0</div>
+                  <small class="text-muted">Pesanan</small>
+                </div>
+                <div>
+                  <div class="h4 mb-0" id="custTotalSpent">Rp 0</div>
+                  <small class="text-muted">Total Belanja</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card p-4">
+            <h5>Riwayat Pesanan</h5>
+            <div id="ordersContainer" class="mt-3">
+              <!-- orders injected here -->
+            </div>
+            <div class="mt-3 text-end">
+              <a href="products.html" class="btn btn-primary">Belanja Lagi</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Customer dashboard: validate role with backend and load customer-scoped data
+      (async function () {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const userData = localStorage.getItem("currentUser");
+
+        if (!isLoggedIn || !userData) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        let user = null;
+        try {
+          user = JSON.parse(userData);
+        } catch (e) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Local quick admin detection to avoid flashing customer page
+        function isAdminUser(u) {
+          if (!u) return false;
+          if (u.role && String(u.role).toLowerCase().includes("admin"))
+            return true;
+          if (u.is_admin === true || u.isAdmin === true) return true;
+          if (
+            Array.isArray(u.roles) &&
+            u.roles.some((r) => String(r).toLowerCase().includes("admin"))
+          )
+            return true;
+          if (u.email && String(u.email).toLowerCase().startsWith("admin"))
+            return true;
+          if (u.username && String(u.username).toLowerCase().includes("admin"))
+            return true;
+          return false;
+        }
+
+        if (isAdminUser(user)) {
+          window.location.href = "dashboard_admin.html";
+          return;
+        }
+
+        // Call backend customer dashboard to validate and fetch data
+        try {
+          const res = await fetch("/api/customer/dashboard", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-ID": user.id,
+            },
+          });
+
+          if (res.status === 401) {
+            // Not authenticated
+            window.location.href = "login.html";
+            return;
+          }
+
+          if (res.status === 403) {
+            // Access denied — maybe admin
+            window.location.href = "dashboard_admin.html";
+            return;
+          }
+
+          const payload = await res.json();
+          if (!res.ok || payload.status === "error") {
+            console.warn("Customer dashboard API error", payload);
+          }
+
+          // If API returned expected data, use it; otherwise fallback to localStorage
+          const data = payload && payload.data ? payload.data : null;
+
+          // Fill profile
+          document.getElementById("custName").textContent =
+            (data &&
+              data.customer &&
+              (data.customer.username || data.customer.name)) ||
+            user.name ||
+            user.username ||
+            "Nama Pelanggan";
+          document.getElementById("custEmail").textContent =
+            (data && data.customer && data.customer.email) || user.email || "-";
+          document.getElementById("custPhone").textContent =
+            user.phone || user.phone || "-";
+          document.getElementById("custAvatar").textContent = (
+            (data &&
+              data.customer &&
+              (data.customer.username || data.customer.name)) ||
+            user.name ||
+            user.username ||
+            "U"
+          )
+            .charAt(0)
+            .toUpperCase();
+
+          // Orders
+          const ordersContainer = document.getElementById("ordersContainer");
+          const recent =
+            data && Array.isArray(data.recent_transactions)
+              ? data.recent_transactions
+              : [];
+
+          if (!recent || recent.length === 0) {
+            ordersContainer.innerHTML =
+              '<p class="text-muted">Belum ada pesanan.</p>';
+          } else {
+            ordersContainer.innerHTML = recent
+              .map(
+                (o) => `
+              <div class="border rounded p-3 mb-2">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <strong>${o.transaction_code || o.id}</strong><br/>
+                    <small class="text-muted">${
+                      o.created_at
+                        ? new Date(o.created_at).toLocaleString()
+                        : ""
+                    }</small>
+                  </div>
+                  <div class="text-end">
+                    <div>Rp ${(o.total_amount || o.total || 0).toLocaleString(
+                      "id-ID"
+                    )}</div>
+                    <small class="badge ${
+                      o.status === "completed"
+                        ? "bg-success text-white"
+                        : "bg-warning text-dark"
+                    }">${o.status}</small>
+                  </div>
+                </div>
+              </div>
+            `
+              )
+              .join("");
+          }
+
+          // Stats
+          const ordersCount =
+            data && typeof data.total_orders === "number"
+              ? data.total_orders
+              : recent.length;
+          const totalSpent =
+            data && typeof data.total_spent === "number"
+              ? data.total_spent
+              : recent.reduce(
+                  (s, r) => s + (r.total_amount || r.total || 0),
+                  0
+                );
+
+          document.getElementById("custOrdersCount").textContent = ordersCount;
+          document.getElementById("custTotalSpent").textContent =
+            "Rp " + totalSpent.toLocaleString("id-ID");
+        } catch (err) {
+          console.error("Error loading customer dashboard:", err);
+          // Fallback to localStorage-rendering if backend unreachable
+          const orders = JSON.parse(
+            localStorage.getItem("userOrders_" + (user.id || "guest")) || "[]"
+          );
+          const ordersContainer = document.getElementById("ordersContainer");
+          if (orders.length === 0) {
+            ordersContainer.innerHTML =
+              '<p class="text-muted">Belum ada pesanan.</p>';
+          } else {
+            ordersContainer.innerHTML = orders
+              .map(
+                (o) => `
+              <div class="border rounded p-3 mb-2">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <strong>${o.id}</strong><br/>
+                    <small class="text-muted">${o.date}</small>
+                  </div>
+                  <div class="text-end">
+                    <div>Rp ${(o.total || 0).toLocaleString("id-ID")}</div>
+                    <small class="badge ${
+                      o.status === "completed"
+                        ? "bg-success text-white"
+                        : "bg-warning text-dark"
+                    }">${o.status}</small>
+                  </div>
+                </div>
+              </div>
+            `
+              )
+              .join("");
+          }
+
+          document.getElementById("custOrdersCount").textContent =
+            orders.length;
+          const total = orders.reduce((s, o) => s + (o.total || 0), 0);
+          document.getElementById("custTotalSpent").textContent =
+            "Rp " + total.toLocaleString("id-ID");
+        }
+
+        // Logout
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("currentUser");
+          window.location.href = "index.html";
+        });
+      })();
+    </script>
+  </body>
+</html>
