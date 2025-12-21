@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Kopi Prima</title>
+
+    <!-- Bootstrap & Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --primary-color: #8b4513;
+        --secondary-color: #d2691e;
+        --accent-color: #a0522d;
+        --dark-brown: #654321;
+        --light-brown: #deb887;
+        --cream: #f5f5dc;
+        --light-cream: #fff8dc;
+        --success-color: #10b981;
+        --info-color: #3b82f6;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--light-cream) 0%,
+          var(--cream) 100%
+        );
+        min-height: 100vh;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        background: linear-gradient(135deg, var(--dark-brown), #2c1a0f);
+        color: white;
+        min-height: 100vh;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+      }
+
+      .sidebar .nav-link {
+        color: var(--light-cream);
+        padding: 12px 20px;
+        margin: 5px 0;
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
+
+      .sidebar .nav-link:hover,
+      .sidebar .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateX(5px);
+      }
+
+      .sidebar .nav-link i {
+        width: 25px;
+        text-align: center;
+      }
+
+      .logo {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+      }
+
+      /* Content Area */
+      .content {
+        padding: 20px;
+      }
+
+      .dashboard-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Stats Cards */
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s;
+        border: none;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(139, 69, 19, 0.1);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      .stat-icon.users {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info-color);
+      }
+      .stat-icon.products {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+      .stat-icon.transactions {
+        background-color: rgba(139, 69, 19, 0.15);
+        color: var(--primary-color);
+      }
+      .stat-icon.revenue {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--warning-color);
+      }
+
+      /* Table Styles */
+      .data-table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+      }
+
+      .dataTables_wrapper .dataTables_length,
+      .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 15px;
+      }
+
+      table.dataTable {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      table.dataTable thead th {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        font-weight: 500;
+      }
+
+      /* Action Buttons */
+      .btn-action {
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin: 2px;
+      }
+
+      .btn-action.edit {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--info-color);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+      .btn-action.delete {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--error-color);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .btn-action.view {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+      .btn-action.restore {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning-color);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+
+      .btn-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Modal Styles */
+      .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        color: white;
+        border-radius: 15px 15px 0 0;
+        border: none;
+      }
+
+      /* Profile Card */
+      .profile-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+        margin: 0 auto 20px;
+      }
+
+      /* Product Card */
+      .product-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .badge-status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .badge-status.active {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+      .badge-status.inactive {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: var(--error-color);
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading-spinner.active {
+        display: flex;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--light-brown);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Tabs */
+      .nav-tabs .nav-link {
+        color: var(--dark-brown);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px 8px 0 0;
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+      }
+
+      /* Form Styles */
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        ) !important;
+        border: none !important;
+        color: white !important;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4) !important;
+        background: linear-gradient(
+          135deg,
+          var(--accent-color),
+          var(--primary-color)
+        ) !important;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          min-height: auto;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          z-index: 1000;
+          height: 60px;
+        }
+
+        .sidebar .nav {
+          flex-direction: row;
+          justify-content: space-around;
+          padding: 0 10px;
+        }
+
+        .sidebar .nav-link {
+          padding: 10px;
+          margin: 0;
+          flex: 1;
+          text-align: center;
+        }
+
+        .sidebar .nav-link span {
+          display: none;
+        }
+
+        .content {
+          padding-bottom: 80px;
+        }
+
+        .logo {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+          <div class="logo">
+            <h4><i class="fas fa-coffee me-2"></i>KOPI PRIMA</h4>
+            <p class="small mb-0 text-light">Dashboard</p>
+          </div>
+
+          <ul class="nav flex-column" id="adminNav">
+            <!-- Admin Navigation (default hidden) -->
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="#"
+                onclick="showSection('dashboard')"
+              >
+                <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('users')">
+                <i class="fas fa-users"></i> <span>Kelola Users</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#"
+                onclick="showSection('transactions')"
+              >
+                <i class="fas fa-shopping-cart"></i> <span>Transaksi</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('products')">
+                <i class="fas fa-coffee"></i> <span>Kelola Produk</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('addProduct')">
+                <i class="fas fa-plus-circle"></i> <span>Tambah Produk</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#"
+                onclick="showSection('inactiveProducts')"
+              >
+                <i class="fas fa-archive"></i> <span>Produk Non-Aktif</span>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav flex-column d-none" id="customerNav">
+            <!-- Customer Navigation -->
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                href="#"
+                onclick="showSection('profile')"
+              >
+                <i class="fas fa-user"></i> <span>Profil Saya</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('myOrders')">
+                <i class="fas fa-shopping-bag"></i> <span>Pesanan Saya</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="products.html">
+                <i class="fas fa-store"></i> <span>Belanja Lagi</span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="mt-auto p-3">
+            <button
+              class="btn btn-outline-light w-100 mb-2"
+              onclick="goToHome()"
+            >
+              <i class="fas fa-home"></i> <span>Kembali ke Beranda</span>
+            </button>
+            <button class="btn btn-danger w-100" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <!-- Dashboard Header -->
+          <div class="dashboard-header mt-3">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <h2 class="mb-1">Dashboard</h2>
+                <p class="text-muted mb-0" id="welcomeMessage">
+                  Selamat datang di Dashboard Kopi Prima
+                </p>
+              </div>
+              <div class="col-md-6 text-md-end">
+                <span class="badge bg-primary p-2" id="userRole"
+                  >Loading...</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Content -->
+          <div id="dashboardContent">
+            <!-- Dashboard Overview (Admin) -->
+            <div class="row mb-4" id="adminOverview">
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon users">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <h3 class="stat-number" id="totalUsers">0</h3>
+                  <p class="text-muted mb-0">Total Users</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon products">
+                    <i class="fas fa-coffee"></i>
+                  </div>
+                  <h3 class="stat-number" id="totalProducts">0</h3>
+                  <p class="text-muted mb-0">Total Produk</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon transactions">
+                    <i class="fas fa-shopping-cart"></i>
+                  </div>
+                  <h3 class="stat-number" id="totalTransactions">0</h3>
+                  <p class="text-muted mb-0">Transaksi</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon revenue">
+                    <i class="fas fa-money-bill-wave"></i>
+                  </div>
+                  <h3 class="stat-number" id="totalRevenue">Rp 0</h3>
+                  <p class="text-muted mb-0">Total Revenue</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Profile (Customer) -->
+            <div class="row mb-4 d-none" id="customerProfile">
+              <div class="col-md-4">
+                <div class="profile-card">
+                  <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <h4 id="customerName">Nama Pelanggan</h4>
+                  <p class="text-muted" id="customerEmail">email@example.com</p>
+                  <p class="text-muted mb-3" id="customerPhone">
+                    +62 812-3456-7890
+                  </p>
+                  <button
+                    class="btn btn-primary"
+                    onclick="showSection('editProfile')"
+                  >
+                    <i class="fas fa-edit me-2"></i>Edit Profil
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="data-table-container">
+                  <h5 class="mb-4">Pesanan Terakhir</h5>
+                  <table class="table table-hover" id="recentOrdersTable">
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Tanggal</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Content -->
+            <div id="sectionContent">
+              <!-- Default: Admin Dashboard or Customer Profile -->
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Modal untuk Tambah/Edit Produk -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tambah Produk Baru</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="productForm">
+              <input type="hidden" id="productId" />
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Nama Produk</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="productName"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Kategori</label>
+                  <select class="form-select" id="productCategory" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="arabica">Arabica</option>
+                    <option value="robusta">Robusta</option>
+                    <option value="specialty">Specialty</option>
+                    <option value="blend">Blend</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Harga (Rp)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="productPrice"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Stok</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="productStock"
+                    required
+                  />
+                </div>
+                <div class="col-md-12 mb-3">
+                  <label class="form-label">Deskripsi</label>
+                  <textarea
+                    class="form-control"
+                    id="productDescription"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <div class="col-md-12 mb-3">
+                  <label class="form-label">Gambar Produk (URL)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="productImage"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <small class="text-muted"
+                    >Atau unggah file nanti melalui backend</small
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" id="productStatus">
+                    <option value="active">Aktif</option>
+                    <option value="inactive">Non-Aktif</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="saveProduct()"
+            >
+              Simpan Produk
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal untuk Edit Profil Pelanggan -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Profil</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="profileForm">
+              <div class="mb-3">
+                <label class="form-label">Nama Lengkap</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="editEmail"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nomor Telepon</label>
+                <input type="tel" class="form-control" id="editPhone" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Alamat</label>
+                <textarea
+                  class="form-control"
+                  id="editAddress"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="updateProfile()"
+            >
+              Simpan Perubahan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+      // State Management
+      let currentUser = null;
+      let currentRole = null;
+
+      // Inisialisasi Dashboard
+      document.addEventListener("DOMContentLoaded", function () {
+        showLoading();
+
+        // Cek status login dan role dari localStorage
+        checkAuthStatus();
+
+        // Setup DataTables
+        initializeDataTables();
+
+        setTimeout(() => {
+          hideLoading();
+        }, 1000);
+      });
+
+      // Fungsi untuk cek status autentikasi
+      function checkAuthStatus() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const userData = localStorage.getItem("currentUser");
+
+        if (!isLoggedIn || !userData) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          currentUser = JSON.parse(userData);
+          currentRole = currentUser.role || "customer";
+
+          updateUIBasedOnRole();
+          loadDashboardData();
+        } catch (error) {
+          console.error("Error parsing user data:", error);
+          window.location.href = "login.html";
+        }
+      }
+
+      // Update UI berdasarkan role
+      function updateUIBasedOnRole() {
+        document.getElementById("userRole").textContent =
+          currentRole === "admin" ? "Administrator" : "Pelanggan";
+        document.getElementById(
+          "welcomeMessage"
+        ).textContent = `Selamat datang, ${currentUser.name || "User"}!`;
+
+        if (currentRole === "admin") {
+          document.getElementById("adminNav").classList.remove("d-none");
+          document.getElementById("customerNav").classList.add("d-none");
+          document.getElementById("adminOverview").classList.remove("d-none");
+          document.getElementById("customerProfile").classList.add("d-none");
+          showSection("dashboard");
+        } else {
+          document.getElementById("adminNav").classList.add("d-none");
+          document.getElementById("customerNav").classList.remove("d-none");
+          document.getElementById("adminOverview").classList.add("d-none");
+          document.getElementById("customerProfile").classList.remove("d-none");
+          showSection("profile");
+          loadCustomerProfile();
+        }
+      }
+
+      // Fungsi untuk memuat data dashboard
+      async function loadDashboardData() {
+        try {
+          // Simulasi API call untuk data dashboard
+          const mockData = {
+            totalUsers: 1245,
+            totalProducts: 56,
+            totalTransactions: 890,
+            totalRevenue: 125430000,
+          };
+
+          // Update stats untuk admin
+          if (currentRole === "admin") {
+            document.getElementById("totalUsers").textContent =
+              mockData.totalUsers;
+            document.getElementById("totalProducts").textContent =
+              mockData.totalProducts;
+            document.getElementById("totalTransactions").textContent =
+              mockData.totalTransactions;
+            document.getElementById("totalRevenue").textContent =
+              "Rp " + mockData.totalRevenue.toLocaleString("id-ID");
+          }
+
+          // Load data untuk section yang aktif
+          if (currentRole === "admin") {
+            loadUsers();
+            loadTransactions();
+            loadProducts();
+          }
+        } catch (error) {
+          console.error("Error loading dashboard data:", error);
+        }
+      }
+
+      // Fungsi untuk memuat data pelanggan
+      async function loadCustomerProfile() {
+        document.getElementById("customerName").textContent =
+          currentUser.name || "Nama Pelanggan";
+        document.getElementById("customerEmail").textContent =
+          currentUser.email || "email@example.com";
+        document.getElementById("customerPhone").textContent =
+          currentUser.phone || "+62 812-3456-7890";
+
+        // Load order history
+        loadCustomerOrders();
+      }
+
+      // Fungsi untuk memuat pesanan pelanggan
+      async function loadCustomerOrders() {
+        const mockOrders = [
+          {
+            id: "ORD001",
+            date: "2024-01-15",
+            total: 250000,
+            status: "completed",
+          },
+          {
+            id: "ORD002",
+            date: "2024-01-10",
+            total: 180000,
+            status: "processing",
+          },
+          {
+            id: "ORD003",
+            date: "2024-01-05",
+            total: 320000,
+            status: "completed",
+          },
+        ];
+
+        const tbody = document.querySelector("#recentOrdersTable tbody");
+        tbody.innerHTML = "";
+
+        mockOrders.forEach((order) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td>Rp ${order.total.toLocaleString("id-ID")}</td>
+                    <td><span class="badge ${
+                      order.status === "completed" ? "bg-success" : "bg-warning"
+                    }">${order.status}</span></td>
+                    <td>
+                        <button class="btn btn-action view" onclick="viewOrder('${
+                          order.id
+                        }')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Fungsi untuk menampilkan section yang berbeda
+      function showSection(section) {
+        const sectionContent = document.getElementById("sectionContent");
+
+        // Update active nav link
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        // Show loading
+        showLoading();
+
+        // Clear current content
+        sectionContent.innerHTML = "";
+
+        // Load section content based on section name
+        setTimeout(() => {
+          switch (section) {
+            case "dashboard":
+              loadAdminDashboard();
+              break;
+            case "users":
+              loadUsers();
+              break;
+            case "transactions":
+              loadTransactions();
+              break;
+            case "products":
+              loadProducts();
+              break;
+            case "addProduct":
+              showAddProductForm();
+              break;
+            case "inactiveProducts":
+              loadInactiveProducts();
+              break;
+            case "profile":
+              showCustomerProfile();
+              break;
+            case "myOrders":
+              showCustomerOrders();
+              break;
+            case "editProfile":
+              showEditProfileForm();
+              break;
+          }
+          hideLoading();
+        }, 500);
+      }
+
+      // Fungsi untuk memuat data users (Admin)
+      async function loadUsers() {
+        const mockUsers = [
+          {
+            id: 1,
+            name: "Budi Santoso",
+            email: "budi@email.com",
+            phone: "081234567890",
+            role: "customer",
+            status: "active",
+          },
+          {
+            id: 2,
+            name: "Sari Dewi",
+            email: "sari@email.com",
+            phone: "081298765432",
+            role: "customer",
+            status: "active",
+          },
+          {
+            id: 3,
+            name: "Admin Kopi",
+            email: "admin@kopiprima.co.id",
+            phone: "08111222333",
+            role: "admin",
+            status: "active",
+          },
+        ];
+
+        const html = `
+                <div class="data-table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5>Kelola Users</h5>
+                        <button class="btn btn-primary" onclick="exportUsers()">
+                            <i class="fas fa-download me-2"></i>Export
+                        </button>
+                    </div>
+                    <table class="table table-hover" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Telepon</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockUsers
+                              .map(
+                                (user) => `
+                                <tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.phone}</td>
+                                    <td><span class="badge ${
+                                      user.role === "admin"
+                                        ? "bg-primary"
+                                        : "bg-secondary"
+                                    }">${user.role}</span></td>
+                                    <td><span class="badge-status ${
+                                      user.status
+                                    }">${user.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-action edit" onclick="editUser(${
+                                          user.id
+                                        })">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        ${
+                                          user.role !== "admin"
+                                            ? `
+                                        <button class="btn btn-action delete" onclick="deleteUser(${user.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        `
+                                            : ""
+                                        }
+                                    </td>
+                                </tr>
+                            `
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+        $("#usersTable").DataTable();
+      }
+
+      // Fungsi untuk memuat transaksi (Admin)
+      async function loadTransactions() {
+        const mockTransactions = [
+          {
+            id: "TRX001",
+            customer: "Budi Santoso",
+            date: "2024-01-15",
+            amount: 250000,
+            status: "completed",
+          },
+          {
+            id: "TRX002",
+            customer: "Sari Dewi",
+            date: "2024-01-14",
+            amount: 180000,
+            status: "processing",
+          },
+          {
+            id: "TRX003",
+            customer: "Agus Wijaya",
+            date: "2024-01-13",
+            amount: 320000,
+            status: "completed",
+          },
+        ];
+
+        const html = `
+                <div class="data-table-container">
+                    <h5 class="mb-4">Daftar Transaksi</h5>
+                    <table class="table table-hover" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>ID Transaksi</th>
+                                <th>Pelanggan</th>
+                                <th>Tanggal</th>
+                                <th>Jumlah</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockTransactions
+                              .map(
+                                (trans) => `
+                                <tr>
+                                    <td>${trans.id}</td>
+                                    <td>${trans.customer}</td>
+                                    <td>${trans.date}</td>
+                                    <td>Rp ${trans.amount.toLocaleString(
+                                      "id-ID"
+                                    )}</td>
+                                    <td><span class="badge ${
+                                      trans.status === "completed"
+                                        ? "bg-success"
+                                        : "bg-warning"
+                                    }">${trans.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-action view" onclick="viewTransaction('${
+                                          trans.id
+                                        }')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action edit" onclick="updateTransactionStatus('${
+                                          trans.id
+                                        }')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+        $("#transactionsTable").DataTable();
+      }
+
+      // Fungsi untuk memuat produk (Admin)
+      async function loadProducts() {
+        const mockProducts = [
+          {
+            id: 1,
+            name: "Kopi Arabica Gayo",
+            category: "arabica",
+            price: 120000,
+            stock: 50,
+            status: "active",
+          },
+          {
+            id: 2,
+            name: "Kopi Robusta Lampung",
+            category: "robusta",
+            price: 85000,
+            stock: 75,
+            status: "active",
+          },
+          {
+            id: 3,
+            name: "Specialty Coffee",
+            category: "specialty",
+            price: 150000,
+            stock: 25,
+            status: "active",
+          },
+        ];
+
+        const html = `
+                <div class="data-table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5>Kelola Produk</h5>
+                        <button class="btn btn-primary" onclick="showAddProductForm()">
+                            <i class="fas fa-plus me-2"></i>Tambah Produk
+                        </button>
+                    </div>
+                    <table class="table table-hover" id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockProducts
+                              .map(
+                                (product) => `
+                                <tr>
+                                    <td>${product.id}</td>
+                                    <td>${product.name}</td>
+                                    <td><span class="badge bg-info">${
+                                      product.category
+                                    }</span></td>
+                                    <td>Rp ${product.price.toLocaleString(
+                                      "id-ID"
+                                    )}</td>
+                                    <td>${product.stock}</td>
+                                    <td><span class="badge-status ${
+                                      product.status
+                                    }">${product.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-action edit" onclick="editProduct(${
+                                          product.id
+                                        })">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-action delete" onclick="softDeleteProduct(${
+                                          product.id
+                                        })">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+        $("#productsTable").DataTable();
+      }
+
+      // Fungsi untuk memuat produk non-aktif
+      async function loadInactiveProducts() {
+        const mockInactiveProducts = [
+          {
+            id: 4,
+            name: "Kopi Mocha Java",
+            category: "blend",
+            price: 95000,
+            stock: 0,
+            status: "inactive",
+          },
+        ];
+
+        const html = `
+                <div class="data-table-container">
+                    <h5 class="mb-4">Produk Non-Aktif</h5>
+                    <table class="table table-hover" id="inactiveProductsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockInactiveProducts
+                              .map(
+                                (product) => `
+                                <tr>
+                                    <td>${product.id}</td>
+                                    <td>${product.name}</td>
+                                    <td><span class="badge bg-secondary">${
+                                      product.category
+                                    }</span></td>
+                                    <td>Rp ${product.price.toLocaleString(
+                                      "id-ID"
+                                    )}</td>
+                                    <td>${product.stock}</td>
+                                    <td>
+                                        <button class="btn btn-action restore" onclick="restoreProduct(${
+                                          product.id
+                                        })">
+                                            <i class="fas fa-redo"></i> Aktifkan
+                                        </button>
+                                        <button class="btn btn-action delete" onclick="permanentDeleteProduct(${
+                                          product.id
+                                        })">
+                                            <i class="fas fa-trash-alt"></i> Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            `
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+        $("#inactiveProductsTable").DataTable();
+      }
+
+      // Fungsi untuk menampilkan form tambah produk
+      function showAddProductForm() {
+        const html = `
+                <div class="data-table-container">
+                    <h5 class="mb-4">Tambah Produk Baru</h5>
+                    <form id="addProductForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Produk</label>
+                                <input type="text" class="form-control" id="newProductName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kategori</label>
+                                <select class="form-select" id="newProductCategory" required>
+                                    <option value="">Pilih Kategori</option>
+                                    <option value="arabica">Arabica</option>
+                                    <option value="robusta">Robusta</option>
+                                    <option value="specialty">Specialty</option>
+                                    <option value="blend">Blend</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Harga (Rp)</label>
+                                <input type="number" class="form-control" id="newProductPrice" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Stok</label>
+                                <input type="number" class="form-control" id="newProductStock" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Berat (gram)</label>
+                                <input type="number" class="form-control" id="newProductWeight" value="250">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Deskripsi</label>
+                                <textarea class="form-control" id="newProductDescription" rows="4" required></textarea>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Spesifikasi</label>
+                                <textarea class="form-control" id="newProductSpecs" rows="2" placeholder="Contoh: Roast Level: Medium, Asal: Gayo"></textarea>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Gambar Produk (URL)</label>
+                                <input type="text" class="form-control" id="newProductImage" placeholder="https://example.com/image.jpg">
+                                <small class="text-muted">Gunakan URL gambar atau unggah melalui backend</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="showSection('products')">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan Produk</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+
+        // Add form submit handler
+        document
+          .getElementById("addProductForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            saveNewProduct();
+          });
+      }
+
+      // Fungsi untuk menampilkan profil pelanggan
+      function showCustomerProfile() {
+        const html = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="data-table-container">
+                            <h5 class="mb-4">Detail Profil</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Nama Lengkap</label>
+                                    <p class="fs-5">${
+                                      currentUser.name || "Nama Pelanggan"
+                                    }</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Email</label>
+                                    <p class="fs-5">${
+                                      currentUser.email || "email@example.com"
+                                    }</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Nomor Telepon</label>
+                                    <p class="fs-5">${
+                                      currentUser.phone || "+62 812-3456-7890"
+                                    }</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Member Sejak</label>
+                                    <p class="fs-5">${
+                                      currentUser.joinDate || "Januari 2024"
+                                    }</p>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label text-muted">Alamat</label>
+                                    <p class="fs-5">${
+                                      currentUser.address ||
+                                      "Jl. Contoh No. 123, Jakarta"
+                                    }</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showEditProfileForm()">
+                                <i class="fas fa-edit me-2"></i>Edit Profil
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="data-table-container">
+                            <h5 class="mb-4">Statistik Saya</h5>
+                            <div class="text-center">
+                                <div class="display-4 text-primary mb-2">3</div>
+                                <p class="text-muted">Total Pesanan</p>
+                                
+                                <div class="display-4 text-success mb-2">Rp 750.000</div>
+                                <p class="text-muted">Total Belanja</p>
+                                
+                                <div class="display-4 text-info mb-2">2</div>
+                                <p class="text-muted">Pesanan Selesai</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+      }
+
+      // Fungsi untuk menampilkan pesanan pelanggan
+      function showCustomerOrders() {
+        const html = `
+                <div class="data-table-container">
+                    <h5 class="mb-4">Riwayat Pesanan</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="customerOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Tanggal</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ORD001</td>
+                                    <td>15 Jan 2024</td>
+                                    <td>2 Items</td>
+                                    <td>Rp 250.000</td>
+                                    <td><span class="badge bg-success">Selesai</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail('ORD001')">
+                                            <i class="fas fa-eye"></i> Detail
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ORD002</td>
+                                    <td>10 Jan 2024</td>
+                                    <td>1 Item</td>
+                                    <td>Rp 180.000</td>
+                                    <td><span class="badge bg-warning">Diproses</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail('ORD002')">
+                                            <i class="fas fa-eye"></i> Detail
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+        document.getElementById("sectionContent").innerHTML = html;
+        $("#customerOrdersTable").DataTable();
+      }
+
+      // Fungsi untuk menampilkan form edit profil
+      function showEditProfileForm() {
+        const profileModal = new bootstrap.Modal(
+          document.getElementById("profileModal")
+        );
+        document.getElementById("editName").value = currentUser.name || "";
+        document.getElementById("editEmail").value = currentUser.email || "";
+        document.getElementById("editPhone").value = currentUser.phone || "";
+        document.getElementById("editAddress").value =
+          currentUser.address || "";
+        profileModal.show();
+      }
+
+      // Fungsi untuk update profil
+      function updateProfile() {
+        const name = document.getElementById("editName").value;
+        const email = document.getElementById("editEmail").value;
+        const phone = document.getElementById("editPhone").value;
+        const address = document.getElementById("editAddress").value;
+
+        // Simpan ke localStorage (simulasi)
+        currentUser.name = name;
+        currentUser.email = email;
+        currentUser.phone = phone;
+        currentUser.address = address;
+
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+        // Update UI
+        loadCustomerProfile();
+        showSection("profile");
+
+        // Tutup modal
+        bootstrap.Modal.getInstance(
+          document.getElementById("profileModal")
+        ).hide();
+
+        // Tampilkan notifikasi sukses
+        alert("Profil berhasil diperbarui!");
+      }
+
+      // Fungsi untuk menyimpan produk baru
+      function saveNewProduct() {
+        const productData = {
+          name: document.getElementById("newProductName").value,
+          category: document.getElementById("newProductCategory").value,
+          price: parseInt(document.getElementById("newProductPrice").value),
+          stock: parseInt(document.getElementById("newProductStock").value),
+          description: document.getElementById("newProductDescription").value,
+          image: document.getElementById("newProductImage").value,
+        };
+
+        // Simulasi API call
+        console.log("Produk baru disimpan:", productData);
+
+        // Tampilkan pesan sukses
+        alert("Produk berhasil ditambahkan!");
+
+        // Kembali ke daftar produk
+        showSection("products");
+      }
+
+      // Fungsi untuk edit produk
+      function editProduct(productId) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("productModal")
+        );
+        document.getElementById("productId").value = productId;
+        document.getElementById("modalTitle").textContent = "Edit Produk";
+
+        // Load product data (simulasi)
+        document.getElementById("productName").value = "Kopi Arabica Gayo";
+        document.getElementById("productCategory").value = "arabica";
+        document.getElementById("productPrice").value = 120000;
+        document.getElementById("productStock").value = 50;
+        document.getElementById("productDescription").value =
+          "Kopi Arabica premium dari Gayo";
+        document.getElementById("productImage").value =
+          "img/products/gayo_roast.jpeg";
+        document.getElementById("productStatus").value = "active";
+
+        modal.show();
+      }
+
+      // Fungsi untuk soft delete produk
+      function softDeleteProduct(productId) {
+        if (confirm("Apakah Anda yakin ingin menonaktifkan produk ini?")) {
+          // Simulasi API call
+          console.log("Soft delete produk:", productId);
+          alert("Produk berhasil dinonaktifkan!");
+          showSection("products");
+        }
+      }
+
+      // Fungsi untuk restore produk
+      function restoreProduct(productId) {
+        if (
+          confirm("Apakah Anda yakin ingin mengaktifkan kembali produk ini?")
+        ) {
+          // Simulasi API call
+          console.log("Restore produk:", productId);
+          alert("Produk berhasil diaktifkan kembali!");
+          showSection("inactiveProducts");
+        }
+      }
+
+      // Fungsi untuk hapus user
+      function deleteUser(userId) {
+        if (confirm("Apakah Anda yakin ingin menghapus user ini?")) {
+          // Simulasi API call
+          console.log("Delete user:", userId);
+          alert("User berhasil dihapus!");
+          loadUsers();
+        }
+      }
+
+      // Fungsi untuk view order detail
+      function viewOrderDetail(orderId) {
+        alert(
+          `Melihat detail order: ${orderId}\n\nFitur ini akan menampilkan detail lengkap pesanan termasuk item, harga, dan status pengiriman.`
+        );
+      }
+
+      // Fungsi untuk logout
+      function logout() {
+        if (confirm("Apakah Anda yakin ingin logout?")) {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("currentUser");
+          sessionStorage.setItem("justLoggedOut", "true");
+          window.location.href = "index.html";
+        }
+      }
+
+      // Fungsi untuk kembali ke beranda
+      function goToHome() {
+        window.location.href = "index.html";
+      }
+
+      // Fungsi untuk inisialisasi DataTables
+      function initializeDataTables() {
+        // DataTables sudah diinisialisasi di masing-masing fungsi
+      }
+
+      // Fungsi untuk show/hide loading
+      function showLoading() {
+        document.getElementById("loadingSpinner").classList.add("active");
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingSpinner").classList.remove("active");
+      }
+
+      // Fungsi bantuan lainnya
+      function exportUsers() {
+        alert("Fitur export data users akan diimplementasikan di backend");
+      }
+
+      function viewTransaction(transId) {
+        alert(`Melihat detail transaksi: ${transId}`);
+      }
+
+      function updateTransactionStatus(transId) {
+        alert(`Mengubah status transaksi: ${transId}`);
+      }
+
+      function viewOrder(orderId) {
+        alert(`Melihat detail order: ${orderId}`);
+      }
+
+      function permanentDeleteProduct(productId) {
+        if (confirm("Apakah Anda yakin ingin menghapus permanen produk ini?")) {
+          alert("Produk berhasil dihapus permanen!");
+          loadInactiveProducts();
+        }
+      }
+    </script>
+  </body>
+</html>

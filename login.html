@@ -567,7 +567,7 @@
       class MySQLAuthSystem {
         async register(userData) {
           try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("http://localhost:5000/api/register", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -587,7 +587,7 @@
 
         async login(username, password) {
           try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("http://localhost:5000/api/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -734,8 +734,15 @@
 
             loading.style.display = "none";
 
-            if (result.success) {
-              successMessage.textContent = result.message;
+            // Accept both our older `success` boolean and the backend `status: 'success'`
+            const ok =
+              result &&
+              (result.success === true || result.status === "success");
+
+            if (ok) {
+              // Show green success message
+              successMessage.textContent =
+                result.message || "User created successfully";
               successMessage.style.display = "block";
 
               document.getElementById("registerForm").reset();
@@ -747,7 +754,7 @@
                 successMessage.style.display = "none";
               }, 2000);
             } else {
-              errorMessage.textContent = result.message;
+              errorMessage.textContent = result.message || "Register failed";
               errorMessage.style.display = "block";
             }
           } catch (error) {
