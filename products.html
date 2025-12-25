@@ -749,7 +749,9 @@ async function updateCartBadge() {
 }
 
 document.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".add-to-cart, .add-to-cart-btn");
+  // Only handle legacy `.add-to-cart` buttons here. `.add-to-cart-btn` is
+  // handled by `products-app.js` (CartSystem) to avoid duplicate requests.
+  const btn = e.target.closest(".add-to-cart");
   if (!btn) return;
 
   const productIdRaw = btn.dataset.productId || btn.dataset.id || btn.getAttribute('data-id');
@@ -1292,6 +1294,11 @@ updateCartBadge();
         window.addEventListener("storage", function (e) {
           if (e.key === "isLoggedIn" || e.key === "currentUser")
             updateDashboardUI();
+          if (e.key === "cart_count") {
+            const val = Number(e.newValue) || 0;
+            const navBadge = document.getElementById("cartCount");
+            if (navBadge) navBadge.innerText = val;
+          }
         });
       })();
     </script>

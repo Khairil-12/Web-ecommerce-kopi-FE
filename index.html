@@ -2163,6 +2163,11 @@
               window.authSystem.updateAuthUI();
             }
           }
+          if (e.key === "cart_count") {
+            const val = Number(e.newValue) || 0;
+            const navBadge = document.getElementById("cartCount");
+            if (navBadge) navBadge.innerText = val;
+          }
         });
 
         // Initialize carousel auto-play

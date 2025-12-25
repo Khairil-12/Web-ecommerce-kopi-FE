@@ -41,11 +41,10 @@
         font-family: Inter, Poppins, Arial, sans-serif;
         background: linear-gradient(180deg, var(--bg), #ffffff);
         margin: 0;
-        padding: 76px 16px 40px; /* match products.html fixed-top offset */
+        padding: 76px 16px 40px;
         color: var(--dark-brown);
       }
 
-      /* Ensure anchor targets are visible below fixed header */
       html {
         scroll-padding-top: 96px;
       }
@@ -64,7 +63,6 @@
         padding: 12px 0;
       }
 
-      /* Add spacing between navbar items for better readability */
       .navbar-nav {
         gap: 0.6rem;
         align-items: center;
@@ -444,6 +442,19 @@
       }
       if (!USER_ID) USER_ID = localStorage.getItem("user_id") || null;
 
+      // Helper: update cart badge in navbar and persist count
+      function updateGlobalCartBadge(count) {
+        try {
+          const navBadge = document.getElementById("cartCount");
+          if (navBadge) navBadge.innerText = count;
+          const local = document.getElementById("cartCountBadge");
+          if (local) local.innerText = count;
+          localStorage.setItem("cart_count", String(count));
+        } catch (e) {
+          console.warn("updateGlobalCartBadge error", e);
+        }
+      }
+
       if (!USER_ID) {
         alert("User belum login");
         window.location.href = "login.html";
@@ -484,7 +495,7 @@
               ? `<img src="${item.image_url}" alt="${item.product_name}">`
               : `<div style="width:64px;height:48px;background:#f5f0ea;border-radius:6px"></div>`;
             cartEl.innerHTML += `
-            <tr>
+            <tr data-item-id="${item.cart_item_id}">
               <td>
                 <div class="product-cell">
                   ${imgHtml}
@@ -497,32 +508,59 @@
               <td class="price">Rp ${item.price.toLocaleString("id-ID")}</td>
               <td>
                 <div class="qty-box">
-                  <button onclick="void(0)">-</button>
+                  <button class="qty-decrease" data-item-id="${
+                    item.cart_item_id
+                  }">-</button>
                   <input type="text" value="${item.quantity}" readonly>
-                  <button onclick="void(0)">+</button>
+                  <button class="qty-increase" data-item-id="${
+                    item.cart_item_id
+                  }">+</button>
                 </div>
               </td>
               <td class="price">Rp ${item.subtotal.toLocaleString("id-ID")}</td>
-              <td><button class="remove-btn" onclick="alert('Hapus dari keranjang dari halaman cart belum diimplementasikan; gunakan tombol di server atau hubungi admin')">Hapus</button></td>
+              <td><button class="remove-btn remove-item" data-item-id="${
+                item.cart_item_id
+              }">Hapus</button></td>
             </tr>
           `;
           });
 
-          // Summary values
           document.getElementById("summarySubtotal").innerText =
             "Rp " +
             (data.total ? Number(data.total).toLocaleString("id-ID") : "0");
-          // shipping: try to read from server if provided, else default 0
-          const shipping = data.shipping_cost || 0;
+
+          let totalKg = 0;
+          items.forEach((it) => {
+            let w = 1;
+            if (it.weight_kg) w = Number(it.weight_kg) || w;
+            else if (it.weight) w = Number(it.weight) || w;
+            else if (it.weight_g) w = (Number(it.weight_g) || 0) / 1000 || w;
+            totalKg += (Number(it.quantity) || 0) * w;
+          });
+
+          function calcShipping(kg) {
+            if (kg < 10) return 15000;
+            if (kg >= 50) return 40000;
+            if (kg > 30) return 25000;
+            return 20000;
+          }
+
+          const shipping = data.shipping_cost || calcShipping(totalKg);
           document.getElementById("summaryShipping").innerText =
             "Rp " + shipping.toLocaleString("id-ID");
+
+          // show total weight (optional, add to summary if element exists)
+          const weightEl = document.getElementById("summaryWeight");
+          if (weightEl) weightEl.innerText = `${totalKg} kg`;
+
           document.getElementById("summaryTotal").innerText =
             "Rp " +
             (Number(data.total || 0) + Number(shipping)).toLocaleString(
               "id-ID"
             );
-          document.getElementById("cartCountBadge").innerText =
-            data.item_count || items.length;
+          const countVal = data.item_count || items.length;
+          document.getElementById("cartCountBadge").innerText = countVal;
+          updateGlobalCartBadge(countVal);
         } catch (err) {
           console.error("Load cart error:", err);
           alert("Tidak bisa memuat cart");
@@ -530,6 +568,96 @@
       }
 
       loadCart();
+
+      // Update cart item quantity on server
+      async function updateCartItemOnServer(itemId, newQty) {
+        try {
+          const res = await fetch(`${API_BASE}/cart/update/${itemId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-ID": USER_ID,
+            },
+            body: JSON.stringify({ quantity: newQty }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Update failed");
+          return data;
+        } catch (e) {
+          console.error("updateCartItemOnServer error", e);
+          throw e;
+        }
+      }
+
+      // Remove cart item on server
+      async function removeCartItemOnServer(itemId) {
+        try {
+          const res = await fetch(`${API_BASE}/cart/remove/${itemId}`, {
+            method: "DELETE",
+            headers: { "X-User-ID": USER_ID },
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Remove failed");
+          return data;
+        } catch (e) {
+          console.error("removeCartItemOnServer error", e);
+          throw e;
+        }
+      }
+
+      // Delegate clicks for qty and remove
+      document.addEventListener("click", async (ev) => {
+        const dec = ev.target.closest(".qty-decrease");
+        const inc = ev.target.closest(".qty-increase");
+        const rem = ev.target.closest(".remove-item");
+
+        if (dec || inc) {
+          ev.preventDefault();
+          const btn = dec || inc;
+          const itemId = btn.getAttribute("data-item-id");
+          const tr = document.querySelector(`tr[data-item-id='${itemId}']`);
+          if (!tr) return;
+          const input = tr.querySelector(".qty-box input");
+          let qty = Number(input.value || 0);
+          qty = dec ? qty - 1 : qty + 1;
+          if (qty < 0) qty = 0;
+          try {
+            await updateCartItemOnServer(itemId, qty);
+            await loadCart();
+          } catch (e) {
+            alert(e.message || "Gagal update kuantitas");
+          }
+          return;
+        }
+
+        if (rem) {
+          ev.preventDefault();
+          const itemId = rem.getAttribute("data-item-id");
+          if (!confirm("Hapus item ini dari keranjang?")) return;
+          try {
+            await removeCartItemOnServer(itemId);
+            await loadCart();
+          } catch (e) {
+            alert(e.message || "Gagal menghapus item");
+          }
+          return;
+        }
+      });
+
+      // Wire login/logout buttons
+      const loginBtn = document.getElementById("loginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+          try {
+            await logoutUser();
+            // After logout, redirect to login page
+            window.location.href = "login.html";
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      }
 
       // Buttons
       document
