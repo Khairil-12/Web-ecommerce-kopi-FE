@@ -53,10 +53,24 @@
         border-radius: 50%;
         background: #8b4513;
         color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
+        display: block;
+        margin: 0 auto;
+        line-height: 100px;
+        text-align: center;
+        font-size: 40px;
+        font-weight: 600;
+      }
+
+      /* Brown themed buttons */
+      .btn-brown {
+        background: linear-gradient(135deg, #8b4513, #a0522d);
+        color: #fff;
+        border: none;
+      }
+      .btn-brown-outline {
+        background: transparent;
+        color: #8b4513;
+        border: 1px solid #8b4513;
       }
     </style>
   </head>
@@ -65,10 +79,8 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Dashboard Pelanggan</h2>
         <div>
-          <a href="index.html" class="btn btn-outline-secondary me-2"
-            >Beranda</a
-          >
-          <button id="logoutBtn" class="btn btn-danger">Logout</button>
+          <a href="index.html" class="btn btn-brown-outline me-2">Beranda</a>
+          <button id="logoutBtn" class="btn btn-brown">Logout</button>
         </div>
       </div>
 
@@ -77,9 +89,9 @@
           <div class="card p-4">
             <div class="text-center">
               <div class="profile-avatar" id="custAvatar">U</div>
-              <h5 class="mt-3" id="custName">Nama Pelanggan</h5>
-              <p class="text-muted mb-1" id="custEmail">email@example.com</p>
-              <p class="text-muted" id="custPhone">+62 -</p>
+              <h5 class="mt-3 text-center" id="custName">Nama Pelanggan</h5>
+              <p class="text-muted mb-1 text-center" id="custEmail">-</p>
+              <p class="text-muted text-center" id="custPhone">-</p>
             </div>
             <hr />
             <div>
@@ -154,73 +166,94 @@
           return;
         }
 
-        // Call backend customer dashboard to validate and fetch data
-        try {
-          const res = await fetch("/api/customer/dashboard", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "X-User-ID": user.id,
-            },
-          });
+        // Determine API base (use origin when served over http(s), fallback to localhost when opened via file://)
+        const API_BASE =
+          window.location &&
+          window.location.protocol &&
+          window.location.protocol.startsWith("http")
+            ? `${window.location.origin}/api`
+            : "http://localhost:5000/api";
 
-          if (res.status === 401) {
-            // Not authenticated
-            window.location.href = "login.html";
-            return;
-          }
+        // Create a reusable loader for dashboard data so we can refresh later
+        async function loadDashboard() {
+          try {
+            const res = await fetch(`${API_BASE}/customer/dashboard`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "X-User-ID": user.id,
+              },
+            });
 
-          if (res.status === 403) {
-            // Access denied — maybe admin
-            window.location.href = "dashboard_admin.html";
-            return;
-          }
+            if (res.status === 401) {
+              // Not authenticated
+              window.location.href = "login.html";
+              return;
+            }
 
-          const payload = await res.json();
-          if (!res.ok || payload.status === "error") {
-            console.warn("Customer dashboard API error", payload);
-          }
+            if (res.status === 403) {
+              // Access denied — maybe admin
+              window.location.href = "dashboard_admin.html";
+              return;
+            }
 
-          // If API returned expected data, use it; otherwise fallback to localStorage
-          const data = payload && payload.data ? payload.data : null;
+            const payload = await res.json();
+            if (!res.ok || payload.status === "error") {
+              console.warn("Customer dashboard API error", payload);
+            }
 
-          // Fill profile
-          document.getElementById("custName").textContent =
-            (data &&
-              data.customer &&
-              (data.customer.username || data.customer.name)) ||
-            user.name ||
-            user.username ||
-            "Nama Pelanggan";
-          document.getElementById("custEmail").textContent =
-            (data && data.customer && data.customer.email) || user.email || "-";
-          document.getElementById("custPhone").textContent =
-            user.phone || user.phone || "-";
-          document.getElementById("custAvatar").textContent = (
-            (data &&
-              data.customer &&
-              (data.customer.username || data.customer.name)) ||
-            user.name ||
-            user.username ||
-            "U"
-          )
-            .charAt(0)
-            .toUpperCase();
+            // If API returned expected data, use it; otherwise fallback to localStorage
+            const data = payload && payload.data ? payload.data : null;
 
-          // Orders
-          const ordersContainer = document.getElementById("ordersContainer");
-          const recent =
-            data && Array.isArray(data.recent_transactions)
-              ? data.recent_transactions
-              : [];
+            // Fill profile with clear fallbacks
+            const displayName =
+              (data &&
+                data.customer &&
+                (data.customer.username || data.customer.name)) ||
+              user.username ||
+              user.name ||
+              "Nama Pelanggan";
+            const displayEmail =
+              (data && data.customer && data.customer.email) ||
+              user.email ||
+              "-";
+            const displayPhone =
+              (data && data.customer && data.customer.phone) ||
+              user.phone ||
+              "-";
 
-          if (!recent || recent.length === 0) {
-            ordersContainer.innerHTML =
-              '<p class="text-muted">Belum ada pesanan.</p>';
-          } else {
-            ordersContainer.innerHTML = recent
-              .map(
-                (o) => `
+            document.getElementById("custName").textContent = displayName;
+            document.getElementById("custEmail").textContent = displayEmail;
+            document.getElementById("custPhone").textContent = displayPhone;
+
+            // Avatar initial should be the first letter of username (or name/email fallback)
+            let avatarSource =
+              (data &&
+                data.customer &&
+                (data.customer.username || data.customer.name)) ||
+              user.username ||
+              user.name ||
+              user.email ||
+              "U";
+            const initial =
+              String(avatarSource).trim().charAt(0).toUpperCase() || "U";
+            const avatarEl = document.getElementById("custAvatar");
+            if (avatarEl) avatarEl.textContent = initial;
+
+            // Orders
+            const ordersContainer = document.getElementById("ordersContainer");
+            const recent =
+              data && Array.isArray(data.recent_transactions)
+                ? data.recent_transactions
+                : [];
+
+            if (!recent || recent.length === 0) {
+              ordersContainer.innerHTML =
+                '<p class="text-muted">Belum ada pesanan.</p>';
+            } else {
+              ordersContainer.innerHTML = recent
+                .map(
+                  (o) => `
               <div class="border rounded p-3 mb-2">
                 <div class="d-flex justify-content-between">
                   <div>
@@ -240,44 +273,53 @@
                         ? "bg-success text-white"
                         : "bg-warning text-dark"
                     }">${o.status}</small>
+                    <div class="mt-2">
+                      <button class="btn btn-sm btn-outline-primary view-items-btn" data-txn-id="${
+                        o.id
+                      }">Lihat Item</button>
+                    </div>
                   </div>
                 </div>
+                <div id="txn-items-${
+                  o.id
+                }" class="mt-2" style="display:none"></div>
               </div>
             `
-              )
-              .join("");
-          }
+                )
+                .join("");
+            }
 
-          // Stats
-          const ordersCount =
-            data && typeof data.total_orders === "number"
-              ? data.total_orders
-              : recent.length;
-          const totalSpent =
-            data && typeof data.total_spent === "number"
-              ? data.total_spent
-              : recent.reduce(
-                  (s, r) => s + (r.total_amount || r.total || 0),
-                  0
-                );
+            // Stats
+            const ordersCount =
+              data && typeof data.total_orders === "number"
+                ? data.total_orders
+                : recent.length;
+            const totalSpent =
+              data && typeof data.total_spent === "number"
+                ? data.total_spent
+                : recent.reduce(
+                    (s, r) => s + (r.total_amount || r.total || 0),
+                    0
+                  );
 
-          document.getElementById("custOrdersCount").textContent = ordersCount;
-          document.getElementById("custTotalSpent").textContent =
-            "Rp " + totalSpent.toLocaleString("id-ID");
-        } catch (err) {
-          console.error("Error loading customer dashboard:", err);
-          // Fallback to localStorage-rendering if backend unreachable
-          const orders = JSON.parse(
-            localStorage.getItem("userOrders_" + (user.id || "guest")) || "[]"
-          );
-          const ordersContainer = document.getElementById("ordersContainer");
-          if (orders.length === 0) {
-            ordersContainer.innerHTML =
-              '<p class="text-muted">Belum ada pesanan.</p>';
-          } else {
-            ordersContainer.innerHTML = orders
-              .map(
-                (o) => `
+            document.getElementById("custOrdersCount").textContent =
+              ordersCount;
+            document.getElementById("custTotalSpent").textContent =
+              "Rp " + totalSpent.toLocaleString("id-ID");
+          } catch (err) {
+            console.error("Error loading customer dashboard:", err);
+            // Fallback to localStorage-rendering if backend unreachable
+            const orders = JSON.parse(
+              localStorage.getItem("userOrders_" + (user.id || "guest")) || "[]"
+            );
+            const ordersContainer = document.getElementById("ordersContainer");
+            if (orders.length === 0) {
+              ordersContainer.innerHTML =
+                '<p class="text-muted">Belum ada pesanan.</p>';
+            } else {
+              ordersContainer.innerHTML = orders
+                .map(
+                  (o) => `
               <div class="border rounded p-3 mb-2">
                 <div class="d-flex justify-content-between">
                   <div>
@@ -295,16 +337,175 @@
                 </div>
               </div>
             `
-              )
-              .join("");
+                )
+                .join("");
+            }
+
+            document.getElementById("custOrdersCount").textContent =
+              orders.length;
+            const total = orders.reduce((s, o) => s + (o.total || 0), 0);
+            document.getElementById("custTotalSpent").textContent =
+              "Rp " + total.toLocaleString("id-ID");
+          }
+        }
+
+        // Initial load
+        await loadDashboard();
+
+        // Auto-refresh when another tab sets last_checkout or when page becomes visible again
+        window.addEventListener("storage", (ev) => {
+          if (!ev) return;
+          if (ev.key === "last_checkout") {
+            try {
+              // small delay to let backend finalize
+              setTimeout(() => {
+                loadDashboard();
+              }, 300);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+          // also refresh on cart_count changes
+          if (ev.key === "cart_count") {
+            try {
+              loadDashboard();
+            } catch (e) {}
+          }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") {
+            // if there is a recent checkout marker, refresh
+            const last = localStorage.getItem("last_checkout");
+            if (last) {
+              try {
+                // remove marker after reading
+                localStorage.removeItem("last_checkout");
+              } catch (e) {}
+              setTimeout(() => loadDashboard(), 200);
+            }
+          }
+        });
+
+        // Delegate click for viewing transaction items with reliable toggle
+        document.addEventListener("click", async (ev) => {
+          const btn = ev.target.closest(".view-items-btn");
+          if (!btn) return;
+          const txnId = btn.getAttribute("data-txn-id");
+          if (!txnId) return;
+          const container = document.getElementById("txn-items-" + txnId);
+          if (!container) return;
+
+          // determine visibility using computed style
+          const isVisible =
+            window.getComputedStyle(container).display !== "none";
+          if (isVisible) {
+            container.style.display = "none";
+            try {
+              btn.textContent = "Lihat Item";
+            } catch (e) {}
+            return;
           }
 
-          document.getElementById("custOrdersCount").textContent =
-            orders.length;
-          const total = orders.reduce((s, o) => s + (o.total || 0), 0);
-          document.getElementById("custTotalSpent").textContent =
-            "Rp " + total.toLocaleString("id-ID");
-        }
+          // if already loaded, just show
+          if (container.innerHTML && container.innerHTML.trim() !== "") {
+            container.style.display = "block";
+            try {
+              btn.textContent = "Sembunyikan Item";
+            } catch (e) {}
+            return;
+          }
+
+          // Fetch and display items
+          try {
+            btn.disabled = true;
+            const original = btn.textContent;
+            btn.textContent = "Memuat...";
+
+            const res = await fetch(`${API_BASE}/transactions/${txnId}`, {
+              headers: { "X-User-ID": user.id },
+            });
+
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              container.innerHTML = `<div class="text-danger">Gagal memuat item: ${
+                err.message || res.statusText
+              }</div>`;
+              container.style.display = "block";
+              try {
+                btn.textContent = "Lihat Item";
+              } catch (e) {}
+              btn.disabled = false;
+              return;
+            }
+
+            const payload = await res.json();
+            if (!payload || payload.status === "error") {
+              container.innerHTML = `<div class="text-danger">${
+                (payload && payload.message) || "Error"
+              }</div>`;
+              container.style.display = "block";
+              try {
+                btn.textContent = "Lihat Item";
+              } catch (e) {}
+              btn.disabled = false;
+              return;
+            }
+
+            const txn = payload.data;
+            if (!txn || !Array.isArray(txn.items) || txn.items.length === 0) {
+              container.innerHTML =
+                '<div class="text-muted">Tidak ada item di transaksi ini.</div>';
+              container.style.display = "block";
+              try {
+                btn.textContent = "Sembunyikan Item";
+              } catch (e) {}
+              btn.disabled = false;
+              return;
+            }
+
+            container.innerHTML = txn.items
+              .map(
+                (it) => `
+                <div class="d-flex align-items-center gap-3 border rounded p-2 mb-2">
+                  <div style="width:64px;height:48px">${
+                    it.image_url
+                      ? `<img src="${it.image_url}" style="width:64px;height:48px;object-fit:cover;border-radius:6px">`
+                      : ""
+                  }</div>
+                  <div style="flex:1">
+                    <div class="fw-bold">${
+                      it.product_name || "ID " + it.product_id
+                    }</div>
+                    <div class="text-muted">Jumlah: ${
+                      it.quantity
+                    } &middot; Rp ${Number(it.price).toLocaleString(
+                  "id-ID"
+                )}</div>
+                  </div>
+                  <div class="text-end">Rp ${Number(it.subtotal).toLocaleString(
+                    "id-ID"
+                  )}</div>
+                </div>
+            `
+              )
+              .join("");
+
+            container.style.display = "block";
+            try {
+              btn.textContent = "Sembunyikan Item";
+            } catch (e) {}
+            btn.disabled = false;
+          } catch (e) {
+            console.error("Error fetching txn items", e);
+            container.innerHTML = `<div class="text-danger">Kesalahan memuat item.</div>`;
+            container.style.display = "block";
+            try {
+              btn.textContent = "Lihat Item";
+            } catch (err) {}
+            btn.disabled = false;
+          }
+        });
 
         // Logout
         document.getElementById("logoutBtn").addEventListener("click", () => {

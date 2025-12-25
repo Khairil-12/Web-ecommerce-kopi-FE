@@ -665,11 +665,54 @@
         .addEventListener("click", () => {
           window.location.href = "products.html";
         });
-      document.getElementById("checkoutBtn").addEventListener("click", () => {
-        alert(
-          "Fitur checkout akan mengarahkan ke proses pembayaran. Implementasi backend diperlukan."
-        );
-      });
+      document
+        .getElementById("checkoutBtn")
+        .addEventListener("click", async () => {
+          if (!confirm("Lanjut ke pembayaran dan buat pesanan?")) return;
+          try {
+            const payload = { payment_method: "Bank Transfer" };
+            const res = await fetch(`${API_BASE}/cart/checkout`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-User-ID": USER_ID,
+              },
+              body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+            if (!res.ok || data.status === "error") {
+              alert("Checkout gagal: " + (data.message || "Terjadi kesalahan"));
+              return;
+            }
+
+            // Success: clear cart UI and update badge
+            const transCode = (data.data && data.data.transaction_code) || null;
+            const transId = (data.data && data.data.transaction_id) || null;
+            alert(
+              "Pembayaran berhasil. Kode pesanan: " + (transCode || transId)
+            );
+            updateGlobalCartBadge(0);
+            // Mark last checkout in localStorage so dashboard can auto-refresh
+            try {
+              localStorage.setItem(
+                "last_checkout",
+                JSON.stringify({
+                  time: Date.now(),
+                  transaction_code: transCode,
+                  transaction_id: transId,
+                })
+              );
+            } catch (e) {
+              console.warn("Could not set last_checkout", e);
+            }
+            // Redirect to customer dashboard to show recent orders
+            window.location.href = "dashboard_cust.html";
+          } catch (err) {
+            console.error("Checkout error", err);
+            alert("Checkout error: " + (err.message || err));
+          }
+        });
 
       // Ensure header and anchors are visible below fixed navbar
       function adjustForNavbar() {

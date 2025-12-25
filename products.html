@@ -749,8 +749,6 @@ async function updateCartBadge() {
 }
 
 document.addEventListener("click", async (e) => {
-  // Only handle legacy `.add-to-cart` buttons here. `.add-to-cart-btn` is
-  // handled by `products-app.js` (CartSystem) to avoid duplicate requests.
   const btn = e.target.closest(".add-to-cart");
   if (!btn) return;
 
@@ -798,7 +796,6 @@ document.addEventListener("click", async (e) => {
 
     await updateCartBadge();
 
-    // Redirect user to cart page
     window.location.href = 'cart.html';
 
   } catch (err) {
@@ -807,12 +804,10 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-// Initial badge update
 updateCartBadge();
 </script>
 
-
-    <!-- Product Categories -->
+    <!-- Category Filter Section -->
     <div
       class="container-fluid py-4"
       style="
@@ -1096,7 +1091,7 @@ updateCartBadge();
               Close
             </button>
             <button type="button" class="btn btn-primary" id="modalAddToCart">
-              <i class="fas fa-cart-plus me-1"></i>Add 1 kg to Cart
+              <i class="fas fa-cart-plus me-1"></i>Add to Cart
             </button>
           </div>
         </div>
