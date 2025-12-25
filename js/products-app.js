@@ -30,11 +30,19 @@ class ProductManager {
     if (typeof window.products === "undefined" || !window.products) return [];
     return Object.keys(window.products).map((id) => {
       const raw = window.products[id] || {};
-      const categories = Array.isArray(raw.category)
-        ? raw.category
-        : raw.category
-        ? [raw.category]
-        : [];
+      // Normalize category to an array. Accept formats:
+      // - Array (['arabica','green-beans'])
+      // - Comma-separated string ('arabica,green-beans')
+      // - Single string ('arabica')
+      let categories = [];
+      if (Array.isArray(raw.category)) {
+        categories = raw.category.map((c) => String(c).trim()).filter(Boolean);
+      } else if (raw.category) {
+        categories = String(raw.category)
+          .split(/,|;/)
+          .map((c) => c.trim())
+          .filter(Boolean);
+      }
       const normalized = Object.assign({}, raw, { category: categories });
       return {
         id: parseInt(id, 10),
@@ -50,7 +58,10 @@ class ProductManager {
     const categories = Array.isArray(product.category)
       ? product.category
       : product.category
-      ? [product.category]
+      ? String(product.category)
+          .split(/,|;/)
+          .map((c) => c.trim())
+          .filter(Boolean)
       : [];
     const badges = Array.isArray(product.badges)
       ? product.badges.map((b) => b && b.text).filter(Boolean)
@@ -408,21 +419,12 @@ class ProductManager {
             </div>
             <div class="row g-2">
               <div class="col-6 weight-options">
-                <select class="form-select form-select-sm" data-product="${
-                  product.id
-                }">
-                  ${(product.weightOptions || [])
-                    .map(
-                      (option) =>
-                        `<option value="${option.value}">${option.label}</option>`
-                    )
-                    .join("")}
-                </select>
+                <div class="form-control form-control-sm text-center" aria-hidden="true">1 kg</div>
               </div>
               <div class="col-6">
                 <button class="btn btn-primary w-100 btn-sm add-to-cart-btn" data-id="${
                   product.id
-                }"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+                }"><i class="fas fa-cart-plus me-1"></i>Add 1 kg to Cart</button>
               </div>
             </div>
             <button class="btn btn-outline-primary w-100 mt-2 btn-sm btn-detail" data-id="${
@@ -489,32 +491,75 @@ class ProductManager {
     }
     const specsContainer = document.getElementById("modalSpecs");
     if (specsContainer) {
-      specsContainer.innerHTML = "";
-      (product.specs || []).forEach((spec) => {
-        const li = document.createElement("li");
-        li.className = "mb-2";
-        li.textContent = spec;
-        specsContainer.appendChild(li);
-      });
+      const specs = Array.isArray(product.specs) ? product.specs : [];
+      if (specs.length === 0) {
+        specsContainer.innerHTML =
+          '<li class="mb-2 text-muted">Tidak ada spesifikasi.</li>';
+      } else {
+        specsContainer.innerHTML = specs
+          .map((spec) => `<li class="mb-2">${spec}</li>`) // simple list
+          .join("");
+      }
+    }
+
+    // Populate structured spec metadata if present (spec_meta)
+    const specMetaContainer = document.getElementById("modalSpecMeta");
+    if (specMetaContainer) {
+      const meta = product.spec_meta || {};
+      const keys = Object.keys(meta || {});
+      if (!keys.length) {
+        specMetaContainer.innerHTML = "";
+        specMetaContainer.style.display = "none";
+      } else {
+        specMetaContainer.style.display = "block";
+        let metaHtml = "";
+        // preferred order for common keys
+        const preferred = [
+          "asal",
+          "origin",
+          "altitude",
+          "process",
+          "roast",
+          "roast_level",
+          "grade",
+        ];
+        const ordered = [];
+        preferred.forEach((k) => {
+          if (k in meta) ordered.push(k);
+        });
+        keys.forEach((k) => {
+          if (!ordered.includes(k)) ordered.push(k);
+        });
+        ordered.forEach((k) => {
+          const label = k
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+          metaHtml += `<div class="mb-1"><strong>${label}:</strong> ${meta[k]}</div>`;
+        });
+        specMetaContainer.innerHTML = metaHtml;
+      }
     }
     const weightSelect = document.getElementById("modalWeight");
     if (weightSelect) {
-      weightSelect.innerHTML = (product.weightOptions || [])
-        .map(
-          (option) =>
-            `<option value="${option.value}">${option.label} - Rp ${Math.round(
-              (product.price || 0) * (option.priceMultiplier || 1)
-            ).toLocaleString("id-ID")}</option>`
-        )
-        .join("");
+      // We sell per kilogram only — show static 1 kg and set data-weight to 1000 grams
+      weightSelect.innerText = "1 kg";
+      weightSelect.setAttribute("data-weight", "1000");
     }
     const modalQuantity = document.getElementById("modalQuantity");
     if (modalQuantity) modalQuantity.value = 1;
     const modalAddToCartBtn = document.getElementById("modalAddToCart");
     if (modalAddToCartBtn) {
       modalAddToCartBtn.onclick = () => {
-        const weight =
-          parseInt(document.getElementById("modalWeight").value, 10) || 1000;
+        // modalWeight may be a select (old) or a static div with data-weight
+        let weight = 1000;
+        const mw = document.getElementById("modalWeight");
+        if (mw) {
+          if (mw.tagName && mw.tagName.toLowerCase() === "select") {
+            weight = parseInt(mw.value, 10) || 1000;
+          } else {
+            weight = parseInt(mw.getAttribute("data-weight"), 10) || 1000;
+          }
+        }
         const quantity =
           parseInt(document.getElementById("modalQuantity").value, 10) || 1;
         for (let i = 0; i < quantity; i++)
@@ -595,7 +640,8 @@ class ProductManager {
 
 class CartSystem {
   constructor() {
-    this.cart = JSON.parse(localStorage.getItem("kopiprima_cart")) || [];
+    // Do not persist cart in localStorage. Server (requires login) is authoritative.
+    this.cart = [];
     this.shippingCost = 15000;
     this.init();
   }
@@ -632,49 +678,117 @@ class CartSystem {
     );
     const priceMultiplier = weightOption ? weightOption.priceMultiplier : 1;
     const itemPrice = Math.round((product.price || 0) * priceMultiplier);
-    const existingIndex = this.cart.findIndex(
-      (item) => item.id === productId && item.weight === weight
-    );
-    if (existingIndex !== -1) this.cart[existingIndex].quantity += 1;
-    else
-      this.cart.push({
-        id: productId,
-        name: product.name,
-        price: itemPrice,
-        weight: weight,
-        quantity: 1,
-        image: product.image,
-        type: product.type,
+    // Require login and use server API to add to cart
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    let userId = null;
+    try {
+      const cu = localStorage.getItem("currentUser");
+      if (cu) {
+        const parsed = JSON.parse(cu);
+        userId = String(parsed.id || parsed.user_id || null);
+      }
+    } catch (e) {}
+    if (!userId) userId = localStorage.getItem("user_id") || null;
+
+    if (!isLoggedIn || !userId) {
+      if (
+        confirm(
+          "Anda perlu login untuk menambahkan produk ke keranjang. Login sekarang?"
+        )
+      ) {
+        window.location.href = "login.html?redirect=products.html";
+      }
+      return;
+    }
+
+    // Call server API to add
+    fetch("http://localhost:5000/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-ID": userId,
+      },
+      body: JSON.stringify({ product_id: productId, quantity: 1 }),
+    })
+      .then((r) =>
+        r.json().then((j) => ({ ok: r.ok, status: r.status, body: j }))
+      )
+      .then((resp) => {
+        if (!resp.ok) {
+          alert(resp.body.message || `Add to cart failed (${resp.status})`);
+          return;
+        }
+        // Update badge from server
+        this.updateCartCount();
+        this.showAddToCartNotification(product.name);
+      })
+      .catch((err) => {
+        console.error("Add to cart error", err);
+        alert("Gagal menambahkan ke keranjang");
       });
-    this.saveCart();
-    this.updateCartCount();
-    this.updateCartDisplay();
-    this.showAddToCartNotification(product.name);
   }
 
   removeFromCart(index) {
-    this.cart.splice(index, 1);
-    this.saveCart();
-    this.updateCartCount();
-    this.updateCartDisplay();
+    // Cart is server-side. Open cart page to manage items or implement API calls here.
+    alert(
+      "Untuk menghapus item, buka halaman Keranjang (cart.html) dan hapus dari sana."
+    );
   }
 
   updateQuantity(index, newQuantity) {
-    if (newQuantity < 1) {
-      this.removeFromCart(index);
-      return;
-    }
-    this.cart[index].quantity = newQuantity;
-    this.saveCart();
-    this.updateCartCount();
-    this.updateCartDisplay();
+    // Quantity updates are server-side. Direct users to cart page.
+    alert(
+      "Untuk mengubah jumlah, buka halaman Keranjang (cart.html) dan ubah jumlah item di sana."
+    );
   }
 
   saveCart() {
-    localStorage.setItem("kopiprima_cart", JSON.stringify(this.cart));
+    // No-op: cart persistence is handled by server
   }
 
   updateCartCount() {
+    // If user is logged in, prefer server-side cart count to stay consistent
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      try {
+        // derive user id from currentUser
+        let userId = null;
+        const cu = localStorage.getItem("currentUser");
+        if (cu) {
+          const parsed = JSON.parse(cu);
+          userId = String(
+            parsed.id || parsed.user_id || parsed.id === 0
+              ? parsed.id || parsed.user_id
+              : null
+          );
+        }
+        if (!userId) userId = localStorage.getItem("user_id") || null;
+        if (userId) {
+          fetch("http://localhost:5000/api/cart", {
+            headers: { "X-User-ID": userId },
+          })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((json) => {
+              const cnt =
+                json && json.data && json.data.item_count
+                  ? json.data.item_count
+                  : 0;
+              const el = document.getElementById("cartCount");
+              if (el) el.textContent = cnt;
+            })
+            .catch((e) => {
+              // fallback to local
+              const totalItems = this.cart.reduce((s, i) => s + i.quantity, 0);
+              const el = document.getElementById("cartCount");
+              if (el) el.textContent = totalItems;
+            });
+          return;
+        }
+      } catch (e) {
+        // fallthrough to local
+      }
+    }
+
     const totalItems = this.cart.reduce((s, i) => s + i.quantity, 0);
     const el = document.getElementById("cartCount");
     if (el) el.textContent = totalItems;
@@ -831,4 +945,43 @@ function createCoffeeBean() {
 if (typeof window !== "undefined") {
   window.ProductManager = ProductManager;
   window.CartSystem = CartSystem;
+}
+
+async function addToCart(productId, quantity = 1) {
+  const API_URL = "http://localhost:5000";
+  const userId = localStorage.getItem("user_id");
+
+  if (!userId) {
+    alert("Silakan login terlebih dahulu");
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/cart/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-ID": userId,
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        quantity: quantity,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.message || "Gagal menambahkan ke keranjang");
+      return;
+    }
+
+    // sukses
+    showCartSidebar();
+    await loadCartSidebar();
+  } catch (err) {
+    console.error(err);
+    alert("Terjadi kesalahan saat menambahkan ke keranjang");
+  }
 }

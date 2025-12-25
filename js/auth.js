@@ -1,7 +1,8 @@
 // auth.js - Authentication System for Kopi Prima
 class AuthSystem {
   constructor() {
-    this.baseUrl = "/api";
+    // Use absolute API base so pages opened via file:// can reach backend
+    this.baseUrl = "http://localhost:5000/api";
     this.init();
   }
 

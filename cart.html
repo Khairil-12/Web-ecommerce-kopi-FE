@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keranjang Belanja</title>
+
+    <!-- Bootstrap & Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --primary-color: #8b4513;
+        --accent-color: #a0522d;
+        --light-cream: #fff8dc;
+        --cream: #f5f5dc;
+        --dark-brown: #654321;
+        --muted: #777;
+        --bg: #fbf8f2;
+        --card-bg: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, Poppins, Arial, sans-serif;
+        background: linear-gradient(180deg, var(--bg), #ffffff);
+        margin: 0;
+        padding: 96px 16px 40px; /* account for fixed-top navbar (increased) */
+        color: var(--dark-brown);
+      }
+
+      /* Ensure anchor targets are visible below fixed header */
+      html {
+        scroll-padding-top: 96px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 20px auto 40px;
+      }
+
+      .navbar {
+        background: linear-gradient(
+          135deg,
+          var(--light-cream),
+          var(--cream)
+        ) !important;
+        padding: 12px 0;
+      }
+
+      /* Add spacing between navbar items for better readability */
+      .navbar-nav {
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      /* Override Bootstrap primary colors to use brown theme */
+      .btn-primary,
+      .navbar .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        ) !important;
+        border: none !important;
+        color: #fff !important;
+      }
+
+      .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        background: transparent !important;
+      }
+
+      .btn-outline-primary:hover,
+      .btn-outline-primary:focus {
+        background-color: var(--primary-color) !important;
+        color: #fff !important;
+        border-color: var(--primary-color) !important;
+      }
+
+      .navbar-brand {
+        color: var(--primary-color) !important;
+        font-weight: bold;
+      }
+
+      .nav-link {
+        color: var(--dark-brown) !important;
+        padding: 8px 16px;
+        border-radius: 999px;
+        transition: background-color 200ms ease, color 200ms ease,
+          transform 150ms ease, box-shadow 150ms ease;
+        display: inline-block;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: #ffffff !important;
+        background: var(--primary-color) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(139, 69, 19, 0.18);
+      }
+
+      h1 {
+        font-family: Poppins, Inter, Arial;
+        margin: 8px 0 18px;
+        font-weight: 700;
+        color: var(--primary-color);
+        text-align: left;
+      }
+
+      .cart-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+
+      .cart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0e9e0;
+        background: linear-gradient(90deg, var(--light-cream), transparent);
+      }
+
+      .cart-header .left {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .cart-header .count-badge {
+        background: var(--primary-color);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+
+      .cart-body {
+        padding: 18px;
+      }
+
+      table.cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      table.cart-table thead th {
+        padding: 12px 10px;
+        text-align: left;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      table.cart-table tbody tr {
+        vertical-align: middle;
+      }
+      table.cart-table td {
+        padding: 14px 10px;
+        border-top: 1px solid #faf1e8;
+      }
+
+      .product-cell {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .product-cell img {
+        width: 56px;
+        height: 42px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      }
+      .product-name {
+        font-weight: 600;
+        color: var(--dark-brown);
+      }
+      .product-meta {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .qty-box {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .qty-box button {
+        background: #fff;
+        border: 0;
+        padding: 6px 8px;
+        color: var(--primary-color);
+        cursor: pointer;
+      }
+      .qty-box input {
+        width: 44px;
+        text-align: center;
+        border: 0;
+        padding: 6px;
+      }
+
+      .price {
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .remove-btn {
+        background: transparent;
+        border: 0;
+        color: #d9534f;
+        cursor: pointer;
+      }
+
+      .summary {
+        padding: 18px;
+        border-top: 1px solid #faf1e8;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .summary .totals {
+        min-width: 260px;
+        text-align: right;
+        background: #fff;
+        padding: 14px 18px;
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+      }
+      .summary .totals .line {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        color: var(--muted);
+      }
+      .summary .totals .total-amount {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-top: 6px;
+      }
+
+      .summary .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        color: #fff;
+        border: 0;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid #ddd;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      /* Empty state */
+      .empty-state {
+        padding: 48px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      @media (max-width: 800px) {
+        .container {
+          padding: 12px;
+        }
+        .product-cell img {
+          width: 72px;
+          height: 56px;
+        }
+        .summary {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .summary .totals {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html#home">
+          <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#profile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard_admin.html" id="navDashboard"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#products">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#quality">Quality</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#contact">Contact</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center">
+            <span
+              id="userInfo"
+              class="me-3 text-muted small d-none d-md-block"
+            ></span>
+            <a
+              href="login.html"
+              id="loginBtn"
+              class="btn btn-outline-primary me-2"
+              >Login</a
+            >
+            <button id="logoutBtn" class="btn btn-outline-primary me-2 d-none">
+              Logout
+            </button>
+            <a href="products.html" class="btn btn-primary">
+              <i class="fas fa-shopping-bag me-1"></i>Shop
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <h1>Keranjang Belanja</h1>
+
+    <div class="cart-card">
+      <div class="cart-header">
+        <div class="left">
+          <h3 style="margin: 0">Isi Keranjang</h3>
+          <div class="count-badge" id="cartCountBadge">0</div>
+        </div>
+        <div class="right">
+          <small class="text-muted">Belanjaan Anda disimpan di server</small>
+        </div>
+      </div>
+
+      <div class="cart-body">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>Harga</th>
+              <th>Jumlah</th>
+              <th>Subtotal</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="cartItems"></tbody>
+        </table>
+      </div>
+
+      <div class="summary">
+        <div class="totals">
+          <div class="line">
+            <span>Subtotal</span><span id="summarySubtotal">Rp 0</span>
+          </div>
+          <div class="line">
+            <span>Ongkos Kirim</span><span id="summaryShipping">Rp 0</span>
+          </div>
+          <div class="line total-amount">
+            <strong>Total</strong><strong id="summaryTotal">Rp 0</strong>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-outline-primary" id="continueShopping">
+            Lanjut Belanja
+          </button>
+          <button class="btn btn-primary" id="checkoutBtn">Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+      // Derive USER_ID from `currentUser` saved by auth.js, fallback to legacy `user_id`
+      let USER_ID = null;
+      try {
+        const cu = localStorage.getItem("currentUser");
+        if (cu) {
+          const parsed = JSON.parse(cu);
+          if (parsed && (parsed.id || parsed.user_id || parsed.id === 0)) {
+            USER_ID = String(parsed.id || parsed.user_id);
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to parse currentUser", e);
+      }
+      if (!USER_ID) USER_ID = localStorage.getItem("user_id") || null;
+
+      if (!USER_ID) {
+        alert("User belum login");
+        window.location.href = "login.html";
+      }
+
+      async function loadCart() {
+        try {
+          const res = await fetch(`${API_BASE}/cart`, {
+            headers: {
+              "X-User-ID": USER_ID,
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error("Gagal mengambil cart");
+          }
+
+          const result = await res.json();
+          const data = result.data;
+          const items = data.items || [];
+
+          const cartEl = document.getElementById("cartItems");
+          cartEl.innerHTML = "";
+
+          if (items.length === 0) {
+            cartEl.innerHTML = `
+              <tr><td colspan="5"><div class="empty-state">Keranjang kosong</div></td></tr>
+            `;
+            document.getElementById("summarySubtotal").innerText = "Rp 0";
+            document.getElementById("summaryShipping").innerText = "Rp 0";
+            document.getElementById("summaryTotal").innerText = "Rp 0";
+            document.getElementById("cartCountBadge").innerText = 0;
+            return;
+          }
+
+          items.forEach((item) => {
+            const imgHtml = item.image_url
+              ? `<img src="${item.image_url}" alt="${item.product_name}">`
+              : `<div style="width:64px;height:48px;background:#f5f0ea;border-radius:6px"></div>`;
+            cartEl.innerHTML += `
+            <tr>
+              <td>
+                <div class="product-cell">
+                  ${imgHtml}
+                  <div>
+                    <div class="product-name">${item.product_name}</div>
+                    <div class="product-meta">ID: ${item.product_id || ""}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="price">Rp ${item.price.toLocaleString("id-ID")}</td>
+              <td>
+                <div class="qty-box">
+                  <button onclick="void(0)">-</button>
+                  <input type="text" value="${item.quantity}" readonly>
+                  <button onclick="void(0)">+</button>
+                </div>
+              </td>
+              <td class="price">Rp ${item.subtotal.toLocaleString("id-ID")}</td>
+              <td><button class="remove-btn" onclick="alert('Hapus dari keranjang dari halaman cart belum diimplementasikan; gunakan tombol di server atau hubungi admin')">Hapus</button></td>
+            </tr>
+          `;
+          });
+
+          // Summary values
+          document.getElementById("summarySubtotal").innerText =
+            "Rp " +
+            (data.total ? Number(data.total).toLocaleString("id-ID") : "0");
+          // shipping: try to read from server if provided, else default 0
+          const shipping = data.shipping_cost || 0;
+          document.getElementById("summaryShipping").innerText =
+            "Rp " + shipping.toLocaleString("id-ID");
+          document.getElementById("summaryTotal").innerText =
+            "Rp " +
+            (Number(data.total || 0) + Number(shipping)).toLocaleString(
+              "id-ID"
+            );
+          document.getElementById("cartCountBadge").innerText =
+            data.item_count || items.length;
+        } catch (err) {
+          console.error("Load cart error:", err);
+          alert("Tidak bisa memuat cart");
+        }
+      }
+
+      loadCart();
+
+      // Buttons
+      document
+        .getElementById("continueShopping")
+        .addEventListener("click", () => {
+          window.location.href = "products.html";
+        });
+      document.getElementById("checkoutBtn").addEventListener("click", () => {
+        alert(
+          "Fitur checkout akan mengarahkan ke proses pembayaran. Implementasi backend diperlukan."
+        );
+      });
+
+      // Ensure header and anchors are visible below fixed navbar
+      function adjustForNavbar() {
+        const nav = document.querySelector("nav.navbar");
+        const navHeight = nav ? nav.offsetHeight : 96;
+        const pad = navHeight + 20;
+        document.body.style.paddingTop = pad + "px";
+        document.documentElement.style.scrollPaddingTop = navHeight + 10 + "px";
+      }
+      // Run on load and resize
+      window.addEventListener("load", adjustForNavbar);
+      window.addEventListener("resize", adjustForNavbar);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

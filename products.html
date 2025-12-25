@@ -92,6 +92,12 @@
         ) !important;
       }
 
+      /* Add spacing between navbar items for better readability */
+      .navbar-nav {
+        gap: 0.6rem; /* horizontal gap between items */
+        align-items: center;
+      }
+
       .navbar-brand {
         color: var(--primary-color) !important;
         font-weight: bold;
@@ -99,11 +105,18 @@
 
       .nav-link {
         color: var(--dark-brown) !important;
+        padding: 8px 16px;
+        border-radius: 999px;
+        transition: background-color 200ms ease, color 200ms ease, transform 150ms ease, box-shadow 150ms ease;
+        display: inline-block;
       }
 
       .nav-link:hover,
       .nav-link.active {
-        color: var(--primary-color) !important;
+        color: #ffffff !important;
+        background: var(--primary-color) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 9px 18px rgba(139, 69, 19, 0.18);
       }
 
       /* Search Box Improved */
@@ -265,44 +278,6 @@
         border-color: var(--primary-color);
       }
 
-      /* Cart Sidebar */
-      .cart-sidebar {
-        position: fixed;
-        top: 76px;
-        right: -400px;
-        width: 350px;
-        height: calc(100vh - 76px);
-        background: white;
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        transition: right 0.3s ease;
-        z-index: 1000;
-        overflow-y: auto;
-      }
-
-      .cart-sidebar.active {
-        right: 0;
-      }
-
-      .cart-item {
-        border-bottom: 1px solid #eee;
-        padding: 15px 0;
-      }
-
-      .cart-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-      }
-
-      .cart-overlay.active {
-        display: block;
-      }
-
       /* Loading Animation */
       .loading-spinner {
         display: none;
@@ -453,17 +428,16 @@
         margin-bottom: 10px;
       }
 
-      /* Weight options styling */
-      .weight-options .form-select {
+      /* Weight options styling (static 1 kg display) */
+      .weight-options .static-weight,
+      .weight-options .form-control[aria-hidden] {
         border: 2px solid var(--light-brown);
         border-radius: 10px;
         font-size: 0.9rem;
-        cursor: pointer;
-      }
-
-      .weight-options .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.25rem rgba(139, 69, 19, 0.25);
+        cursor: default;
+        background: white;
+        text-align: center;
+        padding: 6px 10px;
       }
 
       /* Empty State */
@@ -483,11 +457,6 @@
         .search-box {
           width: 100%;
           margin-bottom: 10px;
-        }
-
-        .cart-sidebar {
-          width: 100%;
-          right: -100%;
         }
 
         .product-image {
@@ -633,62 +602,14 @@
     </style>
   </head>
   <body>
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-      <div class="spinner"></div>
-    </div>
-
-    <!-- Cart Overlay -->
-    <div class="cart-overlay" id="cartOverlay"></div>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-      <div class="p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="text-primary mb-0">
-            <i class="fas fa-shopping-cart me-2"></i>Keranjang Belanja
-          </h4>
-          <button class="btn-close" id="closeCart"></button>
-        </div>
-
-        <div id="cartItems">
-          <!-- Cart items will be loaded here -->
-          <div class="text-center py-5">
-            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-            <p class="text-muted">Keranjang belanja kosong</p>
-          </div>
-        </div>
-
-        <div class="cart-summary mt-4 pt-4 border-top">
-          <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal:</span>
-            <span id="cartSubtotal">Rp 0</span>
-          </div>
-          <div class="d-flex justify-content-between mb-3">
-            <span>Ongkir:</span>
-            <span id="cartShipping">Rp 15.000</span>
-          </div>
-          <div class="d-flex justify-content-between mb-3 fw-bold">
-            <span>Total:</span>
-            <span id="cartTotal">Rp 15.000</span>
-          </div>
-          <button class="btn btn-primary w-100" id="checkoutBtn">
-            <i class="fas fa-credit-card me-2"></i>Checkout
-          </button>
-          <button class="btn btn-outline-primary w-100 mt-2" id="clearCartBtn">
-            <i class="fas fa-trash me-2"></i>Kosongkan Keranjang
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
       <div class="container">
+        <!-- Brand -->
         <a class="navbar-brand fw-bold" href="index.html">
           <i class="fas fa-coffee me-2"></i>KOPI PRIMA
         </a>
 
+        <!-- Toggle Mobile -->
         <button
           class="navbar-toggler"
           type="button"
@@ -698,145 +619,196 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Navbar Content -->
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
+          <!-- LEFT MENU -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Home</a>
+              <a class="nav-link" href="index.html">
+                Home
+              </a>
             </li>
+
             <li class="nav-item">
-              <a class="nav-link active" href="products.html">Products</a>
+              <a class="nav-link active" href="products.html">
+                </i>Products
+              </a>
             </li>
+
             <li class="nav-item">
-              <a class="nav-link" href="index.html#profile">Profile</a>
+              <a class="nav-link" href="index.html#profile">
+                </i>Profile
+              </a>
             </li>
+
             <li class="nav-item">
-              <a
-                class="nav-link d-none"
-                href="dashboard_admin.html"
-                id="navDashboard"
-                >Dashboard</a
-              >
+              <a class="nav-link" href="index.html#contact">
+                </i>Contact
+              </a>
             </li>
+
+            <!-- Dashboard (admin / user) -->
             <li class="nav-item">
-              <a class="nav-link" href="index.html#contact">Contact</a>
+              <a class="nav-link d-none" href="#" id="navDashboard">
+                </i>Dashboard
+              </a>
             </li>
           </ul>
 
-          <!-- Mobile: Dashboard button (shown only on small screens) -->
-          <div class="d-md-none w-100 mb-2">
-            <a
-              id="navDashboardMobile"
-              class="btn btn-outline-primary w-100 d-none"
-              href="dashboard_admin.html"
-              >Dashboard</a
-            >
-          </div>
-
-          <div class="d-flex align-items-center">
-            <!-- Improved Search Box -->
-            <div class="search-box me-3 position-relative">
+          <!-- RIGHT ACTIONS -->
+          <div class="d-flex align-items-center gap-2">
+            <!-- Search -->
+            <div class="search-box position-relative d-none d-lg-block">
               <input
                 type="text"
                 class="form-control search-input"
                 id="searchInput"
-                placeholder="Cari kopi... (nama, jenis, daerah)"
+                placeholder="Cari kopi..."
                 autocomplete="off"
               />
               <button class="search-btn" id="searchBtn">
                 <i class="fas fa-search"></i>
               </button>
-              <div class="search-suggestions" id="searchSuggestions">
-                <!-- Search suggestions will appear here -->
-              </div>
+              <div class="search-suggestions" id="searchSuggestions"></div>
             </div>
 
+            <!-- User Info -->
             <span
               id="userInfo"
-              class="me-3 text-muted small d-none d-md-block"
+              class="text-muted small d-none d-lg-block"
             ></span>
+
+            <!-- Login / Logout -->
             <a
               href="login.html"
               id="loginBtn"
-              class="btn btn-outline-primary me-2"
-              >Login</a
+              class="btn btn-outline-primary btn-sm"
             >
-            <button id="logoutBtn" class="btn btn-outline-primary me-2 d-none">
+              Login
+            </a>
+
+            <button
+              id="logoutBtn"
+              class="btn btn-outline-primary btn-sm d-none"
+            >
               Logout
             </button>
 
-            <button class="btn btn-primary position-relative" id="cartBtn">
+            <!-- Cart -->
+            <a
+              href="cart.html"
+              class="btn btn-primary position-relative"
+              id="cartBtn"
+            >
               <i class="fas fa-shopping-cart"></i>
               <span
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                 id="cartCount"
-                >0</span
               >
-            </button>
+                0
+              </span>
+            </a>
           </div>
         </div>
       </div>
     </nav>
 
     <script>
-      // Set Dashboard link target and visibility based on localStorage role
-      (function () {
-        try {
-          const nav = document.getElementById("navDashboard");
-          const navMobile = document.getElementById("navDashboardMobile");
-          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-          const s = localStorage.getItem("currentUser");
-          let u = null;
-          try {
-            u = s ? JSON.parse(s) : null;
-          } catch (e) {
-            u = null;
-          }
+const API_BASE = "http://localhost:5000/api";
+// Derive USER_ID from stored `currentUser` (used by auth.js), fallback to `user_id`
+let USER_ID = null;
+try {
+  const cu = localStorage.getItem('currentUser');
+  if (cu) {
+    const parsed = JSON.parse(cu);
+    if (parsed && (parsed.id || parsed.user_id || parsed.id === 0)) {
+      USER_ID = String(parsed.id || parsed.user_id);
+    }
+  }
+} catch (e) {
+  console.warn('Failed to parse currentUser from localStorage', e);
+}
+if (!USER_ID) USER_ID = localStorage.getItem('user_id') || null;
 
-          function isAdminUser(u) {
-            if (!u) return false;
-            try {
-              if (u.role && String(u.role).toLowerCase().includes("admin"))
-                return true;
-              if (u.is_admin === true || u.isAdmin === true) return true;
-              if (
-                Array.isArray(u.roles) &&
-                u.roles.some((r) => String(r).toLowerCase().includes("admin"))
-              )
-                return true;
-              if (u.email && String(u.email).toLowerCase().startsWith("admin"))
-                return true;
-              if (
-                u.username &&
-                String(u.username).toLowerCase().includes("admin")
-              )
-                return true;
-            } catch (e) {
-              return false;
-            }
-            return false;
-          }
+async function updateCartBadge() {
+  try {
+    if (!USER_ID) {
+      document.getElementById('cartCount').innerText = 0;
+      return;
+    }
+    const res = await fetch(`${API_BASE}/cart`, {
+      headers: { 'X-User-ID': USER_ID }
+    });
+    if (!res.ok) return;
+    const json = await res.json();
+    const count = json.data && json.data.item_count ? json.data.item_count : 0;
+    document.getElementById('cartCount').innerText = count;
+  } catch (e) {
+    console.warn('updateCartBadge error', e);
+  }
+}
 
-          if (isLoggedIn && u) {
-            const href = isAdminUser(u)
-              ? "dashboard_admin.html"
-              : "dashboard_cust.html";
-            if (nav) {
-              nav.classList.remove("d-none");
-              nav.setAttribute("href", href);
-            }
-            if (navMobile) {
-              navMobile.classList.remove("d-none");
-              navMobile.setAttribute("href", href);
-            }
-          } else {
-            if (nav) nav.classList.add("d-none");
-            if (navMobile) navMobile.classList.add("d-none");
-          }
-        } catch (e) {
-          console.warn("Dashboard nav init error:", e);
-        }
-      })();
-    </script>
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".add-to-cart, .add-to-cart-btn");
+  if (!btn) return;
+
+  const productIdRaw = btn.dataset.productId || btn.dataset.id || btn.getAttribute('data-id');
+  const productId = Number(productIdRaw);
+
+  if (!productIdRaw || Number.isNaN(productId)) {
+    alert('Add to cart error: invalid product id');
+    return;
+  }
+
+  // Require logged-in user
+  if (!USER_ID || USER_ID === 'null' || USER_ID === 'undefined') {
+    if (confirm('Anda perlu login untuk menambahkan produk ke keranjang. Login sekarang?')) {
+      window.location.href = 'login.html?redirect=products.html';
+    }
+    return;
+  }
+
+  try {
+    const headers = {
+      "Content-Type": "application/json"
+    };
+    headers['X-User-ID'] = USER_ID;
+
+    const res = await fetch(`${API_BASE}/cart/add`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        product_id: productId,
+        quantity: 1
+      })
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      console.error(result);
+      alert(result.message || `Add to cart error: ${res.status}`);
+      return;
+    }
+
+    console.log("POST SUCCESS:", result);
+    alert(result.message);
+
+    await updateCartBadge();
+
+    // Redirect user to cart page
+    window.location.href = 'cart.html';
+
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
+    alert("Add to cart error: " + (err.message || err));
+  }
+});
+
+// Initial badge update
+updateCartBadge();
+</script>
+
 
     <!-- Product Categories -->
     <div
@@ -1088,9 +1060,7 @@
                 <div class="row mb-3">
                   <div class="col-6">
                     <label class="form-label">Berat:</label>
-                    <select class="form-select" id="modalWeight">
-                      <!-- Options will be loaded dynamically -->
-                    </select>
+                    <div id="modalWeight" class="form-control" data-weight="1000">1 kg</div>
                   </div>
                   <div class="col-6">
                     <label class="form-label">Jumlah:</label>
@@ -1107,6 +1077,7 @@
 
                 <div class="mb-4">
                   <h6 class="text-primary">Spesifikasi:</h6>
+                  <div id="modalSpecMeta" class="mb-2 text-muted"></div>
                   <ul id="modalSpecs" class="text-muted">
                     <!-- Specifications will be loaded here -->
                   </ul>
@@ -1123,7 +1094,7 @@
               Close
             </button>
             <button type="button" class="btn btn-primary" id="modalAddToCart">
-              <i class="fas fa-cart-plus me-2"></i>Add to Cart
+              <i class="fas fa-cart-plus me-1"></i>Add 1 kg to Cart
             </button>
           </div>
         </div>

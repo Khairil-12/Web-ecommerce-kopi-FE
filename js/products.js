@@ -25,16 +25,25 @@ async function fetchProductsFromApi() {
       if (!id) return;
 
       mapping[id] = {
-        id: p.id,
-        name: p.name,
-        category: p.category,
-        description: p.description,
-        price: p.price,
-        stock: p.stock,
-        isAvailable: p.is_available,
+        id: p.id ?? id,
+        name: p.name ?? p.title ?? "",
+        category: p.category ?? "",
+        description: p.description ?? p.short_description ?? "",
+        price: p.price ?? 0,
+        stock: p.stock ?? p.quantity ?? 0,
+        isAvailable: p.is_available ?? p.available ?? true,
+
+        // Optional fields useful for UI
+        badges: p.badges ?? [],
+        specs: p.specs ?? p.specification ?? p.specifications ?? [],
+        weightOptions: p.weightOptions ?? p.weight_options ?? [],
+        pricePer: p.pricePer ?? p.price_per ?? "",
+        origin: p.origin ?? "",
+        roastLevel: p.roast_level ?? p.roastLevel ?? "",
+        process: p.process ?? "",
 
         // ⬇️ LANGSUNG PAKAI PATH LOCAL
-        image: p.image_url || "/img/no-image.png",
+        image: p.image_url || p.image || "/img/no-image.png",
       };
     });
 
