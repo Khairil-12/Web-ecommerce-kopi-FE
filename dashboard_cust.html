@@ -39,14 +39,31 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --primary-color: #8b4513;
+        --secondary-color: #d2691e;
+        --accent-color: #a0522d;
+        --dark-brown: #654321;
+        --light-brown: #deb887;
+        --cream: #f5f5dc;
+        --light-cream: #fff8dc;
+      }
+
       body {
         font-family: Inter, sans-serif;
         background: #f8fafc;
+        padding-top: 76px;
       }
+
       .card {
         border-radius: 12px;
       }
+
       .profile-avatar {
         width: 100px;
         height: 100px;
@@ -72,16 +89,231 @@
         color: #8b4513;
         border: 1px solid #8b4513;
       }
+
+      /* Navbar styles (copied from products.html) */
+      .navbar {
+        background: linear-gradient(135deg, var(--light-cream), var(--cream)) !important;
+      }
+
+      .navbar-nav {
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .navbar-brand {
+        color: var(--primary-color) !important;
+        font-weight: bold;
+      }
+
+      .nav-link {
+        color: var(--dark-brown) !important;
+        padding: 8px 16px;
+        border-radius: 999px;
+        transition: background-color 200ms ease, color 200ms ease, transform 150ms ease, box-shadow 150ms ease;
+        display: inline-block;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: #ffffff !important;
+        background: var(--primary-color) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 9px 18px rgba(139, 69, 19, 0.18);
+      }
+
+      .search-box {
+        position: relative;
+        width: 300px;
+      }
+
+      .search-input {
+        padding-right: 50px;
+        border-radius: 25px;
+        border: 2px solid var(--light-brown);
+        transition: all 0.3s ease;
+      }
+
+      .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+        border: none !important;
+        color: white !important;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4) !important;
+        background: linear-gradient(135deg, var(--accent-color), var(--primary-color)) !important;
+      }
+
+      .btn-outline-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        background: transparent !important;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+      }
+
+      .text-primary {
+        color: var(--primary-color) !important;
+      }
+
+      .fade-in-left,
+      .fade-in-right {
+        opacity: 0;
+        transform: translateX(0);
+        transition: opacity 1s ease-out, transform 1s ease-out;
+        will-change: opacity, transform;
+      }
+
+      .fade-in-left { transform: translateX(-30px); }
+      .fade-in-right { transform: translateX(30px); }
+
+      .fade-in-left.visible,
+      .fade-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Slide down/up animation for txn items */
+      .slide-down {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-8px);
+        overflow: hidden;
+        transition: max-height 400ms ease, opacity 400ms ease, transform 400ms ease;
+      }
+
+      .slide-down.show {
+        max-height: 2000px; /* large enough to contain content */
+        opacity: 1;
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+      <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="index.html">
+          <i class="fas fa-coffee me-2"></i>KOPI PRIMA
+        </a>
+
+        <!-- Toggle Mobile -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- LEFT MENU -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">
+                Home
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="products.html">
+                </i>Products
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#profile">
+                </i>Profile
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#quality">Quality</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#contact">
+                </i>Contact
+              </a>
+            </li>
+
+            <!-- Dashboard (admin / user) -->
+            <li class="nav-item">
+              <a class="nav-link d-none" href="#" id="navDashboard">
+                </i>Dashboard
+              </a>
+            </li>
+          </ul>
+
+          <!-- RIGHT ACTIONS -->
+          <div class="d-flex align-items-center gap-2">
+            <span
+              id="userInfo"
+              class="text-muted small d-none d-lg-block"
+            ></span>
+            <a
+              href="login.html"
+              id="loginBtn"
+              class="btn btn-outline-primary btn-sm"
+            >
+              Login
+            </a>
+
+            <button
+              id="logoutBtn"
+              class="btn btn-outline-primary btn-sm d-none"
+            >
+              Logout
+            </button>
+
+            <!-- Cart -->
+            <a
+              href="cart.html"
+              class="btn btn-primary position-relative"
+              id="cartBtn"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="cartCount"
+              >
+                0
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <div class="container py-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Dashboard Pelanggan</h2>
-        <div>
-          <a href="index.html" class="btn btn-brown-outline me-2">Beranda</a>
-          <button id="logoutBtn" class="btn btn-brown">Logout</button>
-        </div>
       </div>
 
       <div class="row g-4">
@@ -252,9 +484,8 @@
                 '<p class="text-muted">Belum ada pesanan.</p>';
             } else {
               ordersContainer.innerHTML = recent
-                .map(
-                  (o) => `
-              <div class="border rounded p-3 mb-2">
+                .map((o, idx) => `
+              <div class="border rounded p-3 mb-2 ${idx % 2 === 0 ? 'fade-in-left' : 'fade-in-right'}">
                 <div class="d-flex justify-content-between">
                   <div>
                     <strong>${o.transaction_code || o.id}</strong><br/>
@@ -287,6 +518,8 @@
             `
                 )
                 .join("");
+                  // reveal animations for newly inserted cards
+                  try { revealOrderAnimations(); } catch (e) {}
             }
 
             // Stats
@@ -318,9 +551,8 @@
                 '<p class="text-muted">Belum ada pesanan.</p>';
             } else {
               ordersContainer.innerHTML = orders
-                .map(
-                  (o) => `
-              <div class="border rounded p-3 mb-2">
+                .map((o, idx) => `
+              <div class="border rounded p-3 mb-2 ${idx % 2 === 0 ? 'fade-in-left' : 'fade-in-right'}">
                 <div class="d-flex justify-content-between">
                   <div>
                     <strong>${o.id}</strong><br/>
@@ -339,6 +571,8 @@
             `
                 )
                 .join("");
+              // reveal animations for fallback-inserted cards
+              try { revealOrderAnimations(); } catch (e) {}
             }
 
             document.getElementById("custOrdersCount").textContent =
@@ -351,6 +585,57 @@
 
         // Initial load
         await loadDashboard();
+
+        // Reveal animation helper: add 'visible' with a small stagger for order cards
+        function revealOrderAnimations() {
+          try {
+            const container = document.getElementById('ordersContainer');
+            if (!container) return;
+            const nodes = container.querySelectorAll('.fade-in-left, .fade-in-right');
+            if (!nodes || nodes.length === 0) return;
+            nodes.forEach((el, i) => {
+              // small stagger so items enter sequentially
+              setTimeout(() => {
+                el.classList.add('visible');
+              }, i * 140);
+            });
+          } catch (e) {
+            // ignore errors
+          }
+        }
+
+        // Helpers to show/hide txn items with slide animation
+        function showContainer(el) {
+          try {
+            if (!el) return;
+            // Ensure the element has slide-down class
+            el.classList.add('slide-down');
+            // make visible (display block) before animating
+            el.style.display = 'block';
+            // force reflow
+            // eslint-disable-next-line no-unused-expressions
+            el.offsetHeight;
+            el.classList.add('show');
+          } catch (e) {}
+        }
+
+        function hideContainer(el) {
+          try {
+            if (!el) return;
+            el.classList.remove('show');
+            // after transition, set display none
+            const onEnd = (ev) => {
+              if (ev && ev.target !== el) return;
+              try { el.style.display = 'none'; } catch (e) {}
+              el.removeEventListener('transitionend', onEnd);
+            };
+            el.addEventListener('transitionend', onEnd);
+            // fallback timeout to ensure hide
+            setTimeout(() => {
+              try { if (getComputedStyle(el).display !== 'none') el.style.display = 'none'; } catch (e) {}
+            }, 600);
+          } catch (e) {}
+        }
 
         // Auto-refresh when another tab sets last_checkout or when page becomes visible again
         window.addEventListener("storage", (ev) => {
@@ -379,7 +664,6 @@
             const last = localStorage.getItem("last_checkout");
             if (last) {
               try {
-                // remove marker after reading
                 localStorage.removeItem("last_checkout");
               } catch (e) {}
               setTimeout(() => loadDashboard(), 200);
@@ -387,7 +671,6 @@
           }
         });
 
-        // Delegate click for viewing transaction items with reliable toggle
         document.addEventListener("click", async (ev) => {
           const btn = ev.target.closest(".view-items-btn");
           if (!btn) return;
@@ -400,7 +683,7 @@
           const isVisible =
             window.getComputedStyle(container).display !== "none";
           if (isVisible) {
-            container.style.display = "none";
+            try { hideContainer(container); } catch (e) {}
             try {
               btn.textContent = "Lihat Item";
             } catch (e) {}
@@ -409,7 +692,7 @@
 
           // if already loaded, just show
           if (container.innerHTML && container.innerHTML.trim() !== "") {
-            container.style.display = "block";
+            try { showContainer(container); } catch (e) {}
             try {
               btn.textContent = "Sembunyikan Item";
             } catch (e) {}
@@ -431,7 +714,7 @@
               container.innerHTML = `<div class="text-danger">Gagal memuat item: ${
                 err.message || res.statusText
               }</div>`;
-              container.style.display = "block";
+              try { showContainer(container); } catch (e) {}
               try {
                 btn.textContent = "Lihat Item";
               } catch (e) {}
@@ -444,7 +727,7 @@
               container.innerHTML = `<div class="text-danger">${
                 (payload && payload.message) || "Error"
               }</div>`;
-              container.style.display = "block";
+              try { showContainer(container); } catch (e) {}
               try {
                 btn.textContent = "Lihat Item";
               } catch (e) {}
@@ -456,7 +739,7 @@
             if (!txn || !Array.isArray(txn.items) || txn.items.length === 0) {
               container.innerHTML =
                 '<div class="text-muted">Tidak ada item di transaksi ini.</div>';
-              container.style.display = "block";
+              try { showContainer(container); } catch (e) {}
               try {
                 btn.textContent = "Sembunyikan Item";
               } catch (e) {}
@@ -491,7 +774,7 @@
               )
               .join("");
 
-            container.style.display = "block";
+            try { showContainer(container); } catch (e) {}
             try {
               btn.textContent = "Sembunyikan Item";
             } catch (e) {}
@@ -499,7 +782,7 @@
           } catch (e) {
             console.error("Error fetching txn items", e);
             container.innerHTML = `<div class="text-danger">Kesalahan memuat item.</div>`;
-            container.style.display = "block";
+            try { showContainer(container); } catch (e) {}
             try {
               btn.textContent = "Lihat Item";
             } catch (err) {}
@@ -512,6 +795,94 @@
           localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("currentUser");
           window.location.href = "index.html";
+        });
+      })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+      // Small navbar helper: derive USER_ID and update cart badge / login display
+      (function () {
+        const API_BASE =
+          window.location &&
+          window.location.protocol &&
+          window.location.protocol.startsWith("http")
+            ? `${window.location.origin}/api`
+            : "http://localhost:5000/api";
+
+        let USER_ID = null;
+        try {
+          const cu = localStorage.getItem("currentUser");
+          if (cu) {
+            const parsed = JSON.parse(cu);
+            if (parsed && (parsed.id || parsed.user_id || parsed.id === 0)) {
+              USER_ID = String(parsed.id || parsed.user_id);
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to parse currentUser from localStorage", e);
+        }
+        if (!USER_ID) USER_ID = localStorage.getItem("user_id") || null;
+
+        async function updateCartBadge() {
+          try {
+            const el = document.getElementById("cartCount");
+            if (!el) return;
+            if (!USER_ID) {
+              el.innerText = 0;
+              return;
+            }
+            const res = await fetch(`${API_BASE}/cart`, {
+              headers: { "X-User-ID": USER_ID },
+            });
+            if (!res.ok) return;
+            const json = await res.json().catch(() => ({}));
+            const count = json.data && json.data.item_count ? json.data.item_count : 0;
+            el.innerText = count;
+          } catch (e) {
+            console.warn("updateCartBadge error", e);
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const userInfo = document.getElementById("userInfo");
+          const loginBtn = document.getElementById("loginBtn");
+          const logoutBtn = document.getElementById("logoutBtn");
+
+          if (localStorage.getItem("isLoggedIn") === "true" && localStorage.getItem("currentUser")) {
+            try {
+              const u = JSON.parse(localStorage.getItem("currentUser"));
+              if (userInfo && u) userInfo.textContent = "Hello, " + (u.username || u.name || u.email || "");
+            } catch (e) {}
+            if (loginBtn) loginBtn.classList.add("d-none");
+            if (logoutBtn) logoutBtn.classList.remove("d-none");
+          } else {
+            if (loginBtn) loginBtn.classList.remove("d-none");
+            if (logoutBtn) logoutBtn.classList.add("d-none");
+          }
+
+          updateCartBadge();
+          // Observe animated elements and reveal when they enter viewport
+          try {
+            const obs = new IntersectionObserver(
+              (entries, o) => {
+                entries.forEach((ent) => {
+                  if (ent.isIntersecting) {
+                    ent.target.classList.add("visible");
+                    o.unobserve(ent.target);
+                  }
+                });
+              },
+              { threshold: 0.12 }
+            );
+
+            document.querySelectorAll('.fade-in-left, .fade-in-right').forEach((el) => {
+              obs.observe(el);
+            });
+          } catch (e) {
+            // IntersectionObserver not available or other error — silently ignore
+          }
         });
       })();
     </script>
