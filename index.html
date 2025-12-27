@@ -1803,6 +1803,7 @@
         notification.className = "notification-card notification-info";
         notification.id = notificationId;
 
+        const timeStr = new Date().toLocaleString("id-ID");
         notification.innerHTML = `
           <div class="status-indicator"></div>
           <button class="notification-close" onclick="removeNotification('${notificationId}')">
@@ -1814,55 +1815,9 @@
                 <i class="fas fa-sign-out-alt"></i>
               </div>
               <div class="notification-title-text">
-                <h4>Berhasil Logout <span class="status-badge info">Selesai</span></h4>
-                <p>Anda telah keluar dari sistem</p>
+                <h4>Logout</h4>
+                <p>Anda telah melakukan logout pada ${timeStr}</p>
               </div>
-            </div>
-            <div class="notification-time">
-              <i class="far fa-clock"></i> Baru saja
-            </div>
-          </div>
-          <div class="notification-content">
-            <p class="notification-message">
-              <strong>Berhasil logout!</strong> Selamat datang kembali, <strong>Guest</strong>.
-            </p>
-            
-            <div class="notification-details">
-              <div class="detail-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Tanggal: ${new Date().toLocaleDateString("id-ID")}</span>
-              </div>
-              <div class="detail-item">
-                <i class="fas fa-clock"></i>
-                <span>Durasi sesi: 2 jam 15 menit</span>
-              </div>
-              <div class="detail-item">
-                <i class="fas fa-shield-alt"></i>
-                <span>Keamanan: Sesi diakhiri dengan aman</span>
-              </div>
-              <div class="detail-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Status: Tidak ada aktivitas mencurigakan</span>
-              </div>
-            </div>
-            
-            <div class="user-status">
-              <div class="user-avatar">
-                <i class="fas fa-user-secret"></i>
-              </div>
-              <div class="user-info">
-                <h5>Status: Guest (Pengunjung)</h5>
-                <p>Akses terbatas ke fitur publik. Login untuk akses penuh.</p>
-              </div>
-            </div>
-            
-            <div class="notification-actions">
-              <button class="notification-btn notification-btn-secondary" onclick="goToHome()">
-                <i class="fas fa-home"></i> Kembali ke Beranda
-              </button>
-              <button class="notification-btn notification-btn-primary" onclick="goToLogin()">
-                <i class="fas fa-sign-in-alt"></i> Login Kembali
-              </button>
             </div>
           </div>
         `;
