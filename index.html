@@ -1793,99 +1793,477 @@
         return notificationId;
       }
 
-      function showLogoutNotification() {
+      // ===== FUNGSI LOGOUT YANG DIPERBAIKI =====
+      async function handleLogout() {
+        try {
+          console.log("Logout process started...");
+
+          // Ambil USER_ID dari localStorage
+          let userId = null;
+          let userName = "User";
+
+          const currentUser = localStorage.getItem("currentUser");
+          if (currentUser) {
+            try {
+              const user = JSON.parse(currentUser);
+              userId = user.id || user.user_id;
+              userName = user.name || user.username || "User";
+            } catch (e) {
+              console.warn("Failed to parse user data", e);
+            }
+          }
+
+          // Jika ada userId, kirim request logout ke API
+          if (userId) {
+            try {
+              console.log("Sending logout request to API for user ID:", userId);
+              const response = await fetch("http://localhost:5000/api/logout", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-User-ID": userId,
+                },
+              });
+
+              const result = await response.json();
+              console.log("API Logout response:", result);
+
+              if (!response.ok) {
+                console.warn("Logout API error:", response.status);
+              }
+            } catch (apiError) {
+              console.warn("Logout API call failed:", apiError);
+              // Tetap lanjutkan meskipun API error
+            }
+          }
+
+          // Clear semua data dari localStorage
+          console.log("Clearing localStorage...");
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("currentUser");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("token");
+
+          // Update USER_ID global variable jika ada
+          if (typeof USER_ID !== "undefined") {
+            USER_ID = null;
+          }
+
+          // PERBAIKAN PENTING: Update UI SEBELUM menampilkan notifikasi
+          updateAuthUI();
+
+          // Reset cart count
+          const cartCountElement = document.getElementById("cartCount");
+          if (cartCountElement) cartCountElement.innerText = "0";
+
+          // Tampilkan notifikasi logout yang lebih sederhana
+          console.log("Showing logout notification...");
+          showCompactLogoutNotification(userName);
+
+          // Tambahkan animasi kopi beans (opsional)
+          createCoffeeBeansAnimation();
+
+          // TIDAK ADA REDIRECT - tetap di halaman yang sama
+        } catch (error) {
+          console.error("Logout process error:", error);
+
+          // Update UI meskipun error
+          updateAuthUI();
+
+          // Clear localStorage sebagai fallback
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("currentUser");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("token");
+
+          // Tampilkan notifikasi error sederhana
+          showCompactErrorNotification(
+            "Gagal logout",
+            "Sesi telah dihapus secara lokal"
+          );
+        }
+      }
+
+      // ===== NOTIFIKASI LOGOUT YANG LEBIH SEDERHANA =====
+      function showCompactLogoutNotification(userName = "User") {
         const notificationContainer = document.getElementById(
           "notificationContainer"
         );
-        const notificationId = "notification-" + Date.now();
+        if (!notificationContainer) {
+          console.warn("Notification container not found");
+          return null;
+        }
+
+        const notificationId = "logout-notification-" + Date.now();
+        const timeStr = new Date().toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        const dateStr = new Date().toLocaleDateString("id-ID", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
 
         const notification = document.createElement("div");
-        notification.className = "notification-card notification-info";
+        notification.className = "notification-card compact-notification";
         notification.id = notificationId;
+        notification.style.maxWidth = "320px";
+        notification.style.marginLeft = "auto";
 
-        const timeStr = new Date().toLocaleString("id-ID");
         notification.innerHTML = `
-          <div class="status-indicator"></div>
-          <button class="notification-close" onclick="removeNotification('${notificationId}')">
-            <i class="fas fa-times"></i>
-          </button>
-          <div class="notification-header">
+        <div class="notification-header">
             <div class="notification-title">
-              <div class="notification-icon">
-                <i class="fas fa-sign-out-alt"></i>
-              </div>
-              <div class="notification-title-text">
-                <h4>Logout</h4>
-                <p>Anda telah melakukan logout pada ${timeStr}</p>
-              </div>
+                <div class="notification-icon" style="background-color: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="notification-title-text">
+                    <h6 class="mb-0" style="font-size: 0.95rem; font-weight: 600;">User Telah Logout</h6>
+                    <p class="mb-0" style="font-size: 0.8rem; color: #64748b;">${timeStr} · ${dateStr}</p>
+                </div>
             </div>
-          </div>
-        `;
+            <button class="notification-close" onclick="removeNotification('${notificationId}')" style="font-size: 0.8rem; padding: 2px 5px;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-content" style="padding: 10px 15px;">
+            <p class="notification-message mb-0" style="font-size: 0.85rem; color: #475569;">
+                <strong>${userName}</strong> telah logout dari sistem. Anda sekarang dalam mode tamu.
+            </p>
+        </div>
+    `;
 
         notificationContainer.appendChild(notification);
 
-        // Auto remove after 10 seconds
+        // Auto remove after 5 seconds
         setTimeout(() => {
           removeNotification(notificationId);
-        }, 10000);
+        }, 5000);
 
         return notificationId;
       }
 
+      function showCompactErrorNotification(title, message) {
+        const notificationContainer = document.getElementById(
+          "notificationContainer"
+        );
+        if (!notificationContainer) return;
+
+        const notificationId = "error-notification-" + Date.now();
+        const timeStr = new Date().toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const notification = document.createElement("div");
+        notification.className = "notification-card compact-notification";
+        notification.id = notificationId;
+        notification.style.maxWidth = "320px";
+        notification.style.marginLeft = "auto";
+        notification.style.borderLeft = "3px solid #ef4444";
+
+        notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">
+                <div class="notification-icon" style="background-color: rgba(239, 68, 68, 0.15); color: #ef4444">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="notification-title-text">
+                    <h6 class="mb-0" style="font-size: 0.95rem; font-weight: 600;">${title}</h6>
+                    <p class="mb-0" style="font-size: 0.8rem; color: #64748b;">${timeStr}</p>
+                </div>
+            </div>
+            <button class="notification-close" onclick="removeNotification('${notificationId}')" style="font-size: 0.8rem; padding: 2px 5px;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-content" style="padding: 10px 15px;">
+            <p class="notification-message mb-0" style="font-size: 0.85rem; color: #475569;">
+                ${message}
+            </p>
+        </div>
+    `;
+
+        notificationContainer.appendChild(notification);
+
+        setTimeout(() => {
+          removeNotification(notificationId);
+        }, 4000);
+      }
+
+      // ===== STYLE CSS UNTUK NOTIFIKASI KOMPAK =====
+      function addCompactNotificationStyles() {
+        if (!document.querySelector("style[data-compact-notifications]")) {
+          const style = document.createElement("style");
+          style.setAttribute("data-compact-notifications", "true");
+          style.textContent = `
+            .compact-notification {
+                max-width: 320px !important;
+                margin-left: auto;
+                margin-right: 10px;
+                animation: slideInRight 0.3s ease forwards;
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            
+            .compact-notification .notification-header {
+                padding: 10px 15px !important;
+                border-bottom: 1px solid #f1f5f9;
+            }
+            
+            .compact-notification .notification-title {
+                gap: 10px !important;
+            }
+            
+            .compact-notification .notification-icon {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 14px !important;
+            }
+            
+            .compact-notification .notification-content {
+                padding: 10px 15px !important;
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+          document.head.appendChild(style);
+        }
+      }
+
+      // ===== FUNGSI UPDATE AUTH UI =====
+      function updateAuthUI() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const currentUser = localStorage.getItem("currentUser");
+
+        // Get UI elements
+        const userInfo = document.getElementById("userInfo");
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        if (isLoggedIn && currentUser) {
+          try {
+            const user = JSON.parse(currentUser);
+
+            // Tampilkan user info dengan "Hello, User!"
+            if (userInfo) {
+              userInfo.classList.remove("d-none");
+            }
+            if (userNameDisplay) {
+              userNameDisplay.textContent =
+                user.name || user.username || "User";
+            }
+
+            // Toggle login/logout buttons
+            if (loginBtn) loginBtn.classList.add("d-none");
+            if (logoutBtn) logoutBtn.classList.remove("d-none");
+          } catch (e) {
+            console.warn("Error parsing user data:", e);
+            showGuestUI();
+          }
+        } else {
+          showGuestUI();
+        }
+
+        updateDashboardUI();
+      }
+
+      function showGuestUI() {
+        const userInfo = document.getElementById("userInfo");
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        if (userInfo) userInfo.classList.add("d-none");
+        if (userNameDisplay) userNameDisplay.textContent = "User";
+        if (loginBtn) loginBtn.classList.remove("d-none");
+        if (logoutBtn) logoutBtn.classList.add("d-none");
+      }
+
+      // ===== ANIMASI KOPI BEANS (lebih sederhana) =====
+      function createCoffeeBeansAnimation() {
+        if (window.innerWidth > 768) {
+          // Hanya 3 biji kopi
+          for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+              const bean = document.createElement("div");
+              bean.className = "coffee-bean";
+              bean.innerHTML = "☕";
+              bean.style.cssText = `
+                    position: fixed;
+                    left: ${Math.random() * 100}vw;
+                    bottom: 0;
+                    font-size: 18px;
+                    z-index: 1000;
+                    pointer-events: none;
+                    animation: floatUp 2s ease-out forwards;
+                    opacity: 0;
+                `;
+              document.body.appendChild(bean);
+
+              // Hapus setelah animasi selesai
+              setTimeout(() => {
+                if (bean.parentNode) {
+                  bean.parentNode.removeChild(bean);
+                }
+              }, 2000);
+            }, i * 500);
+          }
+        }
+      }
+
+      // ===== FUNGSI DASHBOARD UI =====
+      function updateDashboardUI() {
+        const navDashboard = document.getElementById("navDashboard");
+        if (!navDashboard) return;
+
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const userData = localStorage.getItem("currentUser");
+
+        if (!isLoggedIn || !userData) {
+          navDashboard.classList.add("d-none");
+          return;
+        }
+
+        try {
+          const user = JSON.parse(userData);
+          const target =
+            user && user.role === "admin"
+              ? "dashboard_admin.html"
+              : "dashboard_cust.html";
+
+          navDashboard.classList.remove("d-none");
+          navDashboard.href = target;
+        } catch (e) {
+          navDashboard.classList.add("d-none");
+        }
+      }
+
+      // ===== EVENT LISTENER SETUP =====
+      function setupLogoutEventListeners() {
+        // Setup logout button event listener
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLogout();
+          });
+        }
+
+        // Setup login button
+        const loginBtn = document.getElementById("loginBtn");
+        if (loginBtn) {
+          loginBtn.addEventListener("click", function () {
+            sessionStorage.setItem("returningToPage", "true");
+          });
+        }
+      }
+
+      // ===== INITIALIZATION =====
+      document.addEventListener("DOMContentLoaded", function () {
+        // Tambahkan style untuk notifikasi kompak
+        addCompactNotificationStyles();
+
+        // Setup event listeners
+        setupLogoutEventListeners();
+
+        // Update auth UI based on current login status
+        updateAuthUI();
+
+        // Update cart badge
+        updateCartBadge();
+      });
+
+      // ===== GLOBAL FUNCTIONS =====
+      window.handleLogout = handleLogout;
+      window.updateAuthUI = updateAuthUI;
+      window.showCompactLogoutNotification = showCompactLogoutNotification;
+      window.removeNotification = removeNotification;
+
+      // Fungsi removeNotification yang diperbarui
       function removeNotification(notificationId) {
         const notification = document.getElementById(notificationId);
         if (notification) {
-          notification.style.animation =
-            "notificationSlideOut 0.5s ease forwards";
+          notification.style.animation = "slideOutRight 0.3s ease forwards";
           setTimeout(() => {
             if (notification.parentNode) {
               notification.parentNode.removeChild(notification);
             }
-          }, 500);
+          }, 300);
         }
       }
 
-      // Notification action functions
-      function viewLoginHistory() {
-        alert("Membuka riwayat login...");
-      }
-
-      function manageAccount() {
-        alert("Membuka pengaturan akun...");
-      }
-
-      function goToHome() {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function goToLogin() {
-        window.location.href = "login.html";
-      }
-
-      // Modified logout function to show notification
-      async function logoutUser() {
-        if (window.authSystem) {
-          const result = await window.authSystem.logout();
-          if (result.success) {
-            // Show logout notification
-            showLogoutNotification();
-
-            // Update UI
-            window.authSystem.updateAuthUI();
-
-            // Optional: Scroll to top
-            window.scrollTo({ top: 0, behavior: "smooth" });
-
-            // Reset carousel to first slide
-            const carousel = document.getElementById("heroCarousel");
-            if (carousel) {
-              const bsCarousel = bootstrap.Carousel.getInstance(carousel);
-              if (bsCarousel) {
-                bsCarousel.to(0);
-              }
-            }
+      // Fungsi updateCartBadge
+      async function updateCartBadge() {
+        try {
+          const userId = localStorage.getItem("user_id");
+          if (!userId) {
+            const cartCount = document.getElementById("cartCount");
+            if (cartCount) cartCount.innerText = 0;
+            return;
           }
+
+          const response = await fetch(`http://localhost:5000/api/cart`, {
+            headers: { "X-User-ID": userId },
+          });
+
+          if (!response.ok) return;
+
+          const data = await response.json();
+          const count = data.data?.item_count || 0;
+
+          const cartCount = document.getElementById("cartCount");
+          if (cartCount) cartCount.innerText = count;
+        } catch (error) {
+          console.warn("Cart badge update error:", error);
         }
+      }
+
+      // Tambahkan animasi floatUp untuk kopi beans
+      if (!document.querySelector("style[data-coffee-bean-animation]")) {
+        const style = document.createElement("style");
+        style.setAttribute("data-coffee-bean-animation", "true");
+        style.textContent = `
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(180deg);
+                opacity: 0;
+            }
+        }
+        
+        .coffee-bean {
+            animation: floatUp 2s ease-out forwards;
+        }
+    `;
+        document.head.appendChild(style);
       }
 
       // Check if user just logged in and show notification

@@ -30,6 +30,11 @@
         --light-brown: #deb887;
         --cream: #f5f5dc;
         --light-cream: #fff8dc;
+        /* Notification colors */
+        --success-color: #10b981;
+        --info-color: #3b82f6;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
       }
 
       body {
@@ -599,9 +604,406 @@
       .suggestion-item:last-child {
         border-bottom: none;
       }
+
+      /* Notification System Styles */
+      .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .notification-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+        animation: notificationSlideIn 0.5s ease forwards;
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      @keyframes notificationSlideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes notificationSlideOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+      }
+
+      .notification-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .notification-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .notification-success .notification-icon {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+
+      .notification-info .notification-icon {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info-color);
+      }
+
+      .notification-title-text h4 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 2px;
+      }
+
+      .notification-title-text p {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      .notification-time {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .notification-content {
+        padding: 15px 20px;
+      }
+
+      .notification-message {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #334155;
+        margin-bottom: 10px;
+      }
+
+      .notification-message strong {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .notification-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #475569;
+      }
+
+      .detail-item i {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        width: 16px;
+        text-align: center;
+      }
+
+      .user-status {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .notification-success .user-avatar {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+      }
+
+      .notification-info .user-avatar {
+        background: linear-gradient(135deg, #94a3b8, #64748b);
+      }
+
+      .user-info h5 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+
+      .user-info p {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      .notification-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f1f5f9;
+      }
+
+      .notification-btn {
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+      }
+
+      .notification-btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        color: white;
+      }
+
+      .notification-btn-secondary {
+        background: white;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+      }
+
+      .notification-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .notification-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: color 0.2s;
+        padding: 5px;
+        line-height: 1;
+      }
+
+      .notification-close:hover {
+        color: #64748b;
+      }
+
+      .status-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+      }
+
+      .notification-success .status-indicator {
+        background: linear-gradient(to bottom, var(--success-color), #059669);
+      }
+
+      .notification-info .status-indicator {
+        background: linear-gradient(to bottom, var(--info-color), #2563eb);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+
+      .status-badge.success {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+      }
+
+      .status-badge.info {
+        background-color: rgba(59, 130, 246, 0.15);
+        color: var(--info-color);
+      }
+
+      /* User Info Style */
+      .user-info-text {
+        color: var(--dark-brown);
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .user-info-text i {
+        color: var(--primary-color);
+        margin-right: 5px;
+      }
+
+      /* Compact Notification Styles */
+      .compact-notification {
+        max-width: 320px !important;
+        margin-left: auto;
+        margin-right: 10px;
+        animation: slideInRight 0.3s ease forwards;
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      
+      .compact-notification .notification-header {
+        padding: 10px 15px !important;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      
+      .compact-notification .notification-title {
+        gap: 10px !important;
+      }
+      
+      .compact-notification .notification-icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+      }
+      
+      .compact-notification .notification-content {
+        padding: 10px 15px !important;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(180deg);
+          opacity: 0;
+        }
+      }
+      
+      .coffee-bean {
+        animation: floatUp 2s ease-out forwards;
+      }
+
+      @media (max-width: 768px) {
+        .notification-container {
+          top: 10px;
+          right: 10px;
+          left: 10px;
+          max-width: none;
+        }
+        .notification-card {
+          max-width: 100%;
+        }
+        .notification-details {
+          grid-template-columns: 1fr;
+        }
+        .notification-actions {
+          flex-direction: column;
+        }
+        .notification-btn {
+          justify-content: center;
+          width: 100%;
+        }
+        .compact-notification {
+          max-width: 100% !important;
+          margin: 0 10px;
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
       <div class="container">
         <!-- Brand -->
@@ -661,6 +1063,11 @@
 
           <!-- RIGHT ACTIONS -->
           <div class="d-flex align-items-center gap-2">
+            <!-- User Info - Modified untuk "Hello, User!" -->
+            <span id="userInfo" class="user-info-text d-none d-lg-block me-2">
+              <i class="fas fa-user-circle"></i>Hello, <span id="userNameDisplay">User</span>
+            </span>
+
             <!-- Search -->
             <div class="search-box position-relative d-none d-lg-block">
               <input
@@ -676,26 +1083,20 @@
               <div class="search-suggestions" id="searchSuggestions"></div>
             </div>
 
-            <!-- User Info -->
-            <span
-              id="userInfo"
-              class="text-muted small d-none d-lg-block"
-            ></span>
-
             <!-- Login / Logout -->
             <a
-              href="login.html"
+              href="login.html?redirect=products.html"
               id="loginBtn"
               class="btn btn-outline-primary btn-sm"
             >
-              Login
+              <i class="fas fa-sign-in-alt me-1"></i>Login
             </a>
 
             <button
               id="logoutBtn"
               class="btn btn-outline-primary btn-sm d-none"
             >
-              Logout
+              <i class="fas fa-sign-out-alt me-1"></i>Logout
             </button>
 
             <!-- Cart -->
@@ -716,100 +1117,6 @@
         </div>
       </div>
     </nav>
-
-    <script>
-const API_BASE = "http://localhost:5000/api";
-// Derive USER_ID from stored `currentUser` (used by auth.js), fallback to `user_id`
-let USER_ID = null;
-try {
-  const cu = localStorage.getItem('currentUser');
-  if (cu) {
-    const parsed = JSON.parse(cu);
-    if (parsed && (parsed.id || parsed.user_id || parsed.id === 0)) {
-      USER_ID = String(parsed.id || parsed.user_id);
-    }
-  }
-} catch (e) {
-  console.warn('Failed to parse currentUser from localStorage', e);
-}
-if (!USER_ID) USER_ID = localStorage.getItem('user_id') || null;
-
-async function updateCartBadge() {
-  try {
-    if (!USER_ID) {
-      document.getElementById('cartCount').innerText = 0;
-      return;
-    }
-    const res = await fetch(`${API_BASE}/cart`, {
-      headers: { 'X-User-ID': USER_ID }
-    });
-    if (!res.ok) return;
-    const json = await res.json();
-    const count = json.data && json.data.item_count ? json.data.item_count : 0;
-    document.getElementById('cartCount').innerText = count;
-  } catch (e) {
-    console.warn('updateCartBadge error', e);
-  }
-}
-
-document.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".add-to-cart");
-  if (!btn) return;
-
-  const productIdRaw = btn.dataset.productId || btn.dataset.id || btn.getAttribute('data-id');
-  const productId = Number(productIdRaw);
-
-  if (!productIdRaw || Number.isNaN(productId)) {
-    alert('Add to cart error: invalid product id');
-    return;
-  }
-
-  // Require logged-in user
-  if (!USER_ID || USER_ID === 'null' || USER_ID === 'undefined') {
-    if (confirm('Anda perlu login untuk menambahkan produk ke keranjang. Login sekarang?')) {
-      window.location.href = 'login.html?redirect=products.html';
-    }
-    return;
-  }
-
-  try {
-    const headers = {
-      "Content-Type": "application/json"
-    };
-    headers['X-User-ID'] = USER_ID;
-
-    const res = await fetch(`${API_BASE}/cart/add`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        product_id: productId,
-        quantity: 1
-      })
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      console.error(result);
-      alert(result.message || `Add to cart error: ${res.status}`);
-      return;
-    }
-
-    console.log("POST SUCCESS:", result);
-    alert(result.message);
-
-    await updateCartBadge();
-
-    window.location.href = 'cart.html';
-
-  } catch (err) {
-    console.error("FETCH ERROR:", err);
-    alert("Add to cart error: " + (err.message || err));
-  }
-});
-
-updateCartBadge();
-</script>
 
     <!-- Category Filter Section -->
     <div
@@ -1064,14 +1371,14 @@ updateCartBadge();
                     <div id="modalWeight" class="form-control" data-weight="1000">1 kg</div>
                   </div>
                   <div class="col-6">
-                    <label class="form-label">Jumlah:</label>
+                    <label class="form-label">Jumlah (kg):</label>
                     <input
                       type="number"
                       class="form-control"
                       id="modalQuantity"
                       value="1"
                       min="1"
-                      max="10"
+                      max="100"
                     />
                   </div>
                 </div>
@@ -1225,81 +1532,662 @@ updateCartBadge();
     <script src="js/products-app.js"></script>
 
     <script>
-      (async function initProducts() {
-        if (window.fetchProductsFromApi) {
-          try {
-            await window.fetchProductsFromApi();
-          } catch (e) {
-            console.warn("Failed to load products from API", e);
-          }
+    // ===== KONSTAN DAN VARIABEL GLOBAL =====
+    const API_BASE = "http://localhost:5000/api";
+    let USER_ID = null;
+    let CURRENT_USER_NAME = null;
+
+    // ===== 1. INISIALISASI USER YANG LEBIH ROBUST =====
+    function initializeUser() {
+        console.log("initializeUser called");
+        try {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const cu = localStorage.getItem('currentUser');
+            
+            console.log("isLoggedIn:", isLoggedIn);
+            console.log("currentUser from localStorage:", cu);
+            
+            if (isLoggedIn && cu) {
+                const parsed = JSON.parse(cu);
+                console.log("Parsed user data:", parsed);
+                
+                if (parsed && (parsed.id || parsed.user_id || parsed.id === 0)) {
+                    USER_ID = String(parsed.id || parsed.user_id);
+                    CURRENT_USER_NAME = parsed.name || parsed.username || 'User';
+                    console.log('User ID initialized:', USER_ID);
+                    console.log('User Name:', CURRENT_USER_NAME);
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to parse currentUser from localStorage', e);
         }
+        
+        // Reset jika tidak ada user
+        USER_ID = null;
+        CURRENT_USER_NAME = null;
+        console.log('No valid user found, set to guest mode');
+        return false;
+    }
 
-        if (typeof ProductManager !== "undefined") {
-          try {
-            window.productManager = new ProductManager();
-          } catch (e) {
-            console.error("Error initializing ProductManager:", e);
-          }
-        } else {
-          console.warn("ProductManager is not defined on this page.");
+    // ===== 2. FUNGSI CART SYSTEM =====
+    async function updateCartBadge() {
+        try {
+            if (!USER_ID) {
+                document.getElementById('cartCount').innerText = 0;
+                return;
+            }
+            
+            const res = await fetch(`${API_BASE}/cart`, {
+                headers: { 'X-User-ID': USER_ID }
+            });
+            
+            if (!res.ok) {
+                document.getElementById('cartCount').innerText = 0;
+                return;
+            }
+            
+            const json = await res.json();
+            
+            let count = 0;
+            if (json.data && json.data.items) {
+                count = json.data.items.reduce((total, item) => total + (item.quantity || 0), 0);
+            } else if (json.data && json.data.item_count) {
+                count = json.data.item_count;
+            }
+            
+            document.getElementById('cartCount').innerText = count;
+            
+        } catch (e) {
+            console.warn('updateCartBadge error', e);
+            document.getElementById('cartCount').innerText = 0;
         }
+    }
 
-        if (typeof CartSystem !== "undefined") {
-          try {
-            window.cartSystem = new CartSystem();
-          } catch (e) {
-            console.error("Error initializing CartSystem:", e);
-          }
-        }
-      })();
-    </script>
-
-    <script>
-      (function () {
-        const nav = document.getElementById("navDashboard");
-        const navMobile = document.getElementById("navDashboardMobile");
-        if (!nav && !navMobile) return;
-
-        function updateDashboardUI() {
-          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-          const userData = localStorage.getItem("currentUser");
-          if (!isLoggedIn || !userData) {
-            if (nav) nav.classList.add("d-none");
-            if (navMobile) navMobile.classList.add("d-none");
+    // ===== 3. FUNGSI UNTUK MENAMBAH KE CART LANGSUNG =====
+    async function addToCartDirect(productId, quantity, productName) {
+        console.log("addToCartDirect called with:", { productId, quantity, productName });
+        
+        // Cek login status terbaru
+        const isLoggedIn = initializeUser();
+        
+        if (!isLoggedIn || !USER_ID) {
+            if (confirm('Anda perlu login untuk menambahkan produk ke keranjang. Login sekarang?')) {
+                window.location.href = 'login.html?redirect=products.html';
+            }
             return;
-          }
-
-          try {
-            const user = JSON.parse(userData);
-            const target =
-              user && user.role === "admin"
-                ? "dashboard_admin.html"
-                : "dashboard_cust.html";
-            if (nav) {
-              nav.classList.remove("d-none");
-              nav.href = target;
-            }
-            if (navMobile) {
-              navMobile.classList.remove("d-none");
-              navMobile.href = target;
-            }
-          } catch (e) {
-            if (nav) nav.classList.add("d-none");
-            if (navMobile) navMobile.classList.add("d-none");
-          }
         }
 
-        updateDashboardUI();
-        window.addEventListener("storage", function (e) {
-          if (e.key === "isLoggedIn" || e.key === "currentUser")
-            updateDashboardUI();
-          if (e.key === "cart_count") {
-            const val = Number(e.newValue) || 0;
-            const navBadge = document.getElementById("cartCount");
-            if (navBadge) navBadge.innerText = val;
-          }
+        try {
+            const headers = {
+                "Content-Type": "application/json",
+                "X-User-ID": USER_ID
+            };
+
+            const res = await fetch(`${API_BASE}/cart/add`, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({
+                    product_id: parseInt(productId),
+                    quantity: parseInt(quantity)
+                })
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                console.error(result);
+                alert(result.message || `Add to cart error: ${res.status}`);
+                return;
+            }
+
+            console.log("POST SUCCESS:", result);
+            alert(`Berhasil menambahkan ${quantity} kg ${productName} ke keranjang`);
+
+            await updateCartBadge();
+
+        } catch (err) {
+            console.error("FETCH ERROR:", err);
+            alert("Add to cart error: " + (err.message || err));
+        }
+    }
+
+    // ===== 4. EVENT LISTENER UNTUK TOMBOL "Add 1kg to Cart" =====
+    document.addEventListener("click", async (e) => {
+        // Target tombol dengan class khusus untuk card
+        const btn = e.target.closest(".add-to-cart-card-btn");
+        if (!btn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const productIdRaw = btn.dataset.productId || btn.dataset.id;
+        const productId = Number(productIdRaw);
+
+        if (!productIdRaw || Number.isNaN(productId)) {
+            alert('Add to cart error: invalid product id');
+            return;
+        }
+
+        const productName = btn.dataset.productName || 
+                          btn.closest('.product-card')?.querySelector('.card-title')?.textContent || 
+                          'Produk';
+
+        await addToCartDirect(productId, 1, productName);
+    });
+
+    // ===== 5. FUNGSI UNTUK LOAD DETAIL PRODUK =====
+    async function loadProductDetail(productId) {
+        try {
+            console.log(`Loading product detail for ID: ${productId}`);
+            
+            const loadingSpinner = document.getElementById("loadingSpinner");
+            if (loadingSpinner) loadingSpinner.classList.add("active");
+            
+            const response = await fetch(`${API_BASE}/products/${productId}`);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch product: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.status === 'success' && result.data) {
+                const product = result.data;
+                displayProductDetail(product);
+            } else {
+                throw new Error(result.message || 'Product not found');
+            }
+            
+        } catch (error) {
+            console.error("Error loading product detail:", error);
+            alert(`Gagal memuat detail produk: ${error.message}`);
+        } finally {
+            const loadingSpinner = document.getElementById("loadingSpinner");
+            if (loadingSpinner) loadingSpinner.classList.remove("active");
+        }
+    }
+
+    function displayProductDetail(product) {
+        // Set modal title
+        document.getElementById('modalTitle').textContent = product.name || 'Product';
+        
+        // Set modal image
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = product.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+        modalImage.alt = product.name || 'Product Image';
+        
+        // Set price
+        const price = product.price || 0;
+        document.getElementById('modalPrice').textContent = `Rp ${price.toLocaleString('id-ID')}`;
+        
+        // Set price per unit
+        const pricePerUnit = document.getElementById('modalPricePerUnit');
+        if (pricePerUnit) {
+            pricePerUnit.textContent = `Harga per kg: Rp ${price.toLocaleString('id-ID')}`;
+        }
+        
+        // Set description
+        document.getElementById('modalDescription').textContent = product.description || 'Tidak ada deskripsi tersedia.';
+        
+        // Set badges
+        const modalBadges = document.getElementById('modalBadges');
+        modalBadges.innerHTML = '';
+        
+        if (product.category) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary me-2';
+            badge.textContent = product.category;
+            modalBadges.appendChild(badge);
+        }
+        
+        if (product.type) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-success me-2';
+            badge.textContent = product.type;
+            modalBadges.appendChild(badge);
+        }
+        
+        if (product.origin) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-info me-2';
+            badge.textContent = product.origin;
+            modalBadges.appendChild(badge);
+        }
+        
+        // Set specifications
+        const modalSpecs = document.getElementById('modalSpecs');
+        const modalSpecMeta = document.getElementById('modalSpecMeta');
+        modalSpecs.innerHTML = '';
+        
+        const specifications = [];
+        
+        if (product.process) {
+            specifications.push(`<li><strong>Proses:</strong> ${product.process}</li>`);
+        }
+        
+        if (product.roast_level) {
+            specifications.push(`<li><strong>Tingkat Sangrai:</strong> ${product.roast_level}</li>`);
+        }
+        
+        if (product.acidity) {
+            specifications.push(`<li><strong>Kelebatan:</strong> ${product.acidity}</li>`);
+        }
+        
+        if (product.body) {
+            specifications.push(`<li><strong>Body:</strong> ${product.body}</li>`);
+        }
+        
+        if (product.flavor_notes) {
+            specifications.push(`<li><strong>Catatan Rasa:</strong> ${product.flavor_notes}</li>`);
+        }
+        
+        if (product.altitude) {
+            specifications.push(`<li><strong>Ketinggian:</strong> ${product.altitude} mdpl</li>`);
+        }
+        
+        if (product.variety) {
+            specifications.push(`<li><strong>Varietas:</strong> ${product.variety}</li>`);
+        }
+        
+        if (product.grade) {
+            specifications.push(`<li><strong>Grade:</strong> ${product.grade}</li>`);
+        }
+        
+        if (specifications.length === 0) {
+            specifications.push(
+                '<li>Biji kopi berkualitas premium</li>',
+                '<li>Diproses dengan standar tinggi</li>',
+                '<li>Cita rasa khas daerah asal</li>',
+                '<li>Dikemas dengan teknologi vakum</li>'
+            );
+        }
+        
+        modalSpecs.innerHTML = specifications.join('');
+        
+        if (modalSpecMeta) {
+            modalSpecMeta.innerHTML = `
+                <small>
+                    <i class="fas fa-box me-1"></i> Stok: ${product.stock || 'Tersedia'} 
+                    | <i class="fas fa-star me-1"></i> Rating: ${product.rating || '4.5/5'}
+                </small>
+            `;
+        }
+        
+        // Set modal quantity input
+        const modalQuantity = document.getElementById('modalQuantity');
+        if (modalQuantity) {
+            modalQuantity.value = 1;
+            modalQuantity.min = 1;
+            modalQuantity.max = product.stock || 100;
+        }
+        
+        // Setup add to cart button in modal - HAPUS EVENT LISTENER LAMA DULU
+        const modalAddToCartBtn = document.getElementById('modalAddToCart');
+        if (modalAddToCartBtn) {
+            // Hapus event listener lama jika ada
+            modalAddToCartBtn.replaceWith(modalAddToCartBtn.cloneNode(true));
+            const newModalAddToCartBtn = document.getElementById('modalAddToCart');
+            
+            newModalAddToCartBtn.onclick = function() {
+                const quantity = document.getElementById('modalQuantity').value;
+                console.log("Modal add to cart clicked, quantity:", quantity);
+                addToCartFromModal(product.id, quantity, product.name);
+            };
+            newModalAddToCartBtn.disabled = false;
+            newModalAddToCartBtn.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Add to Cart';
+        }
+        
+        // Show the modal
+        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        productModal.show();
+    }
+
+    async function addToCartFromModal(productId, quantity, productName) {
+        console.log("addToCartFromModal called with:", { productId, quantity, productName });
+        
+        try {
+            // Validasi quantity
+            const qty = parseInt(quantity);
+            if (isNaN(qty) || qty < 1 || qty > 100) {
+                alert('Jumlah harus antara 1-100 kg');
+                return;
+            }
+
+            // Panggil fungsi yang sama dengan quantity dari input modal
+            await addToCartDirect(productId, qty, productName);
+            
+            // Close modal setelah berhasil
+            const productModal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            if (productModal) {
+                productModal.hide();
+            }
+
+        } catch (err) {
+            console.error("FETCH ERROR:", err);
+            alert("Add to cart error: " + (err.message || err));
+        }
+    }
+
+    // ===== 6. SETUP EVENT LISTENERS UNTUK DETAIL PRODUK =====
+    function setupProductDetailListeners() {
+        // Event delegation for product detail buttons
+        document.addEventListener('click', function(e) {
+            // Check for "View Detail" buttons
+            const detailBtn = e.target.closest('.view-detail');
+            if (detailBtn) {
+                e.preventDefault();
+                const productId = detailBtn.dataset.productId || detailBtn.dataset.id;
+                if (productId) {
+                    loadProductDetail(productId);
+                }
+            }
+            
+            // Check for product cards (click on card image or title)
+            const productCard = e.target.closest('.product-card');
+            if (productCard && !e.target.closest('.add-to-cart-card-btn')) {
+                const productId = productCard.dataset.productId || productCard.dataset.id;
+                if (productId) {
+                    loadProductDetail(productId);
+                }
+            }
         });
-      })();
-    </script>
+    }
+
+    // ===== 7. FUNGSI LOGOUT UTAMA YANG DIPERBAIKI =====
+    async function handleLogout() {
+        console.log("handleLogout called");
+        
+        try {
+            // Ambil data user sebelum menghapus
+            let userId = null;
+            let userName = "User";
+            
+            const currentUser = localStorage.getItem("currentUser");
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    userId = user.id || user.user_id;
+                    userName = user.name || user.username || 'User';
+                } catch (e) {
+                    console.warn('Failed to parse user data', e);
+                }
+            }
+            
+            // Kirim request logout ke API
+            if (userId) {
+                try {
+                    const response = await fetch(`${API_BASE}/logout`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-User-ID": userId
+                        },
+                    });
+
+                    const result = await response.json();
+                    console.log("API Logout response:", result);
+                    
+                } catch (apiError) {
+                    console.warn('Logout API call failed:', apiError);
+                }
+            }
+            
+            // Clear SEMUA data dari localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Reset global variables
+            USER_ID = null;
+            CURRENT_USER_NAME = null;
+            
+            // Force reload untuk membersihkan cache
+            window.location.reload();
+            
+        } catch (error) {
+            console.error("Logout process error:", error);
+            
+            // Clear localStorage sebagai fallback
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Force reload
+            window.location.reload();
+        }
+    }
+
+    // ===== 8. FUNGSI UPDATE AUTH UI YANG DIPERBAIKI =====
+    function updateAuthUI() {
+        console.log("updateAuthUI called");
+        
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const currentUser = localStorage.getItem("currentUser");
+        
+        // Get UI elements
+        const userInfo = document.getElementById("userInfo");
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const navDashboard = document.getElementById("navDashboard");
+        
+        console.log("UI Elements found:", { 
+            userInfo: !!userInfo, 
+            loginBtn: !!loginBtn, 
+            logoutBtn: !!logoutBtn,
+            navDashboard: !!navDashboard 
+        });
+        
+        if (isLoggedIn && currentUser) {
+            try {
+                const user = JSON.parse(currentUser);
+                const userName = user.name || user.username || 'User';
+                
+                console.log("User is logged in as:", userName);
+                
+                // Tampilkan user info
+                if (userInfo) {
+                    userInfo.classList.remove("d-none");
+                    console.log("Showing user info");
+                }
+                if (userNameDisplay) {
+                    userNameDisplay.textContent = userName;
+                }
+                
+                // Toggle login/logout buttons
+                if (loginBtn) {
+                    loginBtn.classList.add("d-none");
+                    console.log("Hiding login button");
+                }
+                if (logoutBtn) {
+                    logoutBtn.classList.remove("d-none");
+                    console.log("Showing logout button");
+                }
+                
+                // Update dashboard link
+                updateDashboardUI();
+                
+            } catch (e) {
+                console.warn('Error parsing user data:', e);
+                showGuestUI();
+            }
+        } else {
+            console.log("User is not logged in, showing guest UI");
+            showGuestUI();
+        }
+    }
+
+    function showGuestUI() {
+        console.log("showGuestUI called");
+        
+        const userInfo = document.getElementById("userInfo");
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const navDashboard = document.getElementById("navDashboard");
+        
+        // Hide user info
+        if (userInfo) {
+            userInfo.classList.add("d-none");
+            console.log("Hiding user info");
+        }
+        if (userNameDisplay) {
+            userNameDisplay.textContent = 'User';
+        }
+        
+        // Show login button, hide logout button
+        if (loginBtn) {
+            loginBtn.classList.remove("d-none");
+            console.log("Showing login button");
+        }
+        if (logoutBtn) {
+            logoutBtn.classList.add("d-none");
+            console.log("Hiding logout button");
+        }
+        
+        // Hide dashboard link
+        if (navDashboard) {
+            navDashboard.classList.add("d-none");
+        }
+        
+        // Juga reset cart badge
+        document.getElementById('cartCount').innerText = '0';
+    }
+
+    // ===== 9. FUNGSI DASHBOARD UI =====
+    function updateDashboardUI() {
+        const navDashboard = document.getElementById("navDashboard");
+        if (!navDashboard) return;
+        
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const userData = localStorage.getItem("currentUser");
+        
+        if (!isLoggedIn || !userData) {
+            navDashboard.classList.add("d-none");
+            return;
+        }
+        
+        try {
+            const user = JSON.parse(userData);
+            const target = user && user.role === "admin" 
+                ? "dashboard_admin.html" 
+                : "dashboard_cust.html";
+            
+            navDashboard.classList.remove("d-none");
+            navDashboard.href = target;
+        } catch (e) {
+            navDashboard.classList.add("d-none");
+        }
+    }
+
+    // ===== 10. SETUP EVENT LISTENERS =====
+    function setupEventListeners() {
+        console.log("Setting up event listeners");
+        
+        // Setup logout button event listener
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            console.log("Found logout button, adding event listener");
+            // Hapus event listener lama jika ada
+            logoutBtn.removeEventListener("click", handleLogout);
+            logoutBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Logout button clicked");
+                handleLogout();
+            });
+        } else {
+            console.log("Logout button not found");
+        }
+        
+        // Setup login button
+        const loginBtn = document.getElementById("loginBtn");
+        if (loginBtn) {
+            loginBtn.href = "login.html?redirect=products.html";
+        }
+        
+        // Setup product detail listeners
+        setupProductDetailListeners();
+    }
+
+    // ===== 11. CHECK LOGIN STATUS SAAT PAGE LOAD =====
+    function checkLoginStatus() {
+        const returningToProducts = sessionStorage.getItem("returningToProducts");
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const currentUser = localStorage.getItem("currentUser");
+
+        if (isLoggedIn && currentUser && returningToProducts === "true") {
+            sessionStorage.removeItem("returningToProducts");
+        }
+    }
+
+    // ===== 12. INISIALISASI SAAT PAGE LOAD =====
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOM Content Loaded");
+        
+        // Initialize user
+        initializeUser();
+        
+        // Update cart badge
+        updateCartBadge();
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Update auth UI berdasarkan status login
+        updateAuthUI();
+        
+        // Check jika user baru login
+        checkLoginStatus();
+        
+        // Initialize products system
+        (async function initProducts() {
+            if (window.fetchProductsFromApi) {
+                try {
+                    await window.fetchProductsFromApi();
+                } catch (e) {
+                    console.warn("Failed to load products from API", e);
+                }
+            }
+
+            if (typeof ProductManager !== "undefined") {
+                try {
+                    window.productManager = new ProductManager();
+                } catch (e) {
+                    console.error("Error initializing ProductManager:", e);
+                }
+            } else {
+                console.warn("ProductManager is not defined on this page.");
+            }
+
+            if (typeof CartSystem !== "undefined") {
+                try {
+                    window.cartSystem = new CartSystem();
+                } catch (e) {
+                    console.error("Error initializing CartSystem:", e);
+                }
+            }
+        })();
+    });
+
+    // ===== 13. EVENT LISTENER UNTUK STORAGE CHANGES =====
+    window.addEventListener("storage", function (e) {
+        console.log("Storage changed:", e.key);
+        
+        if (e.key === "isLoggedIn" || e.key === "currentUser") {
+            // Update user data
+            initializeUser();
+            // Update UI
+            updateAuthUI();
+            // Update cart badge
+            updateCartBadge();
+        }
+    });
+
+    // ===== 14. GLOBAL EXPORTS =====
+    window.handleLogout = handleLogout;
+    window.updateAuthUI = updateAuthUI;
+    window.loadProductDetail = loadProductDetail;
+    window.addToCartDirect = addToCartDirect;
+</script>
   </body>
 </html>
