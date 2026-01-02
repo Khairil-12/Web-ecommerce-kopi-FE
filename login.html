@@ -684,10 +684,18 @@
               } catch (storageErr) {
                 console.warn("Could not write to localStorage:", storageErr);
               }
+              localStorage.setItem("user", JSON.stringify(result.user));
 
               setTimeout(() => {
-                window.location.href = "index.html";
-              }, 1500);
+                if (
+                  result.user.is_admin === true ||
+                  result.user.is_admin === 1
+                ) {
+                  window.location.href = "index.html";
+                } else {
+                  window.location.href = "index.html";
+                }
+              }, 800);
             } else {
               if (errorMessage) {
                 errorMessage.textContent =

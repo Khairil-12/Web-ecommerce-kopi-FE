@@ -301,30 +301,6 @@
     </div>
 
     <script>
-      function initializeUserDatabase() {
-        if (!localStorage.getItem("users")) {
-          const defaultUsers = [
-            {
-              id: 1,
-              username: "admin",
-              password: "admin123",
-              email: "admin@kopiprima.com",
-              phone: "08123456789",
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: 2,
-              username: "customer",
-              password: "customer123",
-              email: "customer@example.com",
-              phone: "0876543210",
-              createdAt: new Date().toISOString(),
-            },
-          ];
-          localStorage.setItem("users", JSON.stringify(defaultUsers));
-        }
-      }
-
       function getUsers() {
         return JSON.parse(localStorage.getItem("users")) || [];
       }
