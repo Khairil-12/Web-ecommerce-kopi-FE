@@ -276,6 +276,15 @@
         document.getElementById("productModal")
       );
 
+      function normalizeImageUrl(url) {
+        if (!url) return url;
+        url = url.replace(/\\/g, "/").trim();
+        if (url.startsWith("/")) return url;
+        if (url.startsWith("static/")) return "/" + url;
+        if (url.startsWith("img/")) return "/static/" + url;
+        return "/" + url;
+      }
+
       async function loadDashboard() {
         const r = await fetch(`${API}/admin/dashboard`, {
           headers: { "X-User-ID": admin.id },
@@ -376,7 +385,19 @@
           fd.append("discount_percentage", productDiscount.value);
         }
         fd.append("is_featured", productFeatured.value);
-        if (productImage.files[0]) fd.append("image", productImage.files[0]);
+        if (productImage.files[0]) {
+          fd.append("image", productImage.files[0]);
+        } else {
+          // if no file uploaded but preview exists (editing existing product), send normalized image_url
+          const imgEl = document.querySelector("#imagePreview img");
+          if (imgEl && imgEl.src) {
+            let src = imgEl.getAttribute("src") || imgEl.src;
+            // If preview image uses API_BASE prefix, strip it before normalizing
+            if (src.startsWith(API_BASE)) src = src.slice(API_BASE.length);
+            src = normalizeImageUrl(src);
+            fd.append("image_url", src);
+          }
+        }
 
         const id = productId.value;
         const res = await fetch(
@@ -414,17 +435,33 @@
       }
 
       async function loadProducts() {
-        const r = await fetch(`${API}/products`);
-        const j = await r.json();
-        productsTable.innerHTML = "";
-        j.data.forEach((p) => {
-          const active = p.is_available !== false;
-          productsTable.innerHTML += `
+        try {
+          const r = await fetch(`${API}/products`);
+          if (!r.ok) {
+            console.error("Failed to fetch products", r.status, r.statusText);
+            productsTable.innerHTML = "";
+            return;
+          }
+          const j = await r.json();
+          if (!j || !Array.isArray(j.data)) {
+            console.error("Invalid products payload", j);
+            productsTable.innerHTML = "";
+            return;
+          }
+
+          productsTable.innerHTML = "";
+          j.data.forEach((p) => {
+            const active = p.is_available !== false;
+            // Normalize image URL: if path starts with / use API_BASE prefix so it loads from server
+            const imgUrl = p.image_url
+              ? p.image_url.startsWith("/")
+                ? API_BASE + p.image_url
+                : p.image_url
+              : null;
+            productsTable.innerHTML += `
       <tr>
       <td>${p.id}</td>
-      <td>${
-        p.image_url ? `<img src="${p.image_url}" class="product-img">` : "-"
-      }</td>
+      <td>${imgUrl ? `<img src="${imgUrl}" class="product-img">` : "-"}</td>
       <td>${p.name}</td>
       <td>Rp ${p.price.toLocaleString("id-ID")}</td>
       <td>${active ? "Active" : "Inactive"}</td>
@@ -439,7 +476,11 @@
       }
       </td>
       </tr>`;
-        });
+          });
+        } catch (e) {
+          console.error("loadProducts error", e);
+          productsTable.innerHTML = "";
+        }
       }
 
       function editProduct(p) {
@@ -571,6 +612,8 @@
         }
       }
 
+      loadDashboard();
+      loadUsers();
       loadProducts();
       loadTransactions();
     </script>

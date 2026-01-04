@@ -751,9 +751,10 @@
                 (it) => `
                 <div class="d-flex align-items-center gap-3 border rounded p-2 mb-2">
                   <div style="width:64px;height:48px">${
-                    it.image_url
-                      ? `<img src="${it.image_url}" style="width:64px;height:48px;object-fit:cover;border-radius:6px">`
-                      : ""
+                    (function(){
+                      const src = it.image_url ? (it.image_url.startsWith('/') ? API_BASE + it.image_url : it.image_url) : null;
+                      return src ? `<img src="${src}" style="width:64px;height:48px;object-fit:cover;border-radius:6px">` : "";
+                    })()
                   }</div>
                   <div style="flex:1">
                     <div class="fw-bold">${

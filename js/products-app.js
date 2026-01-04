@@ -26,6 +26,13 @@ class ProductManager {
     this.init();
   }
 
+  resolveImgSrc(src) {
+    if (!src) return "";
+    if (src.startsWith("/"))
+      return (typeof API_BASE !== "undefined" ? API_BASE : "") + src;
+    return src;
+  }
+
   prepareProductsData() {
     if (typeof window.products === "undefined" || !window.products) return [];
     return Object.keys(window.products).map((id) => {
@@ -396,9 +403,9 @@ class ProductManager {
       <div class="card product-card h-100">
         <div class="position-relative">
           <div class="type-badge ${typeBadge}">${typeText}</div>
-          <img src="${
-            product.image || ""
-          }" class="card-img-top product-image" alt="${
+          <img src="${this.resolveImgSrc(
+            product.image || product.image_url || ""
+          )}" class="card-img-top product-image" alt="${
       product.name || ""
     }" loading="lazy">
           <div class="price-tag ${typeClass}">Rp ${
@@ -825,7 +832,9 @@ class CartSystem {
       itemsHTML += `
       <div class="cart-item">
         <div class="d-flex">
-          <img src="${item.image || ""}" alt="${
+          <img src="${this.resolveImgSrc(
+            item.image || item.image_url || ""
+          )}" alt="${
         item.name || ""
       }" class="rounded" style="width:60px;height:60px;object-fit:cover;">
           <div class="ms-3 flex-grow-1">
