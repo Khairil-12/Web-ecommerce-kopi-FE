@@ -1,5 +1,4 @@
 :root {
-  /* ===== COFFEE COLOR PALETTE ===== */
   --primary-color: #8b4513;
   --primary-dark: #654321;
   --primary-light: #a0522d;
@@ -18,8 +17,6 @@
   --latte: #fdf5e6;
   --cappuccino: #e6d2b5;
   --mocha: #8b7355;
-
-  /* ===== NEUTRAL COLORS ===== */
   --white: #ffffff;
   --black: #000000;
   --gray-100: #f8f9fa;
@@ -31,14 +28,10 @@
   --gray-700: #495057;
   --gray-800: #343a40;
   --gray-900: #212529;
-
-  /* ===== SEMANTIC COLORS ===== */
   --success-color: #28a745;
   --warning-color: #ffc107;
   --danger-color: #dc3545;
   --info-color: #17a2b8;
-
-  /* ===== SPACING SYSTEM ===== */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -46,8 +39,6 @@
   --spacing-xl: 2rem;
   --spacing-xxl: 3rem;
   --spacing-xxxl: 4rem;
-
-  /* ===== TYPOGRAPHY SCALE ===== */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -58,8 +49,6 @@
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
   --text-6xl: 3.75rem;
-
-  /* ===== LAYOUT VARIABLES ===== */
   --header-height: 76px;
   --section-padding: 80px;
   --container-max-width: 1200px;
@@ -67,8 +56,6 @@
   --border-radius: 12px;
   --border-radius-lg: 16px;
   --border-radius-xl: 20px;
-
-  /* ===== SHADOW SYSTEM ===== */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -80,14 +67,10 @@
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-brown: 0 4px 14px 0 rgba(139, 69, 19, 0.3);
   --shadow-brown-lg: 0 10px 30px 0 rgba(139, 69, 19, 0.2);
-
-  /* ===== TRANSITION TIMING ===== */
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
   --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-  /* ===== Z-INDEX LAYERS ===== */
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
@@ -98,7 +81,6 @@
   --z-toast: 1080;
 }
 
-/* ===== CSS RESET & BASE STYLES ===== */
 *,
 *::before,
 *::after {
@@ -125,7 +107,6 @@ body {
   text-rendering: optimizeSpeed;
 }
 
-/* ===== TYPOGRAPHY SYSTEM ===== */
 h1,
 h2,
 h3,
@@ -237,7 +218,6 @@ h6 {
   color: var(--gray-900) !important;
 }
 
-/* ===== BUTTON COMPONENT SYSTEM ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -363,7 +343,6 @@ h6 {
   transform: translateY(-2px);
 }
 
-/* ===== NAVBAR COMPONENT ===== */
 .navbar {
   background: linear-gradient(
     135deg,
@@ -477,7 +456,6 @@ h6 {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-/* ===== HERO SECTION ===== */
 .hero-section {
   background: linear-gradient(135deg, var(--light-cream) 0%, var(--cream) 100%);
   min-height: 100vh;
@@ -545,7 +523,6 @@ h6 {
   box-shadow: var(--shadow-2xl), 0 0 50px rgba(139, 69, 19, 0.2);
 }
 
-/* ===== SECTION SYSTEM ===== */
 .section {
   padding: var(--section-padding) 0;
   position: relative;
@@ -593,7 +570,6 @@ h6 {
   color: var(--white);
 }
 
-/* ===== CARD COMPONENT SYSTEM ===== */
 .card {
   border: none;
   border-radius: var(--border-radius-lg);
@@ -673,7 +649,6 @@ h6 {
   line-height: 1.6;
 }
 
-/* ===== BADGE COMPONENT SYSTEM ===== */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -733,7 +708,6 @@ h6 {
   color: var(--white) !important;
 }
 
-/* ===== PROCESS STEPS COMPONENT ===== */
 .process-steps {
   margin-top: var(--spacing-xxl);
 }

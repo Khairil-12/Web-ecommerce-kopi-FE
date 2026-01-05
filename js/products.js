@@ -32,8 +32,6 @@ async function fetchProductsFromApi() {
         price: p.price ?? 0,
         stock: p.stock ?? p.quantity ?? 0,
         isAvailable: p.is_available ?? p.available ?? true,
-
-        // Optional fields useful for UI
         badges: p.badges ?? [],
         specs: p.specs ?? p.specification ?? p.specifications ?? [],
         weightOptions: p.weightOptions ?? p.weight_options ?? [],
@@ -41,8 +39,6 @@ async function fetchProductsFromApi() {
         origin: p.origin ?? "",
         roastLevel: p.roast_level ?? p.roastLevel ?? "",
         process: p.process ?? "",
-
-        // ⬇️ LANGSUNG PAKAI PATH LOCAL
         image: p.image_url || p.image || "/img/no-image.png",
       };
     });
