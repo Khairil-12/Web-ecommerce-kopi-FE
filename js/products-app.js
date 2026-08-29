@@ -709,7 +709,7 @@ class CartSystem {
     }
 
     // Call server API to add
-    fetch("http://localhost:5000/api/cart/add", {
+      fetch(`${window.API_BASE || "http://127.0.0.1:5000/api"}/cart/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -771,7 +771,7 @@ class CartSystem {
         }
         if (!userId) userId = localStorage.getItem("user_id") || null;
         if (userId) {
-          fetch("http://localhost:5000/api/cart", {
+          fetch(`${window.API_BASE || "http://127.0.0.1:5000/api"}/cart`, {
             headers: { "X-User-ID": userId },
           })
             .then((r) => (r.ok ? r.json() : null))
@@ -957,7 +957,7 @@ if (typeof window !== "undefined") {
 }
 
 async function addToCart(productId, quantity = 1) {
-  const API_URL = "http://localhost:5000";
+  const API_URL = window.API_BASE || "http://127.0.0.1:5000";
   const userId = localStorage.getItem("user_id");
 
   if (!userId) {

@@ -2,7 +2,7 @@
 class AuthSystem {
   constructor() {
     // Use absolute API base so pages opened via file:// can reach backend
-    this.baseUrl = "http://localhost:5000/api";
+    this.baseUrl = window.API_BASE || "http://127.0.0.1:5000/api";
     this.init();
   }
 

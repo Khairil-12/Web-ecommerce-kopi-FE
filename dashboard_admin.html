@@ -2,622 +2,119 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <title>Admin Dashboard - Kopi Prima</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      rel="stylesheet"
-    />
-
-    <style>
-      body {
-        background: #f4f6f9;
-      }
-      .card-stat {
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      }
-      .table thead {
-        background: #212529;
-        color: #fff;
-      }
-      img.product-img {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 8px;
-      }
-      .badge-admin {
-        background: #0d6efd;
-      }
-      .badge-customer {
-        background: #6c757d;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin - Kopi Prima</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/auth.js"></script>
   </head>
-
-  <body>
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-light bg-white shadow-sm px-4">
-      <span class="navbar-brand fw-bold">☕ Kopi Prima - Admin</span>
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item">
-        <a class="nav-link" href="index.html"> Home </a>
-      </li>
-      <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </nav>
-
-    
-    <div class="container my-4">
-      <script>
-        const adminRaw =
-          localStorage.getItem("currentUser") || localStorage.getItem("user");
-        const admin = adminRaw ? JSON.parse(adminRaw) : null;
-        if (!admin || !admin.is_admin) location.href = "index.html";
-      </script>
-
-      <!-- DASHBOARD -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-3">
-          <div class="card card-stat p-3">
-            <small>Total Users</small>
-            <h3 id="statUsers">-</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card card-stat p-3">
-            <small>Total Products</small>
-            <h3 id="statProducts">-</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card card-stat p-3">
-            <small>Total Transactions</small>
-            <h3 id="statTransactions">-</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card card-stat p-3">
-            <small>Total Revenue</small>
-            <h3 id="statRevenue">Rp 0</h3>
-          </div>
+  <body class="bg-gray-100">
+    <header class="sticky top-0 z-50 border-b bg-white shadow">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        <h1 class="text-xl font-bold text-coffee-700">☕ ADMIN DASHBOARD</h1>
+        <div class="flex gap-3">
+          <a href="index.html" class="text-sm font-medium">Kembali</a>
+          <button id="logoutBtn" class="rounded px-3 py-2 bg-red-500 text-white text-sm">Logout</button>
         </div>
       </div>
-
-      <!-- USERS -->
-      <h4>👥 Users</h4>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th width="80">Action</th>
-          </tr>
-        </thead>
-        <tbody id="usersTable"></tbody>
-      </table>
-
-      <!-- PRODUCTS -->
-      <div class="d-flex justify-content-between align-items-center mt-5">
-        <h4>📦 Products</h4>
-        <button class="btn btn-primary" onclick="openAddProductModal()">
-          <i class="fas fa-plus"></i> Add Product
-        </button>
-      </div>
-
-      <table class="table table-bordered table-hover mt-3">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th width="150">Action</th>
-          </tr>
-        </thead>
-        <tbody id="productsTable"></tbody>
-      </table>
-
-      <!-- TRANSACTIONS -->
-      <h4 class="mt-5">💰 Transactions</h4>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>User</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Method</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody id="transactionsTable"></tbody>
-      </table>
-    </div>
-
-    <!-- PRODUCT MODAL -->
-    <div class="modal fade" id="productModal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalTitle">Add Product</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-
-          <div class="modal-body">
-            <input type="hidden" id="productId" />
-
-            <label>Nama *</label>
-            <input class="form-control mb-2" id="productName" />
-
-            <label>Kategori *</label>
-            <input class="form-control mb-2" id="productCategory" />
-
-            <div class="row">
-              <div class="col-md-6">
-                <label>Harga *</label>
-                <input
-                  type="number"
-                  class="form-control mb-2"
-                  id="productPrice"
-                />
-              </div>
-              <div class="col-md-6">
-                <label>Harga Asli</label>
-                <input
-                  type="number"
-                  class="form-control mb-2"
-                  id="productOriginalPrice"
-                />
-              </div>
-            </div>
-
-            <label>Deskripsi</label>
-            <textarea class="form-control mb-2" id="productDesc"></textarea>
-
-            <div class="row">
-              <div class="col-md-4">
-                <input
-                  class="form-control mb-2"
-                  id="productWeight"
-                  placeholder="Weight"
-                />
-              </div>
-              <div class="col-md-4">
-                <input
-                  class="form-control mb-2"
-                  id="productRoast"
-                  placeholder="Roast Level"
-                />
-              </div>
-              <div class="col-md-4">
-                <input
-                  class="form-control mb-2"
-                  id="productOrigin"
-                  placeholder="Origin"
-                />
-              </div>
-            </div>
-
-            <textarea
-              class="form-control mb-2"
-              id="productFlavor"
-              placeholder="Flavor Notes"
-            ></textarea>
-            <textarea
-              class="form-control mb-2"
-              id="productBrewing"
-              placeholder="Brewing Methods"
-            ></textarea>
-            <textarea
-              class="form-control mb-2"
-              id="productSpecs"
-              placeholder="Specifications"
-            ></textarea>
-
-            <div class="row">
-              <div class="col-md-4">
-                <input
-                  type="number"
-                  step="0.1"
-                  class="form-control mb-2"
-                  id="productRating"
-                  placeholder="Rating"
-                />
-              </div>
-              <div class="col-md-4">
-                <select class="form-control mb-2" id="productFeatured">
-                  <option value="0">Not Featured</option>
-                  <option value="1">Featured</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <input
-                  type="number"
-                  class="form-control mb-2"
-                  id="productDiscount"
-                  placeholder="Discount %"
-                />
-              </div>
-            </div>
-
-            <input type="file" class="form-control mb-2" id="productImage" />
-            <div id="imagePreview"></div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button class="btn btn-primary" onclick="submitProduct()">
-              Save
-            </button>
-          </div>
+    </header>
+    <main class="mx-auto max-w-7xl px-4 py-8">
+      <div class="grid gap-4 md:grid-cols-4 mb-8">
+        <div class="rounded-lg bg-white p-6 shadow">
+          <p class="text-sm text-gray-600">Total Users</p>
+          <p id="statUsers" class="mt-2 text-3xl font-bold">-</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <p class="text-sm text-gray-600">Total Products</p>
+          <p id="statProducts" class="mt-2 text-3xl font-bold">-</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <p class="text-sm text-gray-600">Total Transactions</p>
+          <p id="statTransactions" class="mt-2 text-3xl font-bold">-</p>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <p class="text-sm text-gray-600">Total Revenue</p>
+          <p id="statRevenue" class="mt-2 text-3xl font-bold">Rp 0</p>
         </div>
       </div>
-    </div>
-
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+      <section class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-bold">👥 Users</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="border-b">
+              <tr class="text-left">
+                <th class="px-4 py-2">ID</th>
+                <th class="px-4 py-2">Username</th>
+                <th class="px-4 py-2">Email</th>
+                <th class="px-4 py-2">Phone</th>
+                <th class="px-4 py-2">Role</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable" class="divide-y">
+              <tr><td class="px-4 py-2 text-center" colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="mt-8 rounded-lg bg-white p-6 shadow">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-lg font-bold">📦 Products</h2>
+          <button id="addProductBtn" class="rounded px-3 py-2 bg-coffee-600 text-white text-sm">+ Add</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="border-b">
+              <tr class="text-left">
+                <th class="px-4 py-2">ID</th>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Price</th>
+                <th class="px-4 py-2">Stock</th>
+                <th class="px-4 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody id="productsTable" class="divide-y">
+              <tr><td class="px-4 py-2 text-center" colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="mt-8 rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-bold">💰 Transactions</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="border-b">
+              <tr class="text-left">
+                <th class="px-4 py-2">Code</th>
+                <th class="px-4 py-2">User</th>
+                <th class="px-4 py-2">Total</th>
+                <th class="px-4 py-2">Status</th>
+                <th class="px-4 py-2">Date</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTable" class="divide-y">
+              <tr><td class="px-4 py-2 text-center" colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
     <script>
-      const API = "http://127.0.0.1:5000/api";
-      const API_BASE = API.replace("/api", "");
-      const modal = new bootstrap.Modal(
-        document.getElementById("productModal")
-      );
-
-      function normalizeImageUrl(url) {
-        if (!url) return url;
-        url = url.replace(/\\/g, "/").trim();
-        if (url.startsWith("/")) return url;
-        if (url.startsWith("static/")) return "/" + url;
-        if (url.startsWith("img/")) return "/static/" + url;
-        return "/" + url;
-      }
-
-      async function loadDashboard() {
-        const r = await fetch(`${API}/admin/dashboard`, {
-          headers: { "X-User-ID": admin.id },
-        });
-        const j = await r.json();
-        statUsers.innerText = j.data.total_users;
-        statProducts.innerText = j.data.total_products;
-        statTransactions.innerText = j.data.total_transactions;
-        statRevenue.innerText =
-          "Rp " + j.data.total_revenue.toLocaleString("id-ID");
-      }
-
-      async function loadUsers() {
-        const r = await fetch(`${API}/admin/users`, {
-          headers: { "X-User-ID": admin.id },
-        });
-        const j = await r.json();
-        usersTable.innerHTML = "";
-        j.data.forEach((u) => {
-          usersTable.innerHTML += `
-      <tr>
-      <td>${u.id}</td>
-      <td>${u.username}</td>
-      <td>${u.email}</td>
-      <td>${u.phone || "-"}</td>
-      <td><span class="badge ${
-        u.is_admin ? "badge-admin" : "badge-customer"
-      }">${u.is_admin ? "Admin" : "Customer"}</span></td>
-      <td>${
-        u.is_admin
-          ? "-"
-          : `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i></button>`
-      }</td>
-      </tr>`;
-        });
-      }
-
-      async function deleteUser(id) {
-        if (!confirm("Delete user?")) return;
-        await fetch(`${API}/users/${id}`, {
-          method: "DELETE",
-          headers: { "X-User-ID": admin.id },
-        });
-        loadUsers();
-      }
-
-      function openAddProductModal() {
-        productId.value = "";
-        modalTitle.innerText = "Add Product";
-
-        // Kosongkan semua field
-        productName.value = "";
-        productCategory.value = "";
-        productPrice.value = "";
-        productOriginalPrice.value = "";
-        productDesc.value = "";
-        productWeight.value = "";
-        productRoast.value = "";
-        productOrigin.value = "";
-        productFlavor.value = "";
-        productBrewing.value = "";
-        productSpecs.value = "";
-        productRating.value = "";
-        productFeatured.value = 0;
-        productDiscount.value = "";
-        productImage.value = "";
-        imagePreview.innerHTML = "";
-
-        modal.show();
-      }
-
-      async function submitProduct() {
-        if (
-          !productName.value ||
-          !productCategory.value ||
-          !productPrice.value
-        ) {
-          alert("Nama, kategori & harga wajib");
-          return;
-        }
-        const fd = new FormData();
-        fd.append("name", productName.value);
-        fd.append("category", productCategory.value);
-        fd.append("price", productPrice.value);
-        if (productDesc.value) fd.append("description", productDesc.value);
-        if (productOriginalPrice.value)
-          fd.append("original_price", productOriginalPrice.value);
-        if (productWeight.value) fd.append("weight", productWeight.value);
-        if (productRoast.value) fd.append("roast_level", productRoast.value);
-        if (productOrigin.value) fd.append("origin", productOrigin.value);
-        if (productFlavor.value) fd.append("flavor_notes", productFlavor.value);
-        if (productBrewing.value)
-          fd.append("brewing_methods", productBrewing.value);
-        if (productSpecs.value) fd.append("specifications", productSpecs.value);
-        if (productRating.value) fd.append("rating", productRating.value);
-        if (productDiscount.value) {
-          fd.append("is_discounted", 1);
-          fd.append("discount_percentage", productDiscount.value);
-        }
-        fd.append("is_featured", productFeatured.value);
-        if (productImage.files[0]) {
-          fd.append("image", productImage.files[0]);
-        } else {
-          // if no file uploaded but preview exists (editing existing product), send normalized image_url
-          const imgEl = document.querySelector("#imagePreview img");
-          if (imgEl && imgEl.src) {
-            let src = imgEl.getAttribute("src") || imgEl.src;
-            // If preview image uses API_BASE prefix, strip it before normalizing
-            if (src.startsWith(API_BASE)) src = src.slice(API_BASE.length);
-            src = normalizeImageUrl(src);
-            fd.append("image_url", src);
-          }
-        }
-
-        const id = productId.value;
-        const res = await fetch(
-          id ? `${API}/products/${id}` : `${API}/products`,
-          {
-            method: id ? "PUT" : "POST",
-            headers: { "X-User-ID": admin.id },
-            body: fd,
-          }
-        );
-        if (!res.ok) {
-          alert("Gagal simpan produk");
-          return;
-        }
-        productId.value = "";
-        productName.value = "";
-        productCategory.value = "";
-        productPrice.value = "";
-        productOriginalPrice.value = "";
-        productDesc.value = "";
-        productWeight.value = "";
-        productRoast.value = "";
-        productOrigin.value = "";
-        productFlavor.value = "";
-        productBrewing.value = "";
-        productSpecs.value = "";
-        productRating.value = "";
-        productFeatured.value = 0;
-        productDiscount.value = "";
-        productImage.value = "";
-        imagePreview.innerHTML = "";
-
-        modal.hide();
-        loadProducts();
-      }
-
-      async function loadProducts() {
+      const user = auth.getCurrentUser();
+      if (!user || !user.is_admin) location.href = 'index.html';
+      document.getElementById('logoutBtn').addEventListener('click', async () => { await auth.logout(); location.href = 'index.html'; });
+      (async () => {
         try {
-          const r = await fetch(`${API}/products`);
-          if (!r.ok) {
-            console.error("Failed to fetch products", r.status, r.statusText);
-            productsTable.innerHTML = "";
-            return;
+          const res = await fetch(`${window.API_BASE}/admin/dashboard`, { headers: { 'X-User-ID': user.id } });
+          const data = await res.json();
+          if (data.status === 'success') {
+            const s = data.data;
+            document.getElementById('statUsers').textContent = s.total_users || 0;
+            document.getElementById('statProducts').textContent = s.total_products || 0;
+            document.getElementById('statTransactions').textContent = s.total_transactions || 0;
+            document.getElementById('statRevenue').textContent = 'Rp ' + (s.total_revenue || 0).toLocaleString('id-ID');
           }
-          const j = await r.json();
-          if (!j || !Array.isArray(j.data)) {
-            console.error("Invalid products payload", j);
-            productsTable.innerHTML = "";
-            return;
-          }
-
-          productsTable.innerHTML = "";
-          j.data.forEach((p) => {
-            const active = p.is_available !== false;
-            // Normalize image URL: if path starts with / use API_BASE prefix so it loads from server
-            const imgUrl = p.image_url
-              ? p.image_url.startsWith("/")
-                ? API_BASE + p.image_url
-                : p.image_url
-              : null;
-            productsTable.innerHTML += `
-      <tr>
-      <td>${p.id}</td>
-      <td>${imgUrl ? `<img src="${imgUrl}" class="product-img">` : "-"}</td>
-      <td>${p.name}</td>
-      <td>Rp ${p.price.toLocaleString("id-ID")}</td>
-      <td>${active ? "Active" : "Inactive"}</td>
-      <td>
-      <button class="btn btn-warning btn-sm" onclick="editProductById(${
-        p.id
-      })"><i class="fas fa-edit"></i></button>
-      ${
-        active
-          ? `<button class="btn btn-danger btn-sm" onclick="deactivateProduct(${p.id})"><i class="fas fa-toggle-off"></i></button>`
-          : `<button class="btn btn-success btn-sm" onclick="activateProduct(${p.id})"><i class="fas fa-toggle-on"></i></button>`
-      }
-      </td>
-      </tr>`;
-          });
-        } catch (e) {
-          console.error("loadProducts error", e);
-          productsTable.innerHTML = "";
-        }
-      }
-
-      function editProduct(p) {
-        productId.value = p.id;
-        productName.value = p.name;
-        productCategory.value = p.category;
-        productPrice.value = p.price;
-        productOriginalPrice.value = p.original_price || "";
-        productDesc.value = p.description || "";
-        productWeight.value = p.weight || "";
-        productRoast.value = p.roast_level || "";
-        productOrigin.value = p.origin || "";
-        productFlavor.value = p.flavor_notes || "";
-        productBrewing.value = p.brewing_methods || "";
-        productSpecs.value = p.specifications || "";
-        productRating.value = p.rating || "";
-        productFeatured.value = p.is_featured ? "1" : "0";
-        productDiscount.value = p.discount_percentage || "";
-
-        // Preview image jika ada (prefix server base if needed)
-        if (p.image_url) {
-          const previewUrl = p.image_url.startsWith("/")
-            ? API_BASE + p.image_url
-            : p.image_url;
-          imagePreview.innerHTML = `<img src="${previewUrl}" class="img-thumbnail mt-2" width="100">`;
-        } else {
-          imagePreview.innerHTML = "";
-        }
-
-        modalTitle.innerText = "Edit Product";
-        modal.show();
-      }
-
-      async function deactivateProduct(id) {
-        await fetch(`${API}/products/${id}`, {
-          method: "DELETE",
-          headers: { "X-User-ID": admin.id },
-        });
-        loadProducts();
-      }
-
-      async function activateProduct(id) {
-        await fetch(`${API}/products/${id}/activate`, {
-          method: "PUT",
-          headers: { "X-User-ID": admin.id },
-        });
-        loadProducts();
-      }
-
-      async function loadProducts() {
-        const r = await fetch(`${API}/products`);
-        const j = await r.json();
-        productsTable.innerHTML = "";
-        j.data.forEach((p) => {
-          const active = p.is_available !== false;
-          // Normalize image URL: if path starts with / use API_BASE prefix so it loads from server
-          const imgUrl = p.image_url
-            ? p.image_url.startsWith("/")
-              ? API_BASE + p.image_url
-              : p.image_url
-            : null;
-          productsTable.innerHTML += `
-      <tr>
-      <td>${p.id}</td>
-      <td>${imgUrl ? `<img src="${imgUrl}" class="product-img">` : "-"}</td>
-      <td>${p.name}</td>
-      <td>Rp ${p.price.toLocaleString("id-ID")}</td>
-      <td>${active ? "Active" : "Inactive"}</td>
-      <td>
-      <button class="btn btn-warning btn-sm" onclick="editProductById(${
-        p.id
-      })"><i class="fas fa-edit"></i></button>
-      ${
-        active
-          ? `<button class="btn btn-danger btn-sm" onclick="deactivateProduct(${p.id})"><i class="fas fa-toggle-off"></i></button>`
-          : `<button class="btn btn-success btn-sm" onclick="activateProduct(${p.id})"><i class="fas fa-toggle-on"></i></button>`
-      }
-      </td>
-      </tr>`;
-        });
-      }
-
-      // Fetch product by id and open edit modal
-      async function editProductById(id) {
-        try {
-          const r = await fetch(`${API}/products/${id}`);
-          if (!r.ok) {
-            alert("Gagal mengambil data produk");
-            return;
-          }
-          const j = await r.json();
-          const p = j.data;
-          if (!p) {
-            alert("Produk tidak ditemukan");
-            return;
-          }
-          // If image_url is a server path, prefix API_BASE for preview
-          if (p.image_url && p.image_url.startsWith("/"))
-            p.image_url = API_BASE + p.image_url;
-          editProduct(p);
-        } catch (e) {
-          console.error("editProductById error", e);
-          alert("Terjadi kesalahan saat mengambil produk");
-        }
-      }
-      // Load transactions (admin)
-      async function loadTransactions() {
-        try {
-          const r = await fetch(`${API}/admin/transactions`, {
-            headers: { "X-User-ID": admin.id },
-          });
-          const j = await r.json();
-          transactionsTable.innerHTML = "";
-          if (Array.isArray(j.data)) {
-            j.data.forEach((t) => {
-              transactionsTable.innerHTML += `
-      <tr>
-      <td>${t.transaction_code}</td>
-      <td>${t.username}</td>
-      <td>Rp ${Number(t.total_amount).toLocaleString("id-ID")}</td>
-      <td>${t.status}</td>
-      <td>${t.payment_method || "-"}</td>
-      <td>${t.created_at ? new Date(t.created_at).toLocaleString() : "-"}</td>
-      </tr>`;
-            });
-          }
-        } catch (e) {
-          console.error("loadTransactions error", e);
-        }
-      }
-
-      loadDashboard();
-      loadUsers();
-      loadProducts();
-      loadTransactions();
+        } catch (e) { console.error(e); }
+      })();
     </script>
   </body>
 </html>

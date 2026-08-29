@@ -2,7 +2,7 @@ if (typeof window !== "undefined") window.products = {};
 
 async function fetchProductsFromApi() {
   try {
-    const API_URL = "http://127.0.0.1:5000/api/products";
+    const API_URL = window.API_BASE ? `${window.API_BASE}/products` : "http://127.0.0.1:5000/api/products";
 
     const res = await fetch(API_URL);
     if (!res.ok) {
