@@ -1,22 +1,22 @@
 :root {
-  --primary-color: #8b4513;
-  --primary-dark: #654321;
-  --primary-light: #a0522d;
-  --secondary-color: #d2691e;
-  --secondary-dark: #b8860b;
-  --secondary-light: #daa520;
-  --accent-color: #a0522d;
-  --accent-dark: #8b4513;
-  --accent-light: #cd853f;
-  --dark-brown: #654321;
-  --medium-brown: #a0522d;
-  --light-brown: #deb887;
-  --cream: #f5f5dc;
-  --light-cream: #fff8dc;
-  --espresso: #3e2723;
-  --latte: #fdf5e6;
-  --cappuccino: #e6d2b5;
-  --mocha: #8b7355;
+  --primary-color: #7a6b61;
+  --primary-dark: #6b5d54;
+  --primary-light: #8b7f74;
+  --secondary-color: #9d8b7e;
+  --secondary-dark: #8b7f74;
+  --secondary-light: #c4b5a0;
+  --accent-color: #8b7f74;
+  --accent-dark: #7a6b61;
+  --accent-light: #9d8b7e;
+  --dark-brown: #6b5d54;
+  --medium-brown: #8b7f74;
+  --light-brown: #c4b5a0;
+  --cream: #faf8f3;
+  --light-cream: #f5f1e8;
+  --espresso: #4a453d;
+  --latte: #fdfbf7;
+  --cappuccino: #e6dfd6;
+  --mocha: #9d8b7e;
   --white: #ffffff;
   --black: #000000;
   --gray-100: #f8f9fa;
@@ -58,15 +58,15 @@
   --border-radius-xl: 20px;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-brown: 0 4px 14px 0 rgba(139, 69, 19, 0.3);
-  --shadow-brown-lg: 0 10px 30px 0 rgba(139, 69, 19, 0.2);
+  --shadow-brown: 0 4px 14px 0 rgba(122, 107, 97, 0.2);
+  --shadow-brown-lg: 0 10px 30px 0 rgba(122, 107, 97, 0.15);
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
@@ -97,8 +97,14 @@ html {
 }
 
 body {
-  font-family: "Segoe UI", system-ui, -apple-system, "Roboto", "Helvetica Neue",
-    Arial, sans-serif;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   line-height: 1.6;
   color: var(--gray-900);
   background-color: var(--white);
@@ -473,7 +479,8 @@ h6 {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       circle at 20% 80%,
       rgba(139, 69, 19, 0.03) 0%,
       transparent 50%
@@ -520,7 +527,9 @@ h6 {
 
 .hero-section img:hover {
   transform: scale(1.02) rotate(1deg);
-  box-shadow: var(--shadow-2xl), 0 0 50px rgba(139, 69, 19, 0.2);
+  box-shadow:
+    var(--shadow-2xl),
+    0 0 50px rgba(139, 69, 19, 0.2);
 }
 
 .section {
@@ -937,7 +946,8 @@ footer::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       circle at 10% 20%,
       rgba(139, 69, 19, 0.1) 0%,
       transparent 50%
