@@ -4,28 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Kopi Prima</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <script defer src="js/config.js"></script>
     <script defer src="js/auth.js"></script>
   </head>
-  <body class="min-h-screen bg-gradient-to-br from-coffee-700 to-coffee-500">
-    <main class="mx-auto flex min-h-screen max-w-6xl items-center px-4 py-10">
-      <section class="w-full rounded-3xl bg-white p-10 shadow-2xl">
-        <div class="mb-8 flex items-center justify-between">
-          <h1 class="text-3xl font-bold text-coffee-700">Daftar Akun</h1>
-          <a class="text-sm font-semibold text-coffee-600" href="index.html">Kembali</a>
+  <body>
+    <main class="section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card card-shadow p-5">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">Daftar Akun</h1>
+                <a href="index.html">Kembali</a>
+              </div>
+              <form id="registerForm" class="row g-3">
+                <div class="col-md-6"><input id="username" class="form-control" placeholder="Username" required /></div>
+                <div class="col-md-6"><input id="email" type="email" class="form-control" placeholder="Email" required /></div>
+                <div class="col-md-6"><input id="phone" class="form-control" placeholder="Nomor telepon" required /></div>
+                <div class="col-md-6"><input id="password" type="password" class="form-control" placeholder="Password" required /></div>
+                <div class="col-12"><input id="confirmPassword" type="password" class="form-control" placeholder="Konfirmasi password" required /></div>
+                <div class="col-12"><button class="btn btn-primary w-100">Daftar</button></div>
+                <div class="col-12"><p id="errorMessage" class="d-none alert alert-danger mb-0"></p></div>
+                <div class="col-12"><p id="successMessage" class="d-none alert alert-success mb-0"></p></div>
+              </form>
+            </div>
+          </div>
         </div>
-        <form id="registerForm" class="grid gap-4 md:grid-cols-2">
-          <input id="username" class="rounded-xl border px-4 py-3" placeholder="Username" required />
-          <input id="email" type="email" class="rounded-xl border px-4 py-3" placeholder="Email" required />
-          <input id="phone" class="rounded-xl border px-4 py-3" placeholder="Nomor telepon" required />
-          <input id="password" type="password" class="rounded-xl border px-4 py-3" placeholder="Password" required />
-          <input id="confirmPassword" type="password" class="rounded-xl border px-4 py-3 md:col-span-2" placeholder="Konfirmasi password" required />
-          <button class="rounded-xl bg-coffee-600 px-4 py-3 font-semibold text-white md:col-span-2">Daftar</button>
-          <p id="errorMessage" class="hidden rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 md:col-span-2"></p>
-          <p id="successMessage" class="hidden rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 md:col-span-2"></p>
-        </form>
-      </section>
+      </div>
     </main>
     <script>
       const auth = window.authSystem;
@@ -33,11 +40,13 @@
         e.preventDefault();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
-        if (password !== confirmPassword) return (document.getElementById('errorMessage').classList.remove('hidden'), document.getElementById('errorMessage').textContent = 'Password tidak cocok');
-        const res = await auth.register({ username: username.value.trim(), email: email.value.trim(), phone: phone.value.trim(), password });
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        if (password !== confirmPassword) { errorMessage.textContent = 'Password tidak cocok'; errorMessage.classList.remove('d-none'); return; }
+        const res = await auth.register({ username: document.getElementById('username').value.trim(), email: document.getElementById('email').value.trim(), phone: document.getElementById('phone').value.trim(), password });
         const ok = res && (res.success === true || res.status === 'success');
-        if (ok) { successMessage.textContent = res.message || 'Berhasil'; successMessage.classList.remove('hidden'); }
-        else { errorMessage.textContent = res.message || 'Gagal'; errorMessage.classList.remove('hidden'); }
+        if (ok) { successMessage.textContent = res.message || 'Berhasil'; successMessage.classList.remove('d-none'); }
+        else { errorMessage.textContent = res.message || 'Gagal'; errorMessage.classList.remove('d-none'); }
       });
     </script>
   </body>
