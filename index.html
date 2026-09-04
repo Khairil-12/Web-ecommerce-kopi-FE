@@ -1,49 +1,766 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kopi Prima</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = { theme: { extend: { colors: { coffee: { 50: '#f5f5dc', 100:'#fff8dc', 500:'#8b4513', 600:'#a0522d', 700:'#654321' }}}}};
-    </script>
-    <script defer src="js/config.js"></script>
-    <script defer src="js/auth.js"></script>
-    <script defer src="js/script.js"></script>
+    <meta
+      name="description"
+      content="Kopi Prima - Biji Kopi Premium Nusantara Berkualitas Tinggi"
+    />
+    <title>Kopi Prima - Biji Kopi Premium Nusantara</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
   </head>
-  <body class="bg-[#fbf8f2] text-stone-800">
-    <header class="sticky top-0 z-50 border-b border-coffee-100 bg-white/90 backdrop-blur">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <a href="index.html" class="text-xl font-bold text-coffee-700">☕ KOPI PRIMA</a>
-        <nav class="flex gap-3 text-sm font-medium">
-          <a class="rounded-full px-4 py-2 hover:bg-coffee-500 hover:text-white" href="products.html">Produk</a>
-          <a class="rounded-full px-4 py-2 hover:bg-coffee-500 hover:text-white" href="cart.html">Cart</a>
-          <a class="rounded-full px-4 py-2 hover:bg-coffee-500 hover:text-white" href="login.html">Login</a>
+  <body>
+    <!-- ===== NAVBAR ===== -->
+    <header
+      class="navbar navbar-expand-lg sticky-top"
+      style="
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.95),
+          rgba(101, 67, 33, 0.95)
+        );
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid rgba(205, 133, 63, 0.2);
+      "
+    >
+      <div class="container">
+        <a
+          href="index.html"
+          class="navbar-brand fw-bold"
+          style="font-size: 1.5rem; letter-spacing: 2px"
+        >
+          <span style="color: #cd853f">☕</span> KOPI PRIMA
+        </a>
+        <button
+          class="navbar-toggler border-0"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-label="Toggle navigation"
+          style="color: #f5f5dc"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <nav class="collapse navbar-collapse" id="navbarNav">
+          <div class="navbar-nav ms-auto gap-3">
+            <a
+              class="nav-link fw-500 transition-all"
+              href="index.html"
+              style="color: #f5f5dc"
+              >Beranda</a
+            >
+            <a
+              class="nav-link fw-500 transition-all"
+              href="products.html"
+              style="color: #f5f5dc"
+              >Produk</a
+            >
+            <a
+              class="nav-link fw-500 transition-all"
+              href="cart.html"
+              style="color: #f5f5dc"
+            >
+              <span>🛒 Keranjang</span>
+              <span class="badge bg-danger ms-2" id="cartCount">0</span>
+            </a>
+            <a
+              class="nav-link fw-500 transition-all"
+              id="authBtn"
+              href="login.html"
+              style="color: #f5f5dc"
+              >Login</a
+            >
+          </div>
         </nav>
       </div>
     </header>
-    <main class="mx-auto max-w-7xl px-4 py-16">
-      <section class="grid gap-8 md:grid-cols-2 md:items-center">
-        <div>
-          <p class="mb-3 inline-flex rounded-full bg-coffee-100 px-3 py-1 text-sm font-semibold text-coffee-700">Premium coffee supplier</p>
-          <h1 class="text-4xl font-extrabold tracking-tight md:text-6xl">Kopi hangat, UI bersih, flow cepat.</h1>
-          <p class="mt-4 max-w-xl text-lg text-stone-600">Tema kopi tetap, layout Tailwind, halaman lebih ringan, siap connect Supabase.</p>
-          <div class="mt-6 flex gap-3">
-            <a href="products.html" class="rounded-full bg-coffee-600 px-5 py-3 font-semibold text-white">Lihat produk</a>
-            <a href="register.html" class="rounded-full border border-coffee-600 px-5 py-3 font-semibold text-coffee-700">Daftar</a>
+
+    <main>
+      <!-- ===== HERO SECTION ===== -->
+      <section
+        class="position-relative overflow-hidden"
+        style="
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          padding: 60px 20px;
+        "
+      >
+        <!-- Background Image with Overlay -->
+        <div class="position-absolute inset-0" style="z-index: -2">
+          <img
+            src="img/coffe_trees.jpeg"
+            alt="Coffee Trees"
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              filter: brightness(0.6) contrast(1.1);
+            "
+            class="animate-float"
+          />
+        </div>
+        <div
+          class="position-absolute inset-0"
+          style="
+            background: linear-gradient(
+              135deg,
+              rgba(139, 69, 19, 0.7),
+              rgba(101, 67, 33, 0.8)
+            );
+            z-index: -1;
+          "
+        ></div>
+
+        <!-- Content -->
+        <div class="container position-relative">
+          <div class="row align-items-center g-5 g-lg-5">
+            <!-- Left Content -->
+            <div class="col-lg-6 animate-fade-left">
+              <div class="mb-4">
+                <span
+                  class="badge bg-danger px-3 py-2 fs-6 animate-pulse"
+                  style="font-weight: 600"
+                  >🌟 Biji Kopi Premium</span
+                >
+              </div>
+
+              <h1
+                class="display-3 mb-4"
+                style="
+                  color: #f5f5dc;
+                  font-weight: 800;
+                  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                  line-height: 1.2;
+                "
+              >
+                Kopi <span style="color: #daa520">Nusantara</span>, Rasa Kuat,
+                Tampilan Elegan
+              </h1>
+
+              <p class="lead mb-5" style="color: #fdf5e6; font-size: 1.1rem">
+                Nikmati kualitas biji kopi premium dari seluruh Nusantara. Pilih
+                green bean atau roast bean yang telah dipilih khusus dengan
+                cermat. Sempurna untuk rumah, kedai kopi, maupun reseller.
+              </p>
+
+              <div class="d-flex gap-3 flex-wrap">
+                <a
+                  href="products.html"
+                  class="btn btn-lg"
+                  style="
+                    background: linear-gradient(135deg, #d2691e, #cd853f);
+                    color: white;
+                    border: none;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                  "
+                >
+                  ➜ Jelajahi Produk
+                </a>
+                <a
+                  href="register.html"
+                  class="btn btn-lg"
+                  style="
+                    border: 2px solid #daa520;
+                    color: #daa520;
+                    background: rgba(218, 165, 32, 0.1);
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                  "
+                >
+                  ✏️ Daftar Sekarang
+                </a>
+              </div>
+
+              <!-- Stats -->
+              <div class="row mt-5 gap-3">
+                <div class="col-auto">
+                  <div
+                    class="ps-3 border-start border-3"
+                    style="border-color: #daa520"
+                  >
+                    <p class="mb-0 fs-4 fw-bold" style="color: #daa520">500+</p>
+                    <p class="mb-0 small" style="color: #f5f5dc">
+                      Pelanggan Puas
+                    </p>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="ps-3 border-start border-3"
+                    style="border-color: #daa520"
+                  >
+                    <p class="mb-0 fs-4 fw-bold" style="color: #daa520">100%</p>
+                    <p class="mb-0 small" style="color: #f5f5dc">Autentik</p>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <div
+                    class="ps-3 border-start border-3"
+                    style="border-color: #daa520"
+                  >
+                    <p class="mb-0 fs-4 fw-bold" style="color: #daa520">24/7</p>
+                    <p class="mb-0 small" style="color: #f5f5dc">Layanan</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Visual -->
+            <div class="col-lg-6 animate-fade-right">
+              <div class="position-relative" style="height: 500px">
+                <div
+                  class="position-absolute w-100 h-100"
+                  style="
+                    background: linear-gradient(
+                      45deg,
+                      rgba(205, 133, 63, 0.1),
+                      rgba(218, 165, 32, 0.1)
+                    );
+                    border-radius: 30px;
+                    overflow: hidden;
+                  "
+                >
+                  <img
+                    src="img/petik.jpeg"
+                    alt="Coffee Picking"
+                    style="
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                      border-radius: 30px;
+                    "
+                    class="animate-zoom hover-lift"
+                  />
+                </div>
+                <!-- Floating Badge -->
+                <div
+                  class="position-absolute rounded-3 px-4 py-3 animate-bounce"
+                  style="
+                    bottom: 30px;
+                    right: 20px;
+                    background: rgba(218, 165, 32, 0.95);
+                    color: white;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                  "
+                >
+                  <p class="mb-0 fw-bold">✨ Premium Grade</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="rounded-3xl bg-gradient-to-br from-coffee-700 to-coffee-500 p-8 text-white shadow-xl">
-          <h2 class="text-2xl font-bold">Optimisasi</h2>
-          <ul class="mt-4 space-y-3 text-sm text-coffee-50">
-            <li>• API base tunggal</li>
-            <li>• Load script defer</li>
-            <li>• Tailwind CDN cepat</li>
-            <li>• Layout mobile-first</li>
-          </ul>
+      </section>
+
+      <!-- ===== FEATURES SECTION ===== -->
+      <section
+        style="
+          padding: 80px 20px;
+          background: linear-gradient(135deg, #f5f5dc 0%, #fff8dc 100%);
+        "
+      >
+        <div class="container">
+          <div class="text-center mb-5 animate-fade-up">
+            <h2 class="display-4 mb-3">Mengapa Pilih Kopi Prima?</h2>
+            <p class="lead text-muted">
+              Komitmen kami terhadap kualitas dan kepuasan pelanggan
+            </p>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="background: white; border-radius: 20px; overflow: hidden"
+              >
+                <div class="card-body p-4 text-center">
+                  <div class="fs-1 mb-3">🌍</div>
+                  <h5 class="card-title mb-2">Asal Biji Jelas</h5>
+                  <p class="card-text text-muted small">
+                    Setiap biji kopi dapat dilacak asal-usulnya dengan
+                    transparan
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="background: white; border-radius: 20px; overflow: hidden"
+              >
+                <div class="card-body p-4 text-center">
+                  <div class="fs-1 mb-3">🔥</div>
+                  <h5 class="card-title mb-2">Roast Fresh</h5>
+                  <p class="card-text text-muted small">
+                    Disangrai segar sesuai pesanan untuk kesegaran maksimal
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="background: white; border-radius: 20px; overflow: hidden"
+              >
+                <div class="card-body p-4 text-center">
+                  <div class="fs-1 mb-3">💰</div>
+                  <h5 class="card-title mb-2">Harga Grosir</h5>
+                  <p class="card-text text-muted small">
+                    Harga kompetitif untuk pembelian satuan maupun reseller
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="background: white; border-radius: 20px; overflow: hidden"
+              >
+                <div class="card-body p-4 text-center">
+                  <div class="fs-1 mb-3">📦</div>
+                  <h5 class="card-title mb-2">Siap Kirim</h5>
+                  <p class="card-text text-muted small">
+                    Pengiriman cepat ke seluruh nusantara dengan aman
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== STORY SECTION ===== -->
+      <section style="padding: 80px 20px">
+        <div class="container">
+          <div class="row align-items-center g-5 g-lg-5">
+            <div class="col-lg-6 animate-fade-left">
+              <div
+                style="
+                  height: 400px;
+                  border-radius: 20px;
+                  overflow: hidden;
+                  box-shadow: 0 20px 40px rgba(139, 69, 19, 0.2);
+                "
+              >
+                <img
+                  src="img/story.jpg"
+                  alt="Our Story"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                  class="hover-scale"
+                />
+              </div>
+            </div>
+
+            <div class="col-lg-6 animate-fade-right">
+              <h2 class="display-4 mb-4">Cerita Kopi Prima</h2>
+              <p class="lead mb-3">
+                Kami memulai perjalanan dengan visi sederhana: membawa kopi
+                terbaik Nusantara ke meja Anda dengan kualitas terjamin dan
+                harga yang adil.
+              </p>
+              <p class="text-muted mb-4">
+                Setiap biji kopi yang kami tawarkan dipilih dengan cermat dari
+                petani terbaik di berbagai belahan Nusantara. Kami percaya bahwa
+                kopi berkualitas tinggi bukan hanya tentang rasa, tetapi juga
+                tentang kisah dan dedikasi di balik setiap panen.
+              </p>
+              <p class="text-muted mb-4">
+                Dengan pengalaman lebih dari 10 tahun di industri kopi, kami
+                memahami apa yang pelanggan kami butuhkan. Dari green bean
+                hingga roast bean, setiap produk kami telah melalui kontrol
+                kualitas yang ketat.
+              </p>
+
+              <div class="d-flex gap-4 mt-5">
+                <div>
+                  <p class="fs-3 fw-bold text-primary">1000+</p>
+                  <p class="small text-muted">Kg Kopi Terjual</p>
+                </div>
+                <div>
+                  <p class="fs-3 fw-bold text-primary">50+</p>
+                  <p class="small text-muted">Jenis Kopi</p>
+                </div>
+                <div>
+                  <p class="fs-3 fw-bold text-primary">10+</p>
+                  <p class="small text-muted">Tahun Pengalaman</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PRODUCTS PREVIEW SECTION ===== -->
+      <section
+        style="
+          padding: 80px 20px;
+          background: linear-gradient(135deg, #f5f5dc 0%, #fff8dc 100%);
+        "
+      >
+        <div class="container">
+          <div class="text-center mb-5 animate-fade-up">
+            <h2 class="display-4 mb-3">Produk Terpopuler</h2>
+            <p class="lead text-muted">Pilihan favorit pelanggan kami</p>
+          </div>
+
+          <div class="row g-4" id="productsPreview">
+            <!-- Products will be loaded here via JavaScript -->
+            <div class="col-12 text-center animate-spin">
+              <p class="text-muted">Memuat produk...</p>
+            </div>
+          </div>
+
+          <div class="text-center mt-5 animate-fade-up">
+            <a
+              href="products.html"
+              class="btn btn-lg"
+              style="
+                background: linear-gradient(135deg, #d2691e, #cd853f);
+                color: white;
+                border: none;
+                font-weight: 600;
+              "
+            >
+              Lihat Semua Produk →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CTA SECTION ===== -->
+      <section
+        style="
+          padding: 80px 20px;
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--accent-color)
+          );
+          position: relative;
+          overflow: hidden;
+        "
+      >
+        <div
+          class="position-absolute inset-0 opacity-10"
+          style="
+            background-image: url(&quot;data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22white%22 opacity=%220.1%22/></svg>&quot;);
+            z-index: 0;
+          "
+        ></div>
+
+        <div class="container position-relative z-1">
+          <div class="text-center animate-fade-up" style="color: white">
+            <h2 class="display-4 mb-4">Siap untuk Merasakan Kopi Terbaik?</h2>
+            <p class="lead mb-5">
+              Bergabunglah dengan ribuan pelanggan yang telah merasakan kepuasan
+              Kopi Prima
+            </p>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a
+                href="products.html"
+                class="btn btn-lg"
+                style="
+                  background: white;
+                  color: var(--primary-color);
+                  border: none;
+                  font-weight: 600;
+                "
+              >
+                Mulai Belanja Sekarang
+              </a>
+              <a
+                href="register.html"
+                class="btn btn-lg"
+                style="
+                  border: 2px solid white;
+                  color: white;
+                  background: transparent;
+                  font-weight: 600;
+                "
+              >
+                Daftar Member Baru
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TESTIMONIALS SECTION ===== -->
+      <section style="padding: 80px 20px">
+        <div class="container">
+          <div class="text-center mb-5 animate-fade-up">
+            <h2 class="display-4 mb-3">Apa Kata Pelanggan Kami</h2>
+            <p class="lead text-muted">
+              Kepuasan pelanggan adalah prioritas utama kami
+            </p>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-4 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="
+                  background: white;
+                  border-radius: 20px;
+                  border-left: 4px solid var(--primary-color);
+                "
+              >
+                <div class="card-body p-4">
+                  <div class="mb-3">
+                    <span class="text-warning">★★★★★</span>
+                  </div>
+                  <p class="card-text mb-4">
+                    "Kopi dari Kopi Prima benar-benar berkualitas tinggi. Rasa
+                    yang kaya dan konsisten setiap kali saya membeli. Sangat
+                    merekomendasikan!"
+                  </p>
+                  <p class="fw-bold mb-0">Budi Santoso</p>
+                  <p class="small text-muted">Jakarta</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="
+                  background: white;
+                  border-radius: 20px;
+                  border-left: 4px solid var(--secondary-color);
+                "
+              >
+                <div class="card-body p-4">
+                  <div class="mb-3">
+                    <span class="text-warning">★★★★★</span>
+                  </div>
+                  <p class="card-text mb-4">
+                    "Sebagai pemilik kafe, saya sangat puas dengan konsistensi
+                    kualitas dan layanan pengiriman yang cepat dari Kopi Prima."
+                  </p>
+                  <p class="fw-bold mb-0">Siti Nurhaliza</p>
+                  <p class="small text-muted">Bandung</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 stagger-item animate-fade-up">
+              <div
+                class="card border-0 h-100 hover-lift"
+                style="
+                  background: white;
+                  border-radius: 20px;
+                  border-left: 4px solid var(--accent-color);
+                "
+              >
+                <div class="card-body p-4">
+                  <div class="mb-3">
+                    <span class="text-warning">★★★★★</span>
+                  </div>
+                  <p class="card-text mb-4">
+                    "Harga grosir yang sangat kompetitif dan kualitas yang tidak
+                    pernah mengecewakan. Reseller seperti saya selalu untung!"
+                  </p>
+                  <p class="fw-bold mb-0">Ahmad Wijaya</p>
+                  <p class="small text-muted">Surabaya</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== NEWSLETTER SECTION ===== -->
+      <section
+        style="
+          padding: 60px 20px;
+          background: linear-gradient(135deg, #f5f5dc 0%, #fff8dc 100%);
+        "
+      >
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-6 text-center animate-fade-up">
+              <h3 class="mb-3">Dapatkan Penawaran Spesial</h3>
+              <p class="text-muted mb-4">
+                Berlangganan newsletter kami untuk mendapat diskon eksklusif dan
+                info produk terbaru
+              </p>
+
+              <form class="d-flex gap-2" style="display: flex; flex-wrap: wrap">
+                <input
+                  type="email"
+                  class="form-control transition-all"
+                  placeholder="Email Anda"
+                  style="
+                    border-radius: 10px;
+                    border: 2px solid transparent;
+                    flex: 1;
+                    min-width: 200px;
+                  "
+                  required
+                />
+                <button
+                  type="submit"
+                  class="btn btn-primary transition-all"
+                  style="
+                    border-radius: 10px;
+                    font-weight: 600;
+                    white-space: nowrap;
+                  "
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </section>
     </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer
+      style="
+        background: var(--primary-color);
+        color: var(--light-cream);
+        padding: 60px 20px 20px;
+      "
+    >
+      <div class="container mb-5">
+        <div class="row g-5">
+          <div class="col-md-3 col-sm-6">
+            <h5 class="mb-3" style="color: #daa520">Kopi Prima</h5>
+            <p class="small">
+              Kopi premium Nusantara dengan kualitas terjamin untuk kebutuhan
+              Anda.
+            </p>
+          </div>
+
+          <div class="col-md-3 col-sm-6">
+            <h5 class="mb-3" style="color: #daa520">Menu</h5>
+            <ul class="list-unstyled gap-2 d-flex flex-column">
+              <li>
+                <a
+                  href="index.html"
+                  style="color: inherit; text-decoration: none"
+                  class="transition-all"
+                  >Beranda</a
+                >
+              </li>
+              <li>
+                <a
+                  href="products.html"
+                  style="color: inherit; text-decoration: none"
+                  class="transition-all"
+                  >Produk</a
+                >
+              </li>
+              <li>
+                <a
+                  href="cart.html"
+                  style="color: inherit; text-decoration: none"
+                  class="transition-all"
+                  >Keranjang</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-md-3 col-sm-6">
+            <h5 class="mb-3" style="color: #daa520">Hubungi Kami</h5>
+            <ul class="list-unstyled gap-2 d-flex flex-column small">
+              <li>📞 +62 812-3456-7890</li>
+              <li>📧 info@kopipirma.com</li>
+              <li>📍 Jakarta, Indonesia</li>
+            </ul>
+          </div>
+
+          <div class="col-md-3 col-sm-6">
+            <h5 class="mb-3" style="color: #daa520">Ikuti Kami</h5>
+            <div class="d-flex gap-2">
+              <a
+                href="#"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                  background: rgba(255, 255, 255, 0.1);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: inherit;
+                  text-decoration: none;
+                  transition: all 0.3s;
+                "
+                >f</a
+              >
+              <a
+                href="#"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                  background: rgba(255, 255, 255, 0.1);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: inherit;
+                  text-decoration: none;
+                  transition: all 0.3s;
+                "
+                >📷</a
+              >
+              <a
+                href="#"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                  background: rgba(255, 255, 255, 0.1);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: inherit;
+                  text-decoration: none;
+                  transition: all 0.3s;
+                "
+                >𝕏</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="text-center py-3 border-top"
+        style="border-color: rgba(255, 255, 255, 0.1); color: var(--cappuccino)"
+      >
+        <p class="mb-0 small">
+          &copy; 2024 Kopi Prima. Semua hak dilindungi. |
+          <a href="#" style="color: inherit; text-decoration: none"
+            >Kebijakan Privasi</a
+          >
+          |
+          <a href="#" style="color: inherit; text-decoration: none"
+            >Syarat & Ketentuan</a
+          >
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/auth.js"></script>
+    <script defer src="js/index-app.js"></script>
   </body>
 </html>
